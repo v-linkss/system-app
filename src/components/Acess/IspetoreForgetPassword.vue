@@ -44,7 +44,7 @@ export default {
         email: this.email,
       };
       try {
-        const response = await axios.post("http://localhost:3333/recuperarSenha", data);
+        const response = await axios.post(process.env.VUE_APP_API_ACESS,"/recuperarSenha", data);
         console.log(response.data);
         if (response.status === 200) {
           window.console.log("Verifique a caixa de E-mail para alterar a senha");

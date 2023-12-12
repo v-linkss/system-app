@@ -58,8 +58,10 @@ export default {
         email: this.email,
         senha: this.senha,
       };
+      console.log("QQQQQQQQQQQQQQQQQQQQQQQQQQQ\n",data)
       try {
-        const response = await axios.post("http://localhost:3333/login", data);
+        const response = await axios.post(`${process.env.VUE_APP_API_ACESS}/login`, data);
+
         console.log(response.data);
         this.$router.push("/panel");
         if (response.status === 404) {
