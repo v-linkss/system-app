@@ -8,19 +8,14 @@
         height="180"
         src="../../assets/Logo.png"
       ></v-img>
-      <div class="text">Redifinir Senha</div>
-      <v-text-field
-        v-model="email"
-        class="input"
-        density="compact"
-        placeholder="Email"
-        prepend-inner-icon="mdi-email-outline"
-        variant="outlined"
-      ></v-text-field>
-
-      <v-btn block rounded class="button" @click="recuperarSenha">
-        Enviar email
-      </v-btn>
+      <v-autocomplete
+        label="Acessar Cliente"
+        v-model="selectedPredio"
+        :items="transformedPredios"
+        :item-text="text"
+        :item-value="value"
+      ></v-autocomplete>
+      <v-btn block rounded class="button" @click="login"> Acessar </v-btn>
 
       <a
         class="text-caption text-decoration-none text-blue"
@@ -34,31 +29,39 @@
   </div>
 </template>
 <script>
-import axios from "axios";
 export default {
   data: () => ({
+    selectedPredio: null,
     visible: false,
-    email: "",
   }),
+
   methods: {
-    async recuperarSenha() {
-      const data = {
-        email: this.email,
+    async login() {
+      this.$router.push("/panel");
+    },
+  },
+  computed: {
+    user() {
+      return this.$store.getters.user;
+    },
+    predios() {
+      return this.$store.getters.predios;
+    },
+    transformedPredios() {
+      return this.predios.map((predio) => ({
+        title: predio.text,
+        value: predio.value,
+      }));
+    },
+    value() {
+      return function (item) {
+        return item.value;
       };
-      try {
-        const response = await axios.post(
-          "http://localhost:3333/recuperarSenha",
-          data
-        );
-        console.log(response.data);
-        if (response.status === 200) {
-          window.console.log(
-            "Verifique a caixa de E-mail para alterar a senha"
-          );
-        }
-      } catch (error) {
-        console.error(error, this.email);
-      }
+    },
+    text() {
+      return function (item) {
+        return item.title;
+      };
     },
   },
 };

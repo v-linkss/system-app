@@ -11,6 +11,7 @@
       <div class="text">Redifinir a Senha</div>
       <v-text-field
         class="input"
+        v-model="senha_nova"
         :append-inner-icon="visible ? 'mdi-eye-off' : 'mdi-eye'"
         :type="visible ? 'text' : 'password'"
         density="compact"
@@ -22,6 +23,7 @@
 
       <v-text-field
         class="input"
+        v-model="senha_redigitada"
         :append-inner-icon="visible ? 'mdi-eye-off' : 'mdi-eye'"
         :type="visible ? 'text' : 'password'"
         density="compact"
@@ -31,17 +33,48 @@
         @click:append-inner="visible = !visible"
       ></v-text-field>
 
-      <v-btn block rounded class="button"> Salvar Nova Senha </v-btn>
+      <v-btn block rounded class="button" @click="verificaSenha"> Salvar Nova Senha </v-btn>
 
     </div>
     <div class="background-image"></div>
   </div>
 </template>
 <script>
+import axios from "axios";
 export default {
   data: () => ({
     visible: false,
+    senha_nova: "",
+    senha_redigitada:""
   }),
+  methods: {
+    async verificaSenha() {
+      if(this.senha_nova === this.senha_redigitada){
+        console.log("A senha foi alterada")
+      }else{
+        console.log("A senha redigitada é diferente da nova senha")
+      }
+    },
+    async recuperarSenha() {
+      const data = {
+        senha: this.senha_nova,
+      };
+      try {
+        const response = await axios.post(
+          "http://localhost:3333/alterarSenha",
+          data
+        );
+        console.log(response.data);
+        if (response.status === 200) {
+          window.console.log(
+            "Verifique a caixa de E-mail para alterar a senha"
+          );
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    },
+  },
 };
 </script>
 <style scoped>

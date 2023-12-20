@@ -1,7 +1,7 @@
-import { VDataTable } from 'vuetify/lib/components/index.mjs'
 
 // Plugins
 import { registerPlugins } from '@/plugins'
+import store from './router/store'
 
 // Components
 import App from './App.vue'
@@ -10,7 +10,7 @@ import App from './App.vue'
 import { createApp } from 'vue'
 
 const app = createApp(App)
-app.component(VDataTable)
+app.use(store);
 registerPlugins(app)
 
 app.mount('#app')

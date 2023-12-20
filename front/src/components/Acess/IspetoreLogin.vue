@@ -30,7 +30,6 @@
         @click:append-inner="visible = !visible"
       ></v-text-field>
 
-
       <v-btn block rounded class="button" v-on:click="login"> Acessar </v-btn>
 
       <a
@@ -41,23 +40,26 @@
         Esqueceu a senha?</a
       >
       <v-container v-if="showError">
-          <v-alert text="Erro no sistema" type="error">
-            <v-spacer></v-spacer>
-            <v-btn text="Fechar" @click="showError = false">Fechar</v-btn>
-          </v-alert>
-        </v-container>
-        <v-container v-if="showEmailError">
-          <v-alert text="Erro na autenticação de login: Email não cadastrado" type="error">
-            <v-spacer></v-spacer>
-            <v-btn text="Fechar" @click="showEmailError = false">Fechar</v-btn>
-          </v-alert>
-        </v-container>
-        <v-container v-if="showPasswordError">
-          <v-alert text="Erro na autenticação da senha" type="error">
-            <v-spacer></v-spacer>
-            <v-btn text="Fechar" @click="showPasswordError = false">Fechar</v-btn>
-          </v-alert>
-        </v-container>
+        <v-alert text="Erro no sistema" type="error">
+          <v-spacer></v-spacer>
+          <v-btn text="Fechar" @click="showError = false">Fechar</v-btn>
+        </v-alert>
+      </v-container>
+      <v-container v-if="showEmailError">
+        <v-alert
+          text="Erro na autenticação de login: Email não cadastrado"
+          type="error"
+        >
+          <v-spacer></v-spacer>
+          <v-btn text="Fechar" @click="showEmailError = false">Fechar</v-btn>
+        </v-alert>
+      </v-container>
+      <v-container v-if="showPasswordError">
+        <v-alert text="Erro na autenticação da senha" type="error">
+          <v-spacer></v-spacer>
+          <v-btn text="Fechar" @click="showPasswordError = false">Fechar</v-btn>
+        </v-alert>
+      </v-container>
     </div>
 
     <div class="background-image"></div>
@@ -72,7 +74,7 @@ export default {
     senha: "",
     showError: false,
     showEmailError: false,
-    showPasswordError: false // Adiciona variável para controlar exibição do modal
+    showPasswordError: false, // Adiciona variável para controlar exibição do modal
   }),
 
   methods: {
@@ -86,22 +88,45 @@ export default {
         const response = await axios.post("http://localhost:3333/login", data);
 
         if (response.status === 200) {
-          // Successful login
-          console.log(response.data);
-          this.$router.push("/panel");
+          const responseData = response.data;
+
+          if (
+            responseData &&
+            responseData[0] &&
+            responseData[0].func_autentica_acesso_v1 &&
+            responseData[0].func_autentica_acesso_v1[0] &&
+            responseData[0].func_autentica_acesso_v1[0].status === "OK" &&
+            responseData[0].func_autentica_acesso_v1[0].registro &&
+            responseData[0].func_autentica_acesso_v1[0].registro.length > 0
+          ) {
+            const user =
+              responseData[0].func_autentica_acesso_v1[0].registro[0];
+
+            if (user.predios && user.predios.length > 1) {
+              // Guarde os dados do usuário para serem usados na tela de seleção de clientes
+              this.$store.dispatch('setUser', user);
+              this.$router.push({name: 'selecao-predio'});
+            } else {
+              console.log("Redirecionando para /panel");
+              // this.$store.commit("setUser", user);
+              this.$router.push("/panel");
+            }
+          } else {
+            console.error("Erro de autenticação com usuário");
+            this.showError = true;
+          }
         }
       } catch (error) {
-        // Handle network or other errors
-        console.error("Erro de autenticação com usuario", error);
-        if (error.response && error.response.status === 400 || error.response && error.response.status === 500) {
+        console.error("Erro ao fazer login", error);
+        if (error.response && error.response.status === 400) {
           const errorData = error.response.data;
 
           if (errorData.error === "Email não cadastrado no Durabil") {
             this.showEmailError = true;
           } else if (errorData.error === "Senha incorreta") {
             this.showPasswordError = true;
-          } else if(errorData.error === "Erro ao autenticar usuário"){
-            this.showError = true
+          } else if (errorData.error === "Erro ao autenticar usuário") {
+            this.showError = true;
           }
         }
       }
