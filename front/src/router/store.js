@@ -21,9 +21,17 @@ export default createStore({
     },
     predios(state) {
       return state.user.predios.map((predio) => ({
+        token: predio.predio_token,
         text: predio.predio_descricao,
         value: predio.predio_id,
       }));
     },
+    usuarios(state) {
+      return {
+        name: state.user.nome,
+        token: state.user.token,
+        predio_token: state.user.predios.predio_token
+      };
+   },
   },
 });

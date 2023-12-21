@@ -105,6 +105,7 @@ export default {
             if (user.predios && user.predios.length > 1) {
               // Guarde os dados do usuário para serem usados na tela de seleção de clientes
               this.$store.dispatch('setUser', user);
+              console.log(user)
               this.$router.push({name: 'selecao-predio'});
             } else {
               console.log("Redirecionando para /panel");

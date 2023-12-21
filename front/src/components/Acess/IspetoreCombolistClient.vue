@@ -37,6 +37,9 @@ export default {
 
   methods: {
     async login() {
+      console.log(this.user)
+      console.log("asdk",this.predios)
+      console.log("asdk",this.usuarios)
       this.$router.push("/panel");
     },
   },
@@ -46,6 +49,9 @@ export default {
     },
     predios() {
       return this.$store.getters.predios;
+    },
+    usuarios() {
+      return this.$store.getters.usuarios;
     },
     transformedPredios() {
       return this.predios.map((predio) => ({

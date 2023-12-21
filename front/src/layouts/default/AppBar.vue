@@ -27,15 +27,21 @@
 </template>
 
 <script>
+import axios from "axios";
 export default {
   data: () => ({
     items: [{ title: "Alterar Senha" }, { title: "Sair" }],
   }),
 
-  // return {
-  //   drawer: false,
-  // };
   methods: {
+    async listNavBar() {
+      try {
+        const response = await axios.get("http://localhost:3200/listarMenu");
+        console.log(response);
+      } catch (error) {
+        console.log(error);
+      }
+    },
     navigateTo(route) {
       // Lógica para navegar para a rota desejada
       console.log(`Navegando para ${route}`);
