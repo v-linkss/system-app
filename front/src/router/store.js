@@ -1,19 +1,32 @@
 // store.js
 import { createStore } from "vuex";
+import axios from "axios";
 
 export default createStore({
   state: {
     user: null,
+    menu: null
   },
   mutations: {
     setUser(state, user) {
       state.user = user;
+    },
+    setMenu(state, menu) {
+      state.menu = menu;
     },
   },
   actions: {
     setUser({ commit }, user) {
       commit("setUser", user);
     },
+    async listarMenu({commit,getters }) {
+      try {
+        const response = await axios.post("http://localhost:3200/listarMenu", getters.usuarios);
+        commit('setMenu', response.data);
+      } catch (error) {
+        console.log(error);
+      }
+   },
   },
   getters: {
     user(state) {
@@ -29,9 +42,16 @@ export default createStore({
     usuarios(state) {
       return {
         name: state.user.nome,
-        token: state.user.token,
-        predio_token: state.user.predios.predio_token
+        user_token: state.user.token,
+        predio_token: state.user.predios[0].predio_token,
       };
    },
+   menu(state) {
+    return {
+      cadastros: state.menu.cadastros,
+      financeiro: state.menu.financeiro,
+      relatorios: state.user.predios[0].predio_token,
+    };
+  },
   },
 });
