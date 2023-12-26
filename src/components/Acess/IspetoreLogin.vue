@@ -105,14 +105,17 @@ export default {
             if (user.predios && user.predios.length > 1) {
               // Guarde os dados do usuário para serem usados na tela de seleção de clientes
               this.$store.dispatch('setUser', user);
+
               this.$router.push({name: 'selecao-predio'});
             } else {
-              console.log("Redirecionando para /panel");
-              // this.$store.commit("setUser", user);
+              this.$store.commit("setUser", user);
+              console.log(responseData)
+              this.$store.dispatch('listarMenu');
               this.$router.push("/panel");
             }
           } else {
             console.error("Erro de autenticação com usuário");
+            console.log(responseData)
             this.showError = true;
           }
         }
@@ -131,7 +134,6 @@ export default {
         }
       }
     },
-
     closeAlert() {
       // Fecha o modal e reseta a variável
       this.showError = false;
