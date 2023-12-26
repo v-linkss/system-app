@@ -25,11 +25,12 @@
       </template>
       <v-list>
         <v-list-item
-          v-for="(item, cadastros1) in Cadastros"
-          :key="cadastros1"
-          :value="cadastros1"
+          v-for="item in menuSelect"
+          v-bind:key="item.url"
+          :value="item.url"
+          :title="item.url"
         >
-          <v-list-item-title>{{ item.cadastros }}</v-list-item-title>
+          <v-list-item-title>{{ menuSelect.name}}</v-list-item-title>
         </v-list-item>
       </v-list>
     </v-menu>
@@ -38,7 +39,11 @@
         <v-btn class="text" v-bind="props"> Prestações de Contas</v-btn>
       </template>
       <v-list>
-        <v-list-item v-for="(item, index) in Financeiro" :key="index" :value="index">
+        <v-list-item
+          v-for="(item, index) in Financeiro"
+          :key="index"
+          :value="index"
+        >
           <v-list-item-title>{{ item.financeiro }}</v-list-item-title>
         </v-list-item>
       </v-list>
@@ -76,19 +81,18 @@
 // import axios from "axios";
 export default {
   data: () => ({
+    loading: true,
     items: [{ title: "Alterar Senha" }, { title: "Sair" }],
-    Cadastros: {},
-    Financeiro:[],
   }),
   computed: {
     usuarios() {
       return this.$store.getters.usuarios;
     },
     nomeUsuario() {
-      return this.usuarios.nome;
+      return this.$store.getters.usuarios.nome;
     },
     menuSelect() {
-      return this.$store.getters.menuSelect;
+      return this.$store.getters.menuSelect.cadastros;
     },
   },
   //   watch: {
@@ -115,29 +119,14 @@ export default {
         console.log(this.usuarios);
       }
       if (title === "Alterar Senha") {
-        console.log(this.menuSelect.cadastros);
-        console.log("cada", this.Cadastros);
+        console.log(this.menuSelect);
       }
     },
-    async loadMenu() {
-      const data = this.$store.getters.menuSelect;
-
-      this.Cadastros = data;
-      this.Financeiro = data;
-    },
-  },
-  mounted() {
-    (async () => {
-      await this.loadMenu();
-    })();
   },
 };
 </script>
 
 <style scoped>
-.label-white {
-  --v-label-text-color: white;
-}
 .logo {
   margin-top: 18px;
   margin-left: 50px;

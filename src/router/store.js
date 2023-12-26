@@ -56,7 +56,7 @@ export default createStore({
     },
     menuSelect(state) {
       return {
-        cadastros: state.menu.Cadastros || [],
+        cadastros: state.menu.Cadastros,
         financeiro: state.menu.Financeiro,
         relatorios: state.menu.Relatórios,
       };
