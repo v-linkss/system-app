@@ -106,7 +106,7 @@ export default {
               this.$router.push({ name: "selecao-predio" });
             } else {
               this.$store.commit("setUser", user);
-              this.$store.commit("setPredio", user.predios);
+              this.$store.commit("setPredio", user.predios[0].predio_token);
               this.$store.dispatch("listarMenu");
               this.$router.push("/panel");
             }

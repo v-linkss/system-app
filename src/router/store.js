@@ -6,7 +6,7 @@ export default createStore({
   state: {
     user: null,
     menu: null,
-    predioState:null
+    predio:null
   },
   mutations: {
     setUser(state, user) {
@@ -15,18 +15,21 @@ export default createStore({
     setMenu(state, menu) {
       state.menu = menu;
     },
-    setPredio(state, predioState) {
-      state.predioState = predioState;
+    setPredio(state, predio) {
+      state.predio = predio;
     },
   },
   actions: {
     setUser({ commit }, user) {
       commit("setUser", user);
     },
+    setPredio({ commit }, predio) {
+      commit("setPredio", predio);
+    },
     async listarMenu({ commit }) {
       const data = {
         user_token:this.getters.usuarios.user_token,
-        predio_token:this.getters.prediosState[0].predio_token
+        predio_token:this.getters.prediosState
       }
       try {
         const response = await axios.post(
@@ -34,9 +37,7 @@ export default createStore({
           data
         );
         const responseData = response.data;
-        console.log("dados", data);
         commit("setMenu", responseData[0].func_menu[0].menu);
-        console.log("dados", responseData[0].func_menu[0].menu);
       } catch (error) {
         console.log(error);
       }
@@ -50,7 +51,7 @@ export default createStore({
       return state.menu;
     },
     prediosState(state) {
-      return state.predioState;
+      return state.predio;
     },
     predios(state) {
       return state.user.predios.map((predio) => ({

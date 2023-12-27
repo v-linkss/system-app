@@ -38,20 +38,16 @@ export default {
 
   methods: {
     async login() {
-      console.log(this.user)
-      console.log("asdk",this.predios)
-      console.log("asdk",this.usuarios)
       const selectedPredio = this.predios.find(
-      (predio) => predio.value === this.selectedPredio
-    );
+        (predio) => predio.value === this.selectedPredio
+      );
 
-    // Se um registro for encontrado, enviar o predio_token para a rota de listarMenu
-    if (selectedPredio) {
-      console.log("predio",selectedPredio.value)
-      this.$store.commit('listarMenu', selectedPredio.value);
-      await this.$store.dispatch('listarMenu', selectedPredio.value);
-      // this.$router.push("/panel");
-    }
+      // Se um registro for encontrado, enviar o predio_token para a rota de listarMenu
+      if (selectedPredio) {
+        this.$store.commit("setPredio", selectedPredio.value);
+        this.$store.dispatch("listarMenu");
+        this.$router.push("/panel");
+      }
     },
   },
   computed: {

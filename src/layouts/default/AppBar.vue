@@ -4,6 +4,7 @@
     <div class="logo">
       <v-img :width="200" height="40" src="../../assets/Logo2.png"></v-img>
       <v-autocomplete
+        v-if="predios.length > 1"
         label="tipo usuario"
         density="compact"
         variant="outlined"
@@ -13,6 +14,7 @@
         :item-text="text"
         :item-value="value"
       ></v-autocomplete>
+      <h4 v-else>{{ predios[0].text}}</h4>
     </div>
     <v-spacer></v-spacer>
     <v-menu>
