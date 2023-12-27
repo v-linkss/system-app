@@ -34,6 +34,12 @@
       ></v-text-field>
 
       <v-btn block rounded class="button" @click="verificaSenha"> Salvar Nova Senha </v-btn>
+      <v-container v-if="showPasswordError">
+        <v-alert text="Erro na autenticação da senha, Senhas divergentes" type="error">
+          <v-spacer></v-spacer>
+          <v-btn text="Fechar" @click="showPasswordError = false">Fechar</v-btn>
+        </v-alert>
+      </v-container>
 
     </div>
     <div class="background-image"></div>
@@ -44,20 +50,29 @@ import axios from "axios";
 export default {
   data: () => ({
     visible: false,
+    showPasswordError:false,
     senha_nova: "",
     senha_redigitada:""
   }),
+  computed:{
+    usuario() {
+      return this.$store.getters.usuarios;
+    },
+  },
   methods: {
     async verificaSenha() {
       if(this.senha_nova === this.senha_redigitada){
-        console.log("A senha foi alterada")
+        this.recuperarSenha()
+        this.$router.push({ name: "login" });
       }else{
+        this.showPasswordError = true
         console.log("A senha redigitada é diferente da nova senha")
       }
     },
     async recuperarSenha() {
       const data = {
-        senha: this.senha_nova,
+        senha_nova: this.senha_nova,
+        token:this.usuario.user_token
       };
       try {
         const response = await axios.post(

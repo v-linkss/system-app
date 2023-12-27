@@ -1,4 +1,5 @@
 <!-- eslint-disable vue/multi-word-component-names -->
+<!-- combolist -->
 <template>
   <div class="container1">
     <div class="container">
@@ -40,7 +41,17 @@ export default {
       console.log(this.user)
       console.log("asdk",this.predios)
       console.log("asdk",this.usuarios)
-      this.$router.push("/panel");
+      const selectedPredio = this.predios.find(
+      (predio) => predio.value === this.selectedPredio
+    );
+
+    // Se um registro for encontrado, enviar o predio_token para a rota de listarMenu
+    if (selectedPredio) {
+      console.log("predio",selectedPredio.value)
+      this.$store.commit('listarMenu', selectedPredio.value);
+      await this.$store.dispatch('listarMenu', selectedPredio.value);
+      // this.$router.push("/panel");
+    }
     },
   },
   computed: {

@@ -1,21 +1,17 @@
+<!-- combolist -->
 <template>
   <v-app-bar color="#1b5175" height="85" class="navBar">
     <div class="logo">
       <v-img :width="200" height="40" src="../../assets/Logo2.png"></v-img>
       <v-autocomplete
         label="tipo usuario"
-        :items="[
-          'California',
-          'Colorado',
-          'Florida',
-          'Georgia',
-          'Texas',
-          'Wyoming',
-        ]"
         density="compact"
         variant="outlined"
         hide-details
-        class="label-white"
+        v-model="selectedPredio"
+        :items="transformedPredios"
+        :item-text="text"
+        :item-value="value"
       ></v-autocomplete>
     </div>
     <v-spacer></v-spacer>
@@ -25,12 +21,11 @@
       </template>
       <v-list>
         <v-list-item
-          v-for="item in menuSelect"
-          v-bind:key="item.url"
-          :value="item.url"
-          :title="item.url"
+          v-for="(menu,item) in menuSelect.cadastros"
+          v-bind:key="item"
+          :value="menu"
         >
-          <v-list-item-title>{{ menuSelect.name}}</v-list-item-title>
+          <v-list-item-title>{{item }}</v-list-item-title>
         </v-list-item>
       </v-list>
     </v-menu>
@@ -40,11 +35,11 @@
       </template>
       <v-list>
         <v-list-item
-          v-for="(item, index) in Financeiro"
+          v-for="(item, index) in menuSelect.financeiro"
           :key="index"
           :value="index"
         >
-          <v-list-item-title>{{ item.financeiro }}</v-list-item-title>
+          <v-list-item-title>{{ index }}</v-list-item-title>
         </v-list-item>
       </v-list>
     </v-menu>
@@ -53,8 +48,8 @@
         <v-btn class="text" v-bind="props"> Processos</v-btn>
       </template>
       <v-list>
-        <v-list-item v-for="(item, index) in items" :key="index" :value="index">
-          <v-list-item-title>{{ item.title }}</v-list-item-title>
+        <v-list-item v-for="(item, index) in menuSelect.relatorios" :key="index" :value="index">
+          <v-list-item-title>{{ index}}</v-list-item-title>
         </v-list-item>
       </v-list>
     </v-menu>
@@ -77,22 +72,39 @@
 </template>
 
 <script>
-// import { mapGetters } from 'vuex';
-// import axios from "axios";
 export default {
   data: () => ({
-    loading: true,
+    selectedPredio:null,
     items: [{ title: "Alterar Senha" }, { title: "Sair" }],
   }),
   computed: {
-    usuarios() {
+    predios() {
+      return this.$store.getters.predios;
+    },
+    usuario() {
       return this.$store.getters.usuarios;
     },
     nomeUsuario() {
       return this.$store.getters.usuarios.nome;
     },
     menuSelect() {
-      return this.$store.getters.menuSelect.cadastros;
+      return this.$store.getters.menuSelect;
+    },
+    transformedPredios() {
+      return this.predios.map((predio) => ({
+        title: predio.text,
+        value: predio.value,
+      }));
+    },
+    value() {
+      return function (item) {
+        return item.value;
+      };
+    },
+    text() {
+      return function (item) {
+        return item.title;
+      };
     },
   },
   //   watch: {
@@ -119,7 +131,7 @@ export default {
         console.log(this.usuarios);
       }
       if (title === "Alterar Senha") {
-        console.log(this.menuSelect);
+        this.$router.push({ name: "recupera-senha" });
       }
     },
   },
