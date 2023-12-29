@@ -76,7 +76,7 @@ export default {
       };
       try {
         const response = await axios.post(
-          "http://localhost:3333/alterarSenha",
+          "http://45.55.192.246:3333/alterarSenha",
           data
         );
         console.log(response.data);

@@ -69,7 +69,7 @@ export default {
     async loadPredios() {
       try {
         const response = await axios.get(
-          `http://localhost:3000/PrediosAmbiente/${this.dados.id}`
+          `http://45.55.192.246:3000/PrediosAmbiente/${this.dados.id}`
         );
         this.dados = response.data;
       } catch (error) {

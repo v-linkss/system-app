@@ -85,7 +85,7 @@ export default {
       };
 
       try {
-        const response = await axios.post("http://localhost:3333/login", data);
+        const response = await axios.post("http://45.55.192.246:3333/login", data);
 
         if (response.status === 200) {
           const responseData = response.data;

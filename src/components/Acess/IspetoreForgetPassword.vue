@@ -47,7 +47,7 @@ export default {
       };
       try {
         const response = await axios.post(
-          "http://localhost:3333/recuperarSenha",
+          "http://45.55.192.246:3333/recuperarSenha",
           data
         );
         console.log(response.data);

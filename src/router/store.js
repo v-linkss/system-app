@@ -33,7 +33,7 @@ export default createStore({
       }
       try {
         const response = await axios.post(
-          "http://localhost:3200/listarMenu",
+          "http://45.55.192.246:3200/listarMenu",
           data
         );
         const responseData = response.data;
