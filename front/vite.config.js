@@ -29,7 +29,7 @@ export default defineConfig({
       },
     }),
   ],
-  define: { 'process.env': {} },
+  define: { 'process.env': {AUTH_API_URL: 'http://localhost:3333',MANAGEMENT_API_URL: 'http://localhost:3200'} },
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url))

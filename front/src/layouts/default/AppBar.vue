@@ -1,28 +1,64 @@
+<!-- combolist -->
 <template>
   <v-app-bar color="#1b5175" height="85" class="navBar">
     <div class="logo">
       <v-img :width="200" height="40" src="../../assets/Logo2.png"></v-img>
       <v-autocomplete
-        label="tipo usuario"
-        :items="[
-          'California',
-          'Colorado',
-          'Florida',
-          'Georgia',
-          'Texas',
-          'Wyoming',
-        ]"
-        density="10"
-        variant="outlined"
+        v-if="predios.length > 1"
+        density="compact"
+        variant="underlined"
         hide-details
-        class="label-white"
+        v-model="predioClient"
+        :items="transformedPredios"
+        :item-text="text"
+        :item-value="value"
+        @keyup.enter="trocarCliente"
       ></v-autocomplete>
+      <h4 v-else>{{ predios[0].text }}</h4>
     </div>
     <v-spacer></v-spacer>
-    <v-btn class="text" text>Cadastros</v-btn>
-    <!-- <v-btn class="text" text @click="listNavBar">test</v-btn> -->
-    <v-btn class="text" text>Prestações de Contas</v-btn>
-    <v-btn class="text" text>Processo</v-btn>
+    <v-menu>
+      <template v-slot:activator="{ props }">
+        <v-btn class="text" v-bind="props"> Cadastros </v-btn>
+      </template>
+      <v-list>
+        <v-list-item
+          v-for="(menu, item) in menuSelect.cadastros"
+          v-bind:key="item"
+          :value="menu.url"
+        >
+          <v-list-item-title>{{ item }}</v-list-item-title>
+        </v-list-item>
+      </v-list>
+    </v-menu>
+    <v-menu>
+      <template v-slot:activator="{ props }">
+        <v-btn class="text" v-bind="props"> Prestações de Contas</v-btn>
+      </template>
+      <v-list>
+        <v-list-item
+          v-for="(menu, item) in menuSelect.financeiro"
+          :key="item"
+          :value="menu.url"
+        >
+          <v-list-item-title>{{ item }}</v-list-item-title>
+        </v-list-item>
+      </v-list>
+    </v-menu>
+    <v-menu>
+      <template v-slot:activator="{ props }">
+        <v-btn class="text" v-bind="props"> Processos</v-btn>
+      </template>
+      <v-list>
+        <v-list-item
+          v-for="(menu, item) in menuSelect.relatorios"
+          :key="item"
+          :value="menu.url"
+        >
+          <v-list-item-title>{{ item }}</v-list-item-title>
+        </v-list-item>
+      </v-list>
+    </v-menu>
     <v-menu>
       <template v-slot:activator="{ props }">
         <v-btn class="user" v-bind="props">{{ nomeUsuario }} </v-btn>
@@ -42,20 +78,45 @@
 </template>
 
 <script>
-// import axios from "axios";
 export default {
   data: () => ({
+    selectedItem:null,
     items: [{ title: "Alterar Senha" }, { title: "Sair" }],
   }),
   computed: {
-    usuarios() {
+    predios() {
+      return this.$store.getters.predios;
+    },
+    predioClient() {
+      return this.$store.getters.prediosState;
+    },
+    user() {
+      return this.$store.getters.user;
+    },
+    usuario() {
       return this.$store.getters.usuarios;
     },
     nomeUsuario() {
-      return this.usuarios.name;
+      return this.$store.getters.usuarios.nome;
     },
-    menu() {
-      return this.$store.getters.menu;
+    menuSelect() {
+      return this.$store.getters.menuSelect;
+    },
+    transformedPredios() {
+      return this.predios.map((predio) => ({
+        title: predio.text,
+        value: predio.value,
+      }));
+    },
+    value() {
+      return function (item) {
+        return item.value;
+      };
+    },
+    text() {
+      return function (item) {
+        return item.title;
+      };
     },
   },
   //   watch: {
@@ -76,15 +137,27 @@ export default {
   //  },
 
   methods: {
-    async listNavBar() {},
+    trocarCliente() {
+      const selectedPredio = this.predios.find(
+        (predio) => predio.value === this.selectedItem
+      );
+
+      // Se um registro for encontrado, enviar o predio_token para a rota de listarMenu
+      if (selectedPredio) {
+        // this.$store.commit("setUser", this.user);
+        // this.$store.commit("setPredio", selectedPredio.value);
+        // this.$store.dispatch("listarMenu");
+        // window.location.reload();
+        console.log("Ação executada!",selectedPredio);
+      }
+    },
     itemClick(title) {
       if (title === "Sair") {
         this.$router.push({ name: "login" }); // Redireciona para a rota 'Sair'
         console.log(this.usuarios);
       }
       if (title === "Alterar Senha") {
-        console.log(this.usuarios);
-        console.log(this.menu);
+        this.$router.push({ name: "recupera-senha" });
       }
     },
   },
@@ -92,9 +165,6 @@ export default {
 </script>
 
 <style scoped>
-.label-white {
-  --v-label-text-color: white;
-}
 .logo {
   margin-top: 18px;
   margin-left: 50px;

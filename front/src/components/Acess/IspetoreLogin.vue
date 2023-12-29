@@ -85,15 +85,12 @@ export default {
       };
 
       try {
-        const response = await axios.post("http://localhost:3333/login", data);
+        const response = await axios.post(`${process.env.AUTH_API_URL}/login`, data);
 
         if (response.status === 200) {
           const responseData = response.data;
 
           if (
-            responseData &&
-            responseData[0] &&
-            responseData[0].func_autentica_acesso_v1 &&
             responseData[0].func_autentica_acesso_v1[0] &&
             responseData[0].func_autentica_acesso_v1[0].status === "OK" &&
             responseData[0].func_autentica_acesso_v1[0].registro &&
@@ -104,17 +101,18 @@ export default {
 
             if (user.predios && user.predios.length > 1) {
               // Guarde os dados do usuário para serem usados na tela de seleção de clientes
-              this.$store.dispatch('setUser', user);
+              this.$store.dispatch("setUser", user);
 
-              this.$router.push({name: 'selecao-predio'});
+              this.$router.push({ name: "selecao-predio" });
             } else {
               this.$store.commit("setUser", user);
-              this.$store.dispatch('listarMenu');
+              this.$store.commit("setPredio", user.predios[0].predio_token);
+              this.$store.dispatch("listarMenu");
               this.$router.push("/panel");
             }
           } else {
             console.error("Erro de autenticação com usuário");
-            console.log(responseData)
+            console.log(responseData);
             this.showError = true;
           }
         }
@@ -123,9 +121,9 @@ export default {
         if (error.response && error.response.status === 400) {
           const errorData = error.response.data;
 
-          if (errorData.error === "Email não cadastrado no Durabil") {
+          if (errorData.error === "Erro de autenticação: Usuario Invalido ou Email nao cadastrado") {
             this.showEmailError = true;
-          } else if (errorData.error === "Senha incorreta") {
+          } else if (errorData.error === "Erro de autenticação: Senha inválida") {
             this.showPasswordError = true;
           } else if (errorData.error === "Erro ao autenticar usuário") {
             this.showError = true;
