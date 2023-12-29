@@ -5,16 +5,16 @@
       <v-img :width="200" height="40" src="../../assets/Logo2.png"></v-img>
       <v-autocomplete
         v-if="predios.length > 1"
-        label="tipo usuario"
         density="compact"
-        variant="outlined"
+        variant="underlined"
         hide-details
-        v-model="selectedPredio"
+        v-model="predioClient"
         :items="transformedPredios"
         :item-text="text"
         :item-value="value"
+        @keyup.enter="trocarCliente"
       ></v-autocomplete>
-      <h4 v-else>{{ predios[0].text}}</h4>
+      <h4 v-else>{{ predios[0].text }}</h4>
     </div>
     <v-spacer></v-spacer>
     <v-menu>
@@ -23,11 +23,11 @@
       </template>
       <v-list>
         <v-list-item
-          v-for="(menu,item) in menuSelect.cadastros"
+          v-for="(menu, item) in menuSelect.cadastros"
           v-bind:key="item"
-          :value="menu"
+          :value="menu.url"
         >
-          <v-list-item-title>{{item }}</v-list-item-title>
+          <v-list-item-title>{{ item }}</v-list-item-title>
         </v-list-item>
       </v-list>
     </v-menu>
@@ -37,11 +37,11 @@
       </template>
       <v-list>
         <v-list-item
-          v-for="(item, index) in menuSelect.financeiro"
-          :key="index"
-          :value="index"
+          v-for="(menu, item) in menuSelect.financeiro"
+          :key="item"
+          :value="menu.url"
         >
-          <v-list-item-title>{{ index }}</v-list-item-title>
+          <v-list-item-title>{{ item }}</v-list-item-title>
         </v-list-item>
       </v-list>
     </v-menu>
@@ -50,8 +50,12 @@
         <v-btn class="text" v-bind="props"> Processos</v-btn>
       </template>
       <v-list>
-        <v-list-item v-for="(item, index) in menuSelect.relatorios" :key="index" :value="index">
-          <v-list-item-title>{{ index}}</v-list-item-title>
+        <v-list-item
+          v-for="(menu, item) in menuSelect.relatorios"
+          :key="item"
+          :value="menu.url"
+        >
+          <v-list-item-title>{{ item }}</v-list-item-title>
         </v-list-item>
       </v-list>
     </v-menu>
@@ -76,12 +80,18 @@
 <script>
 export default {
   data: () => ({
-    selectedPredio:null,
+    selectedItem:null,
     items: [{ title: "Alterar Senha" }, { title: "Sair" }],
   }),
   computed: {
     predios() {
       return this.$store.getters.predios;
+    },
+    predioClient() {
+      return this.$store.getters.prediosState;
+    },
+    user() {
+      return this.$store.getters.user;
     },
     usuario() {
       return this.$store.getters.usuarios;
@@ -127,6 +137,20 @@ export default {
   //  },
 
   methods: {
+    trocarCliente() {
+      const selectedPredio = this.predios.find(
+        (predio) => predio.value === this.selectedItem
+      );
+
+      // Se um registro for encontrado, enviar o predio_token para a rota de listarMenu
+      if (selectedPredio) {
+        // this.$store.commit("setUser", this.user);
+        // this.$store.commit("setPredio", selectedPredio.value);
+        // this.$store.dispatch("listarMenu");
+        // window.location.reload();
+        console.log("Ação executada!",selectedPredio);
+      }
+    },
     itemClick(title) {
       if (title === "Sair") {
         this.$router.push({ name: "login" }); // Redireciona para a rota 'Sair'
