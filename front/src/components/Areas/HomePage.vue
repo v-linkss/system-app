@@ -8,13 +8,13 @@ import AppBar from "@/layouts/default/AppBar.vue";
     <v-row class="justify">
       <v-card class="mx-auto" max-width="344" hover>
         <v-card-item class="title-card">
-          <v-card-title> Descrição </v-card-title>
+          <v-card-title> {{ equipamentoLocalStorage.descricao }} </v-card-title>
           <v-card-title> Ambiente </v-card-title>
         </v-card-item>
 
         <v-card-text>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
-          tempor incididunt ut labore et dolore magna aliqua.
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+          eiusmod tempor incididunt ut labore et dolore magna aliqua.
         </v-card-text>
       </v-card>
 
@@ -25,20 +25,8 @@ import AppBar from "@/layouts/default/AppBar.vue";
         </v-card-item>
 
         <v-card-text>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
-          tempor incididunt ut labore et dolore magna aliqua.
-        </v-card-text>
-      </v-card>
-
-      <v-card class="mx-auto" max-width="344" hover>
-        <v-card-item class="title-card">
-          <v-card-title> Descrição </v-card-title>
-          <v-card-title> Ambiente </v-card-title>
-        </v-card-item>
-
-        <v-card-text >
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
-          tempor incididunt ut labore et dolore magna aliqua.
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+          eiusmod tempor incididunt ut labore et dolore magna aliqua.
         </v-card-text>
       </v-card>
 
@@ -49,8 +37,20 @@ import AppBar from "@/layouts/default/AppBar.vue";
         </v-card-item>
 
         <v-card-text>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
-          tempor incididunt ut labore et dolore magna aliqua.
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+          eiusmod tempor incididunt ut labore et dolore magna aliqua.
+        </v-card-text>
+      </v-card>
+
+      <v-card class="mx-auto" max-width="344" hover>
+        <v-card-item class="title-card">
+          <v-card-title> Descrição </v-card-title>
+          <v-card-title> Ambiente </v-card-title>
+        </v-card-item>
+
+        <v-card-text>
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+          eiusmod tempor incididunt ut labore et dolore magna aliqua.
         </v-card-text>
       </v-card>
     </v-row>
@@ -58,8 +58,26 @@ import AppBar from "@/layouts/default/AppBar.vue";
 </template>
 <script>
 export default {
-  data() {
-    return {};
+  data: () => ({
+    equipamentoLocalStorage: null,
+
+  }),
+  created(){
+    this.carregarEquipamentoLocalStorage();
+  },
+  methods: {
+    carregarEquipamentoLocalStorage() {
+      const equipamentoSalvo = localStorage.getItem("equipamento");
+
+      if (equipamentoSalvo) {
+        const equipamento = JSON.parse(equipamentoSalvo);
+        this.equipamentoLocalStorage = equipamento; // Armazena o usuário na variável do componente
+        console.log(
+          "equipamento carregado do localStorage:",
+          this.equipamentoLocalStorage
+        );
+      }
+    },
   },
 };
 </script>
@@ -69,8 +87,8 @@ export default {
   margin-top: 100px;
 }
 
-.title-card{
-  background-color:#53B2E2;
+.title-card {
+  background-color: #53b2e2;
 }
 .btn {
   display: flex;
@@ -94,7 +112,6 @@ export default {
 .red-icon {
   color: red;
 }
-
 
 .gray-icon {
   color: gray;

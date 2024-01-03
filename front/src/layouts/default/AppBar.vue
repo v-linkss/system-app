@@ -4,7 +4,7 @@
     <div class="logo">
       <v-img :width="200" height="40" src="../../assets/Logo2.png"></v-img>
       <v-autocomplete
-        v-if="comboLocalStorage.length > 1"
+        v-if="usuarioLocalStorage.predios.length > 1"
         density="compact"
         variant="underlined"
         :label="predioLocalStorage.predio_descricao"

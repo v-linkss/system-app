@@ -109,6 +109,7 @@ export default {
               this.$store.commit("setUser", user);
               this.$store.commit("setPredio", user.predios[0].predio_token);
               this.$store.dispatch("listarMenu");
+              this.$store.dispatch("listarEquipamento");
               this.$router.push("/panel");
             }
           } else {

@@ -8,15 +8,12 @@ export default createStore({
     menu: null,
     predio:null,
     combo:null,
+    equipamento:null
   },
   mutations: {
     setUser(state, user) {
       state.user = user;
       localStorage.setItem("user", JSON.stringify(user));
-    },
-    setMenu(state, menu) {
-      state.menu = menu;
-      localStorage.setItem("menu", JSON.stringify(menu));
     },
     setPredio(state, predio) {
       state.predio = predio;
@@ -25,6 +22,14 @@ export default createStore({
     setCombo(state, combo) {
       state.combo = combo;
       localStorage.setItem("combo", JSON.stringify(combo));
+    },
+    setMenu(state, menu) {
+      state.menu = menu;
+      localStorage.setItem("menu", JSON.stringify(menu));
+    },
+    setEquipamento(state, equipamento) {
+      state.equipamento = equipamento;
+      localStorage.setItem("equipamento", JSON.stringify(equipamento));
     },
   },
   actions: {
@@ -39,7 +44,7 @@ export default createStore({
     },
     async listarMenu({ commit }) {
       const data = {
-        user_token:this.getters.usuarios.user_token,
+        user_token:this.getters.user.token,
         predio_token:this.getters.prediosState
       }
       try {
@@ -49,7 +54,24 @@ export default createStore({
         );
         const responseData = response.data;
         console.log(response)
+        console.log(responseData)
         commit("setMenu", responseData[0].func_menu[0].menu);
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    async listarEquipamento({ commit }) {
+      const data = {
+        predio_token:this.getters.prediosState
+      }
+      try {
+        const response = await axios.post(
+          `${process.env.MANAGEMENT_API_URL}/listaEquipamentos`,
+          data
+        );
+        const responseData = response.data;
+        console.log(response)
+        commit("setEquipamento", responseData[0].func_json_equipamentos);
       } catch (error) {
         console.log(error);
       }
@@ -65,7 +87,9 @@ export default createStore({
     prediosState(state) {
       return state.predio;
     },
-
+    equipamentos(state){
+      return state.equipamento;
+    },
     predios(state) {
       const storedCombo = JSON.parse(localStorage.getItem("combo"));
       return storedCombo || state.user.predios.map((predio) => ({
