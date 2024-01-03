@@ -102,6 +102,7 @@ export default {
             if (user.predios && user.predios.length > 1) {
               // Guarde os dados do usuário para serem usados na tela de seleção de clientes
               this.$store.dispatch("setUser", user);
+              this.$store.dispatch("setCombo", user.predios);
 
               this.$router.push({ name: "selecao-predio" });
             } else {

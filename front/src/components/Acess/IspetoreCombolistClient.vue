@@ -1,5 +1,3 @@
-<!-- eslint-disable vue/multi-word-component-names -->
-<!-- combolist -->
 <template>
   <div class="container1">
     <div class="container">
@@ -12,9 +10,9 @@
       <v-autocomplete
         label="Acessar Cliente"
         v-model="selectedPredio"
-        :items="transformedPredios"
-        :item-text="text"
-        :item-value="value"
+        :items="comboLocalStorage"
+        item-title="predio_descricao"
+        item-value="predio_token"
       ></v-autocomplete>
       <v-btn block rounded class="button" @click="login"> Acessar </v-btn>
 
@@ -29,56 +27,46 @@
     <div class="background-image"></div>
   </div>
 </template>
+
 <script>
 export default {
   data: () => ({
     selectedPredio: null,
+    comboLocalStorage: null,
     visible: false,
   }),
 
+  created() {
+    this.carregarComboDoLocalStorage();
+  },
+
   methods: {
     async login() {
-      const selectedPredio = this.predios.find(
-        (predio) => predio.value === this.selectedPredio
+      const selectedPredio = this.comboLocalStorage.find(
+        (predio) => predio.predio_token === this.selectedPredio
       );
 
       // Se um registro for encontrado, enviar o predio_token para a rota de listarMenu
       if (selectedPredio) {
-        this.$store.commit("setPredio", selectedPredio.value);
+        this.$store.commit("setPredio", selectedPredio);
         this.$store.dispatch("listarMenu");
         this.$router.push("/panel");
       }
     },
-  },
-  computed: {
-    user() {
-      return this.$store.getters.user;
-    },
-    predios() {
-      return this.$store.getters.predios;
-    },
-    usuarios() {
-      return this.$store.getters.usuarios;
-    },
-    transformedPredios() {
-      return this.predios.map((predio) => ({
-        title: predio.text,
-        value: predio.value,
-      }));
-    },
-    value() {
-      return function (item) {
-        return item.value;
-      };
-    },
-    text() {
-      return function (item) {
-        return item.title;
-      };
+    carregarComboDoLocalStorage() {
+      const comboSalvo = localStorage.getItem("combo");
+
+      if (comboSalvo) {
+        const combo = JSON.parse(comboSalvo);
+
+        this.comboLocalStorage = combo
+        console.log("Combo carregado do localStorage:",this.comboLocalStorage);
+      }
     },
   },
 };
 </script>
+
 <style scoped>
 .input {
   width: 500px;

@@ -1,6 +1,6 @@
 // Composables
 import { createRouter, createWebHistory } from 'vue-router'
-import store from './store';
+import store from '../stores/store';
 
 const routes = [
   {

@@ -8,8 +8,8 @@ import AppBar from "@/layouts/default/AppBar.vue";
     <v-row class="justify">
       <v-card class="mx-auto" max-width="344" hover>
         <v-card-item class="title-card">
-          <v-card-title> Card title </v-card-title>
-          <v-card-subtitle> Card subtitle secondary text </v-card-subtitle>
+          <v-card-title> Descrição </v-card-title>
+          <v-card-title> Ambiente </v-card-title>
         </v-card-item>
 
         <v-card-text>
@@ -20,8 +20,8 @@ import AppBar from "@/layouts/default/AppBar.vue";
 
       <v-card class="mx-auto" max-width="344" hover>
         <v-card-item class="title-card">
-          <v-card-title> Card title </v-card-title>
-          <v-card-subtitle> Card subtitle secondary text </v-card-subtitle>
+          <v-card-title> Descrição </v-card-title>
+          <v-card-title> Ambiente </v-card-title>
         </v-card-item>
 
         <v-card-text>
@@ -32,8 +32,8 @@ import AppBar from "@/layouts/default/AppBar.vue";
 
       <v-card class="mx-auto" max-width="344" hover>
         <v-card-item class="title-card">
-          <v-card-title> Card title </v-card-title>
-          <v-card-subtitle> Card subtitle secondary text </v-card-subtitle>
+          <v-card-title> Descrição </v-card-title>
+          <v-card-title> Ambiente </v-card-title>
         </v-card-item>
 
         <v-card-text >
@@ -44,8 +44,8 @@ import AppBar from "@/layouts/default/AppBar.vue";
 
       <v-card class="mx-auto" max-width="344" hover>
         <v-card-item class="title-card">
-          <v-card-title> Card title </v-card-title>
-          <v-card-subtitle> Card subtitle secondary text </v-card-subtitle>
+          <v-card-title> Descrição </v-card-title>
+          <v-card-title> Ambiente </v-card-title>
         </v-card-item>
 
         <v-card-text>

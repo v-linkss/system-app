@@ -1,7 +1,7 @@
 
 // Plugins
 import { registerPlugins } from '@/plugins'
-import store from './router/store'
+import store from './stores/store'
 
 // Components
 import App from './App.vue'

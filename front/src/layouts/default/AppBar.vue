@@ -4,17 +4,18 @@
     <div class="logo">
       <v-img :width="200" height="40" src="../../assets/Logo2.png"></v-img>
       <v-autocomplete
-        v-if="predios.length > 1"
+        v-if="comboLocalStorage.length > 1"
         density="compact"
         variant="underlined"
+        :label="predioLocalStorage.predio_descricao"
         hide-details
-        v-model="predioClient"
-        :items="transformedPredios"
-        :item-text="text"
-        :item-value="value"
+        v-model="selectedItem"
+        :items="comboLocalStorage"
+        item-title="predio_descricao"
+        item-value="predio_token"
         @keyup.enter="trocarCliente"
       ></v-autocomplete>
-      <h4 v-else>{{ predios[0].text }}</h4>
+      <h4 v-else>{{ usuarioLocalStorage.predios[0].predio_descricao }}</h4>
     </div>
     <v-spacer></v-spacer>
     <v-menu>
@@ -23,7 +24,7 @@
       </template>
       <v-list>
         <v-list-item
-          v-for="(menu, item) in menuSelect.cadastros"
+          v-for="(menu, item) in menuLocalStorage.Cadastros"
           v-bind:key="item"
           :value="menu.url"
         >
@@ -37,7 +38,7 @@
       </template>
       <v-list>
         <v-list-item
-          v-for="(menu, item) in menuSelect.financeiro"
+          v-for="(menu, item) in menuLocalStorage.Financeiro"
           :key="item"
           :value="menu.url"
         >
@@ -51,7 +52,7 @@
       </template>
       <v-list>
         <v-list-item
-          v-for="(menu, item) in menuSelect.relatorios"
+          v-for="(menu, item) in menuLocalStorage.Relatórios"
           :key="item"
           :value="menu.url"
         >
@@ -61,7 +62,7 @@
     </v-menu>
     <v-menu>
       <template v-slot:activator="{ props }">
-        <v-btn class="user" v-bind="props">{{ nomeUsuario }} </v-btn>
+        <v-btn class="user" v-bind="props">{{  usuarioLocalStorage.nome  }} </v-btn>
       </template>
       <v-list>
         <v-list-item
@@ -80,84 +81,79 @@
 <script>
 export default {
   data: () => ({
-    selectedItem:null,
+    usuarioLocalStorage: null,
+    menuLocalStorage:null,
+    predioLocalStorage:null,
+    comboLocalStorage:null,
+    selectedItem: null,
     items: [{ title: "Alterar Senha" }, { title: "Sair" }],
   }),
-  computed: {
-    predios() {
-      return this.$store.getters.predios;
-    },
-    predioClient() {
-      return this.$store.getters.prediosState;
-    },
-    user() {
-      return this.$store.getters.user;
-    },
-    usuario() {
-      return this.$store.getters.usuarios;
-    },
-    nomeUsuario() {
-      return this.$store.getters.usuarios.nome;
-    },
-    menuSelect() {
-      return this.$store.getters.menuSelect;
-    },
-    transformedPredios() {
-      return this.predios.map((predio) => ({
-        title: predio.text,
-        value: predio.value,
-      }));
-    },
-    value() {
-      return function (item) {
-        return item.value;
-      };
-    },
-    text() {
-      return function (item) {
-        return item.title;
-      };
-    },
+
+  created() {
+    this.carregarUsuarioDoLocalStorage();
+    this.carregarMenuDoLocalStorage();
+    this.carregarPredioDoLocalStorage();
+    this.carregarComboDoLocalStorage();
   },
-  //   watch: {
-  //     usuarios(novoUsuario) {
-  //       this.nomeUsuario = novoUsuario.name;
-  //       localStorage.setItem("usuario", JSON.stringify(novoUsuario));
-  //     },
-  //  },
-  //  mounted() {
-  //     if (this.usuarios.length > 0) {
-  //       this.listNavBar();
-  //     } else {
-  //       let usuarioLocalStorage = localStorage.getItem("usuario");
-  //       if (usuarioLocalStorage) {
-  //         this.$store.commit("setUser", JSON.parse(usuarioLocalStorage));
-  //       }
-  //     }
-  //  },
 
   methods: {
     trocarCliente() {
-      const selectedPredio = this.predios.find(
-        (predio) => predio.value === this.selectedItem
+      const selectedPredio = this.comboLocalStorage.find(
+        (predio) => predio.predio_token === this.selectedItem
       );
 
       // Se um registro for encontrado, enviar o predio_token para a rota de listarMenu
       if (selectedPredio) {
-        // this.$store.commit("setUser", this.user);
-        // this.$store.commit("setPredio", selectedPredio.value);
-        // this.$store.dispatch("listarMenu");
-        // window.location.reload();
-        console.log("Ação executada!",selectedPredio);
+         this.$store.commit("setUser", this.usuarioLocalStorage);
+         this.$store.commit("setPredio", selectedPredio);
+         this.$store.dispatch("listarMenu");
+         window.location.reload();
+        console.log("Ação executada!", selectedPredio);
       }
     },
     itemClick(title) {
       if (title === "Sair") {
         this.$router.push({ name: "login" }); // Redireciona para a rota 'Sair'
-        console.log(this.usuarios);
       }
       if (title === "Alterar Senha") {
         this.$router.push({ name: "recupera-senha" });
+      }
+    },
+    carregarUsuarioDoLocalStorage() {
+      const usuarioSalvo = localStorage.getItem("user");
+
+      if (usuarioSalvo) {
+        const usuario = JSON.parse(usuarioSalvo);
+        this.usuarioLocalStorage = usuario; // Armazena o usuário na variável do componente
+        console.log("Usuário carregado do localStorage:", this.usuarioLocalStorage);
+      }
+    },
+    carregarMenuDoLocalStorage() {
+      const menuSalvo = localStorage.getItem("menu");
+
+      if (menuSalvo) {
+        const menu = JSON.parse(menuSalvo);
+        this.menuLocalStorage = menu; // Armazena o usuário na variável do componente
+        console.log("Usuário carregado do localStorage:", this.menuLocalStorage);
+      }
+    },
+    carregarPredioDoLocalStorage() {
+      const predioSalvo = localStorage.getItem("predio");
+
+      if (predioSalvo) {
+        const predio = JSON.parse(predioSalvo);
+        this.predioLocalStorage = predio; // Armazena o usuário na variável do componente
+        console.log("Usuário carregado do localStorage:", this.predioLocalStorage);
+      }
+    },
+    carregarComboDoLocalStorage() {
+      const comboSalvo = localStorage.getItem("combo");
+
+      if (comboSalvo) {
+        const combo = JSON.parse(comboSalvo);
+
+        this.comboLocalStorage = combo
+        console.log("Combo carregado do localStorage:",this.comboLocalStorage);
       }
     },
   },
