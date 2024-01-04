@@ -107,12 +107,12 @@ export default {
          this.$store.commit("setUser", this.usuarioLocalStorage);
          this.$store.commit("setPredio", selectedPredio);
          this.$store.dispatch("listarMenu");
-         window.location.reload();
-        console.log("Ação executada!", selectedPredio);
+         this.$router.go(0);
       }
     },
     itemClick(title) {
       if (title === "Sair") {
+        localStorage.clear();
         this.$router.push({ name: "login" }); // Redireciona para a rota 'Sair'
       }
       if (title === "Alterar Senha") {

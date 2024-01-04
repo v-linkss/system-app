@@ -31,6 +31,7 @@ export default createStore({
       state.equipamento = equipamento;
       localStorage.setItem("equipamento", JSON.stringify(equipamento));
     },
+
   },
   actions: {
     setUser({ commit }, user) {
@@ -45,7 +46,7 @@ export default createStore({
     async listarMenu({ commit }) {
       const data = {
         user_token:this.getters.user.token,
-        predio_token:this.getters.prediosState
+        predio_token:this.getters.prediosState.predio_token
       }
       try {
         const response = await axios.post(
@@ -61,8 +62,9 @@ export default createStore({
       }
     },
     async listarEquipamento({ commit }) {
+      const storedToken = JSON.parse(localStorage.getItem("predio"))
       const data = {
-        predio_token:this.getters.prediosState
+       predio_token:storedToken.predio_token
       }
       try {
         const response = await axios.post(
@@ -114,3 +116,5 @@ export default createStore({
     },
   },
 });
+
+// colocar funcao de localStorage no combolist do appBar quando recarregar a pagina

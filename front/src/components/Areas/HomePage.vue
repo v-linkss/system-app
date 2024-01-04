@@ -3,79 +3,62 @@ import AppBar from "@/layouts/default/AppBar.vue";
 </script>
 
 <template>
-  <AppBar />
-  <v-container fluid fill-height>
-    <v-row class="justify">
-      <v-card class="mx-auto" max-width="344" hover>
-        <v-card-item class="title-card">
-          <v-card-title> {{ equipamentoLocalStorage.descricao }} </v-card-title>
-          <v-card-title> Ambiente </v-card-title>
-        </v-card-item>
-
-        <v-card-text>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-          eiusmod tempor incididunt ut labore et dolore magna aliqua.
-        </v-card-text>
-      </v-card>
-
-      <v-card class="mx-auto" max-width="344" hover>
-        <v-card-item class="title-card">
-          <v-card-title> Descrição </v-card-title>
-          <v-card-title> Ambiente </v-card-title>
-        </v-card-item>
-
-        <v-card-text>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-          eiusmod tempor incididunt ut labore et dolore magna aliqua.
-        </v-card-text>
-      </v-card>
-
-      <v-card class="mx-auto" max-width="344" hover>
-        <v-card-item class="title-card">
-          <v-card-title> Descrição </v-card-title>
-          <v-card-title> Ambiente </v-card-title>
-        </v-card-item>
-
-        <v-card-text>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-          eiusmod tempor incididunt ut labore et dolore magna aliqua.
-        </v-card-text>
-      </v-card>
-
-      <v-card class="mx-auto" max-width="344" hover>
-        <v-card-item class="title-card">
-          <v-card-title> Descrição </v-card-title>
-          <v-card-title> Ambiente </v-card-title>
-        </v-card-item>
-
-        <v-card-text>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-          eiusmod tempor incididunt ut labore et dolore magna aliqua.
-        </v-card-text>
-      </v-card>
+   <v-progress-circular indeterminate size="64" v-if="loading"></v-progress-circular>
+  <div v-else>
+    <AppBar />
+    <v-container fluid fill-height>
+      <v-row class="justify" >
+      <v-col
+        v-for="equipamento in equipamentoLocalStorage"
+        :key="equipamento.token"
+        class="mx-auto"
+        max-width="350"
+        cols="3"
+      >
+        <v-card max-width="350" hover>
+          <v-card-item class="title-card">
+            <v-card-title>{{ equipamento.descricao }}</v-card-title>
+            <v-card-title>{{ equipamento.ambiente }}</v-card-title>
+          </v-card-item>
+          <v-img :width="200" height="200">{{ equipamento.icone }}</v-img>
+        </v-card>
+      </v-col>
     </v-row>
-  </v-container>
+    </v-container>
+  </div>
 </template>
 <script>
 export default {
   data: () => ({
     equipamentoLocalStorage: null,
-
+    loading:true
   }),
   created(){
     this.carregarEquipamentoLocalStorage();
   },
+  mounted() {
+    (async () => {
+      await this.carregarEquipamentoLocalStorage();
+    })();
+  },
   methods: {
-    carregarEquipamentoLocalStorage() {
-      const equipamentoSalvo = localStorage.getItem("equipamento");
+    async carregarEquipamentoLocalStorage() {
+      try {
+        await this.$store.dispatch("listarEquipamento");
+        const equipamentoSalvo = localStorage.getItem("equipamento");
 
-      if (equipamentoSalvo) {
-        const equipamento = JSON.parse(equipamentoSalvo);
-        this.equipamentoLocalStorage = equipamento; // Armazena o usuário na variável do componente
-        console.log(
-          "equipamento carregado do localStorage:",
-          this.equipamentoLocalStorage
-        );
+        if (equipamentoSalvo) {
+          const equipamento = JSON.parse(equipamentoSalvo);
+          this.equipamentoLocalStorage = equipamento; // Armazena o usuário na variável do componente
+          console.log(
+            "equipamento carregado do localStorage:",
+            this.equipamentoLocalStorage
+          );
+        }
+      } catch (error) {
+        console.error(error)
+      } finally {
+        this.loading = false
       }
     },
   },
@@ -85,6 +68,8 @@ export default {
 <style scoped>
 .justify {
   margin-top: 100px;
+  display: flex;
+  align-items: center;
 }
 
 .title-card {

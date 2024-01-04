@@ -50,6 +50,7 @@ export default {
       if (selectedPredio) {
         this.$store.commit("setPredio", selectedPredio);
         this.$store.dispatch("listarMenu");
+        this.$store.dispatch("listarEquipamento");
         this.$router.push("/panel");
       }
     },
