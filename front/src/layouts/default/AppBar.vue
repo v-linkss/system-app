@@ -28,7 +28,9 @@
           v-bind:key="item"
           :value="menu.url"
         >
-          <v-list-item-title>{{ item }}</v-list-item-title>
+          <router-link class="router-link" :to="menu.url" target="_blank">
+            <v-list-item-title>{{ item }}</v-list-item-title>
+          </router-link>
         </v-list-item>
       </v-list>
     </v-menu>
@@ -62,7 +64,9 @@
     </v-menu>
     <v-menu>
       <template v-slot:activator="{ props }">
-        <v-btn class="user" v-bind="props">{{  usuarioLocalStorage.nome  }} </v-btn>
+        <v-btn class="user" v-bind="props"
+          >{{ usuarioLocalStorage.nome }}
+        </v-btn>
       </template>
       <v-list>
         <v-list-item
@@ -82,9 +86,9 @@
 export default {
   data: () => ({
     usuarioLocalStorage: null,
-    menuLocalStorage:null,
-    predioLocalStorage:null,
-    comboLocalStorage:null,
+    menuLocalStorage: null,
+    predioLocalStorage: null,
+    comboLocalStorage: null,
     selectedItem: null,
     items: [{ title: "Alterar Senha" }, { title: "Sair" }],
   }),
@@ -97,6 +101,7 @@ export default {
   },
 
   methods: {
+
     trocarCliente() {
       const selectedPredio = this.comboLocalStorage.find(
         (predio) => predio.predio_token === this.selectedItem
@@ -104,10 +109,10 @@ export default {
 
       // Se um registro for encontrado, enviar o predio_token para a rota de listarMenu
       if (selectedPredio) {
-         this.$store.commit("setUser", this.usuarioLocalStorage);
-         this.$store.commit("setPredio", selectedPredio);
-         this.$store.dispatch("listarMenu");
-         this.$router.go(0);
+        this.$store.commit("setUser", this.usuarioLocalStorage);
+        this.$store.commit("setPredio", selectedPredio);
+        this.$store.dispatch("listarMenu");
+        this.$router.go(0);
       }
     },
     itemClick(title) {
@@ -125,7 +130,10 @@ export default {
       if (usuarioSalvo) {
         const usuario = JSON.parse(usuarioSalvo);
         this.usuarioLocalStorage = usuario; // Armazena o usuário na variável do componente
-        console.log("Usuário carregado do localStorage:", this.usuarioLocalStorage);
+        console.log(
+          "Usuário carregado do localStorage:",
+          this.usuarioLocalStorage
+        );
       }
     },
     carregarMenuDoLocalStorage() {
@@ -134,7 +142,10 @@ export default {
       if (menuSalvo) {
         const menu = JSON.parse(menuSalvo);
         this.menuLocalStorage = menu; // Armazena o usuário na variável do componente
-        console.log("Usuário carregado do localStorage:", this.menuLocalStorage);
+        console.log(
+          "Usuário carregado do localStorage:",
+          this.menuLocalStorage
+        );
       }
     },
     carregarPredioDoLocalStorage() {
@@ -143,7 +154,10 @@ export default {
       if (predioSalvo) {
         const predio = JSON.parse(predioSalvo);
         this.predioLocalStorage = predio; // Armazena o usuário na variável do componente
-        console.log("Usuário carregado do localStorage:", this.predioLocalStorage);
+        console.log(
+          "Usuário carregado do localStorage:",
+          this.predioLocalStorage
+        );
       }
     },
     carregarComboDoLocalStorage() {
@@ -152,8 +166,8 @@ export default {
       if (comboSalvo) {
         const combo = JSON.parse(comboSalvo);
 
-        this.comboLocalStorage = combo
-        console.log("Combo carregado do localStorage:",this.comboLocalStorage);
+        this.comboLocalStorage = combo;
+        console.log("Combo carregado do localStorage:", this.comboLocalStorage);
       }
     },
   },
@@ -161,6 +175,10 @@ export default {
 </script>
 
 <style scoped>
+.router-link {
+  text-decoration: none; /* Remove o sublinhado */
+  color: inherit; /* Usa a cor do texto padrão (não altera a cor) */
+}
 .logo {
   margin-top: 18px;
   margin-left: 50px;

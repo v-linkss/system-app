@@ -1,9 +1,9 @@
 <!-- eslint-disable vue/multi-word-component-names -->
 // eslint-disable-next-line vue/multi-word-component-names
 <template>
-  <UpdateAreas />
+  <Panel />
 </template>
 
 <script setup>
-  import UpdateAreas from '@/components/Ambientes/UpdateAreas.vue';
+  import Panel from '@/components/Panel/HomePage.vue'
 </script>

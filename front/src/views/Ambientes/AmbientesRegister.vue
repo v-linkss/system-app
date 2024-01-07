@@ -5,5 +5,5 @@
 </template>
 
 <script setup>
-  import RegisterAreas from '@/components/Ambientes/RegisterAreas.vue';
+  import RegisterAreas from '@/components/Ambientes/RegisterAmbientes.vue';
 </script>

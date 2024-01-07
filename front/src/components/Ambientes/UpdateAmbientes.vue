@@ -1,7 +1,7 @@
+
+
 <template>
-  <div class="arrow" @click="returnToMainPage">
-    <font-awesome-icon :icon="['fas', 'arrow-left']" size="2xl" />
-  </div>
+
   <form>
     <v-text-field
       v-model="predios.descricao"
@@ -82,7 +82,7 @@ export default {
     },
     async filterTipos(searchText) {
       try {
-        const response = await axios.get("http://localhost:3000/PrediosAreas");
+        const response = await axios.get("http://localhost:3200/PrediosAreas");
         this.tipos = response.data.filter((tipo) =>
           tipo.descricao.toLowerCase().includes(searchText.toLowerCase())
         );
@@ -92,7 +92,7 @@ export default {
     },
     async filterAreas(searchText) {
       try {
-        const response = await axios.get("http://localhost:3000/PrediosAreas");
+        const response = await axios.get("http://localhost:3200/PrediosAreas");
         this.areas = response.data.filter((area) =>
           area.descricao.toLowerCase().includes(searchText.toLowerCase())
         );
@@ -102,7 +102,7 @@ export default {
     },
     async loadTipos() {
       try {
-        const response = await axios.get("http://localhost:3000/TabValores");
+        const response = await axios.get("http://localhost:3200/TabValores");
         this.tipos = response.data.map((tipo) => ({
           descricao: tipo.descricao,
           id: tipo.id,
@@ -114,7 +114,7 @@ export default {
     },
     async loadAreas() {
       try {
-        const response = await axios.get("http://localhost:3000/PrediosAreas");
+        const response = await axios.get("http://localhost:3200/PrediosAreas");
         this.areas = response.data.map((area) => ({
           descricao: area.descricao,
           id: area.id,
@@ -125,7 +125,7 @@ export default {
     },
     async loadPredioDetails() {
     try {
-      const response = await axios.get(`http://localhost:3000/PrediosAmbiente/${this.predios.id}`);
+      const response = await axios.get(`http://localhost:3200/PrediosAmbiente/${this.predios.id}`);
       // Preencha os campos com os detalhes carregados
       this.predios.descricao = response.data.descricao;
       this.predios.numero_ocupantes = response.data.numero_ocupantes;
@@ -147,7 +147,7 @@ export default {
 
       try {
         const response = await axios.put(
-          `http://localhost:3000/PrediosAmbiente/${this.predios.id}`,
+          `http://localhost:3200/PrediosAmbiente/${this.predios.id}`,
           data
         );
         this.$router.push("/home"); // Redirecione para a página principal ou faça qualquer outra ação desejada
@@ -186,7 +186,9 @@ export default {
   },
 };
 </script>
+
 <script setup>
+
 import { useField } from "vee-validate";
 
 const descricao = useField("descricao");

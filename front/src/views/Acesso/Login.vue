@@ -4,5 +4,5 @@
 </template>
 
 <script setup>
-  import LoginIspetore from '@/components/Acess/IspetoreLogin.vue'
+  import LoginIspetore from '@/components/Acesso/IspetoreLogin.vue'
 </script>

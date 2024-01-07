@@ -1,5 +1,6 @@
-<script setup></script>
+
 <template>
+
   <div class="arrow" @click="returnToMainPage">
     <font-awesome-icon :icon="['fas', 'arrow-left']" size="2xl" />
   </div>
@@ -69,7 +70,7 @@ export default {
     async loadPredios() {
       try {
         const response = await axios.get(
-          `http://localhost:3000/PrediosAmbiente/${this.dados.id}`
+          `http://localhost:3200/PrediosAmbiente/${this.dados.id}`
         );
         this.dados = response.data;
       } catch (error) {

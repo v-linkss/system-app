@@ -1,7 +1,5 @@
 <template>
-  <div class="arrow" @click="returnToMainPage">
-    <font-awesome-icon :icon="['fas', 'arrow-left']" size="2xl" />
-  </div>
+
   <form>
     <v-text-field
       v-model="predios.descricao"
@@ -23,6 +21,7 @@
       label="Área(m2)"
     ></v-text-field>
 
+
     <v-autocomplete
       v-model="predios.tabvalores_tipo_ambiente_id"
       :items="tipos"
@@ -43,7 +42,7 @@
       @input="filterAreas"
     ></v-autocomplete>
 
-    <v-btn class="me-4" @click="submit"> Criar </v-btn>
+    <v-btn class="me-4" @click="update"> Alterar </v-btn>
 
     <v-btn @click="handleReset"> Limpar </v-btn>
   </form>
@@ -122,7 +121,20 @@ export default {
         console.error("Erro ao carregar áreas:", error);
       }
     },
-    async submit() {
+    async loadPredioDetails() {
+    try {
+      const response = await axios.get(`http://localhost:3000/PrediosAmbiente/${this.predios.id}`);
+      // Preencha os campos com os detalhes carregados
+      this.predios.descricao = response.data.descricao;
+      this.predios.numero_ocupantes = response.data.numero_ocupantes;
+      this.predios.area = response.data.area;
+      this.predios.tabvalores_tipo_ambiente_id = response.data.tabvalores_tipo_ambiente_id;
+      this.predios.predio_area_id = response.data.predio_area_id;
+    } catch (error) {
+      console.error("Erro ao carregar detalhes do prédio:", error);
+    }
+  },
+    async update() {
       const data = {
         descricao: this.predios.descricao,
         numero_ocupantes: this.predios.numero_ocupantes,
@@ -132,13 +144,14 @@ export default {
       };
 
       try {
-        const response = await axios.post(
-          "http://localhost:3000/PrediosAmbiente",
+        const response = await axios.put(
+          `http://localhost:3000/PrediosAmbiente/${this.predios.id}`,
           data
         );
         this.$router.push("/home"); // Redirecione para a página principal ou faça qualquer outra ação desejada
-        if (response.status === 200) {
+        if (response.status === 201) {
           console.log("Resgistro criado com sucesso");
+          this.$router.push("/home");
         }
       } catch (error) {
         console.error("Erro na criação do registro:", error);
@@ -156,13 +169,23 @@ export default {
       this.predios.predio_area_id = null;
     }
   },
+
+  created() {
+    if (this.$route.query.id) {
+      this.predios.id = this.$route.query.id;
+    } else {
+      console.log("Erro em carregar dados");
+    }
+  },
   mounted() {
-    this.loadAreas();
+    this.loadPredioDetails()
     this.loadTipos();
+    this.loadAreas();
   },
 };
 </script>
 <script setup>
+
 import { useField } from "vee-validate";
 
 const descricao = useField("descricao");
