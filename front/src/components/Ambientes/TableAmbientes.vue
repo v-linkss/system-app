@@ -1,4 +1,9 @@
+<script setup>
+  import AppBar from "@/layouts/default/AppBar.vue";
+</script>
+
 <template>
+    <AppBar/>
   <div class="btn-pointer" @click="redirectToRegister()">
     <font-awesome-icon :icon="['fas', 'plus']" />
   </div>

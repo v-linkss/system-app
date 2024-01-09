@@ -1,47 +1,40 @@
 <template>
-
+  <AppBar />
+  <h1>Tipos Equipamentos</h1>
   <form>
     <v-text-field
-      v-model="predios.descricao"
+      v-model="prediosTipos.descricao"
       :error-messages="descricao.errorMessage.value"
       label="Descrição"
     ></v-text-field>
 
     <v-text-field
-      v-model.number="predios.numero_ocupantes"
+      v-model.number="prediosTipos.icone"
       v-mask="'###'"
-      :error-messages="numero_ocupantes.errorMessage.value"
+      :error-messages="icone.errorMessage.value"
       label="Numero Ocupantes"
     ></v-text-field>
 
-    <v-text-field
-      v-mask="'###.##'"
-      v-model.number="predios.area"
-      :error-messages="area.errorMessage.value"
-      label="Área(m2)"
-    ></v-text-field>
-
     <v-autocomplete
-      v-model="predios.tabvalores_tipo_ambiente_id"
-      :items="tipos"
-      :item-title="(tipo) => tipo.descricao"
-      :item-value="(tipo) => tipo.id"
-      :error-messages="tabvalores_tipo_ambiente_id.errorMessage.value"
+      v-model="prediosTipos.sistema_id"
+      :items="sistemas"
+      :item-title="(sistema) => sistema.descricao"
+      :item-value="(sistema) => sistema.id"
+      :error-messages="sistema_id.errorMessage.value"
       label="Selecione um Tipo"
-      @input="filterTipos"
     ></v-autocomplete>
 
     <v-autocomplete
-      v-model="predios.predio_area_id"
-      :items="areas"
-      label="Selecione uma Área"
-      :item-title="(area) => area.descricao"
-      :item-value="(area) => area.id"
-      :error-messages="predio_area_id.errorMessage.value"
-      @input="filterAreas"
+      v-model="prediosTipos.tabvalores_segmento_id"
+      :items="segmentos"
+      label="Selecione um segmento"
+      :item-title="descricao"
+      :item-value="id"
+      :error-messages="tabvalores_segmento_id.errorMessage.value"
     ></v-autocomplete>
 
-    <v-btn class="me-4" @click="submit"> Criar </v-btn>
+    <v-btn class="me-4" color="green" @click="submit"> Criar </v-btn>
+    <v-btn class="me-4" color="red" @click="returnToMainPage"> Voltar</v-btn>
 
     <v-btn @click="handleReset"> Limpar </v-btn>
   </form>
@@ -51,20 +44,16 @@ import axios from "axios";
 export default {
   data() {
     return {
-      predios: {
+      prediosTipos: {
         descricao: undefined,
-        numero_ocupantes: undefined,
-        area: undefined,
-        tabvalores_tipo_ambiente_id: undefined,
-        predio_area_id: undefined,
+        sistema_id: undefined,
+        tabvalores_segmento_id: undefined,
+        icone: undefined,
       },
-      tipos: [
-        {
-          descricao: undefined,
-          id: undefined,
-        },
+      segmentos: [
+
       ],
-      areas: [
+      sistemas: [
         {
           descricao: undefined,
           id: undefined,
@@ -75,7 +64,7 @@ export default {
 
   methods: {
     returnToMainPage() {
-      this.$router.push("/home");
+      this.$router.push("/equipamentos-tipos/index");
     },
     async filterTipos(searchText) {
       try {
@@ -97,41 +86,43 @@ export default {
         console.error("Erro ao carregar áreas de prédio:", error);
       }
     },
-    async loadTipos() {
+    async carregarSegmentos() {
       try {
-        const response = await axios.get("http://localhost:3000/TabValores");
-        this.tipos = response.data.map((tipo) => ({
-          descricao: tipo.descricao,
-          id: tipo.id,
-        }));
-        console.log(response)
+        const response = await axios.get(
+          "http://localhost:3200/listaSegmentos"
+        );
+        this.segmentos = response.data
+        console.log("vcxvncxn",this.segmentos)
       } catch (error) {
-        console.error("Erro ao carregar tipos:", error);
+        console.error("Erro na chamada de API:", error);
       }
     },
-    async loadAreas() {
+
+    async carregarSistemas() {
       try {
-        const response = await axios.get("http://localhost:3000/PrediosAreas");
-        this.areas = response.data.map((area) => ({
-          descricao: area.descricao,
-          id: area.id,
+        const response = await axios.get("http://localhost:3200/listaSistemas");
+        this.sistemas = response.data.map((sistema) => ({
+          descricao: sistema.func_json_sistemas.descricao,
+          id: sistema.func_json_sistemas.id,
         }));
+        console.log(response.data)
+        console.log("asdasd",this.sistemas.descricao)
       } catch (error) {
-        console.error("Erro ao carregar áreas:", error);
+        console.error("Erro na chamada de API:", error);
       }
     },
     async submit() {
       const data = {
-        descricao: this.predios.descricao,
-        numero_ocupantes: this.predios.numero_ocupantes,
-        area: this.predios.area,
-        tabvalores_tipo_ambiente_id: this.predios.tabvalores_tipo_ambiente_id,
-        predio_area_id: this.predios.predio_area_id,
+        descricao: this.prediosTipos.descricao,
+        numero_ocupantes: this.prediosTipos.numero_ocupantes,
+        area: this.prediosTipos.area,
+        tabvalores_tipo_ambiente_id:
+          this.prediosTipos.tabvalores_tipo_ambiente_id,
       };
 
       try {
         const response = await axios.post(
-          "http://localhost:3000/PrediosAmbiente",
+          "http://localhost:3200/PrediosAmbiente",
           data
         );
         this.$router.push("/home"); // Redirecione para a página principal ou faça qualquer outra ação desejada
@@ -140,35 +131,29 @@ export default {
         }
       } catch (error) {
         console.error("Erro na criação do registro:", error);
-        console.log(
-          typeof this.predios.predio_area_id,
-          typeof this.predios.tabvalores_tipo_ambiente_id
-        );
       }
     },
-    async handleReset(){
-      this.predios.descricao = null;
-      this.predios.numero_ocupantes = null;
-      this.predios.area = null;
-      this.predios.tabvalores_tipo_ambiente_id = null;
-      this.predios.predio_area_id = null;
-    }
+    async handleReset() {
+      this.prediosTipos.descricao = null;
+      this.prediosTipos.tabvalores_segmento_id = null;
+      this.prediosTipos.sistema_id = null;
+      this.prediosTipos.icone = null;
+    },
   },
   mounted() {
-    this.loadAreas();
-    this.loadTipos();
+    this.carregarSegmentos();
+    this.carregarSistemas();
   },
 };
 </script>
 <script setup>
-
+import AppBar from "@/layouts/default/AppBar.vue";
 import { useField } from "vee-validate";
 
 const descricao = useField("descricao");
-const numero_ocupantes = useField("numero_ocupantes");
-const area = useField("area");
-const tabvalores_tipo_ambiente_id = useField("tabvalores_tipo_ambiente_id");
-const predio_area_id = useField("predio_area_id");
+const sistema_id = useField("sistema_id");
+const tabvalores_segmento_id = useField("tabvalores_segmento_id");
+const icone = useField("icone");
 </script>
 <style scoped>
 .arrow {

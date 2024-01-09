@@ -1,7 +1,8 @@
 
 
 <template>
-
+  <AppBar/>
+  <h1>Ambientes</h1>
   <form>
     <v-text-field
       v-model="predios.descricao"
@@ -45,7 +46,7 @@
     ></v-autocomplete>
 
     <v-btn class="me-4" @click="update"> Alterar </v-btn>
-
+    <v-btn class="me-4" color="red" @click="returnToMainPage"> Voltar </v-btn>
     <v-btn @click="handleReset"> Limpar </v-btn>
   </form>
 </template>
@@ -78,7 +79,7 @@ export default {
 
   methods: {
     returnToMainPage() {
-      this.$router.push("/home");
+      this.$router.push("/predios-ambientes/index");
     },
     async filterTipos(searchText) {
       try {
@@ -188,7 +189,7 @@ export default {
 </script>
 
 <script setup>
-
+import AppBar from "@/layouts/default/AppBar.vue";
 import { useField } from "vee-validate";
 
 const descricao = useField("descricao");

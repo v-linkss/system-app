@@ -1,48 +1,39 @@
 <template>
-
+  <AppBar/>
   <form>
     <v-text-field
-      v-model="predios.descricao"
+      v-model="equipamentos_tipos.descricao"
       :error-messages="descricao.errorMessage.value"
       label="Descrição"
     ></v-text-field>
 
     <v-text-field
-      v-model.number="predios.numero_ocupantes"
+      v-model.number="equipamentos_tipos.icone"
       v-mask="'###'"
-      :error-messages="numero_ocupantes.errorMessage.value"
-      label="Numero Ocupantes"
+      :error-messages="icone.errorMessage.value"
+      label="icone"
     ></v-text-field>
-
-    <v-text-field
-      v-mask="'###.##'"
-      v-model.number="predios.area"
-      :error-messages="area.errorMessage.value"
-      label="Área(m2)"
-    ></v-text-field>
-
 
     <v-autocomplete
-      v-model="predios.tabvalores_tipo_ambiente_id"
-      :items="tipos"
+      v-model="equipamentos_tipos.tabvalores_segmento_id"
+      :items="segmentos"
       :item-title="(tipo) => tipo.descricao"
       :item-value="(tipo) => tipo.id"
-      :error-messages="tabvalores_tipo_ambiente_id.errorMessage.value"
+      :error-messages="tabvalores_segmento_id.errorMessage.value"
       label="Selecione um Tipo"
-      @input="filterTipos"
     ></v-autocomplete>
 
     <v-autocomplete
-      v-model="predios.predio_area_id"
-      :items="areas"
+      v-model="equipamentos_tipos.sistema_id"
+      :items="sistemas"
       label="Selecione uma Área"
       :item-title="(area) => area.descricao"
       :item-value="(area) => area.id"
-      :error-messages="predio_area_id.errorMessage.value"
-      @input="filterAreas"
+      :error-messages="sistema_id.errorMessage.value"
     ></v-autocomplete>
 
-    <v-btn class="me-4" @click="update"> Alterar </v-btn>
+    <v-btn class="me-4" color="green" @click="update"> Alterar </v-btn>
+    <v-btn class="me-4" color="red" @click="returnToMainPage"> Voltar </v-btn>
 
     <v-btn @click="handleReset"> Limpar </v-btn>
   </form>
@@ -52,12 +43,11 @@ import axios from "axios";
 export default {
   data() {
     return {
-      predios: {
+      equipamentos_tipos: {
         descricao: undefined,
-        numero_ocupantes: undefined,
-        area: undefined,
-        tabvalores_tipo_ambiente_id: undefined,
-        predio_area_id: undefined,
+        icone: undefined,
+        sistema_id: undefined,
+        tabvalores_segmento_id: undefined,
       },
       tipos: [
         {
@@ -76,7 +66,7 @@ export default {
 
   methods: {
     returnToMainPage() {
-      this.$router.push("/home");
+      this.$router.push("/equipamentos-tipos/index");
     },
     async filterTipos(searchText) {
       try {
@@ -140,7 +130,6 @@ export default {
         numero_ocupantes: this.predios.numero_ocupantes,
         area: this.predios.area,
         tabvalores_tipo_ambiente_id: this.predios.tabvalores_tipo_ambiente_id,
-        predio_area_id: this.predios.predio_area_id,
       };
 
       try {
@@ -162,37 +151,35 @@ export default {
       }
     },
     async handleReset(){
-      this.predios.descricao = null;
-      this.predios.numero_ocupantes = null;
-      this.predios.area = null;
-      this.predios.tabvalores_tipo_ambiente_id = null;
-      this.predios.predio_area_id = null;
+      this.equipamentos_tipos.descricao = null;
+      this.equipamentos_tipos.icone = null;
+      this.equipamentos_tipos.tabvalores_segmento_id = null;
+      this.equipamentos_tipos.sistema_id = null;
     }
   },
 
-  created() {
-    if (this.$route.query.id) {
-      this.predios.id = this.$route.query.id;
-    } else {
-      console.log("Erro em carregar dados");
-    }
-  },
-  mounted() {
-    this.loadPredioDetails()
-    this.loadTipos();
-    this.loadAreas();
-  },
+  // created() {
+  //   if (this.$route.query.id) {
+  //     this.predios.id = this.$route.query.id;
+  //   } else {
+  //     console.log("Erro em carregar dados");
+  //   }
+  // },
+  // mounted() {
+  //   this.loadPredioDetails()
+  //   this.loadTipos();
+  //   this.loadAreas();
+  // },
 };
 </script>
 <script setup>
-
+import AppBar from "@/layouts/default/AppBar.vue";
 import { useField } from "vee-validate";
 
 const descricao = useField("descricao");
-const numero_ocupantes = useField("numero_ocupantes");
-const area = useField("area");
-const tabvalores_tipo_ambiente_id = useField("tabvalores_tipo_ambiente_id");
-const predio_area_id = useField("predio_area_id");
+const sistema_id = useField("sistema_id");
+const tabvalores_segmento_id = useField("tabvalores_segmento_id");
+const icone = useField("icone");
 </script>
 <style scoped>
 .arrow {

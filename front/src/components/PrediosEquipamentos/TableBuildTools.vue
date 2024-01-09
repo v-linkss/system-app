@@ -1,12 +1,12 @@
 
-<script setup></script>
+<script setup>
+import AppBar from "@/layouts/default/AppBar.vue";
+</script>
 
 <template>
-  <div>
-    <v-text-field v-model="searchQuery" label="Pesquisar" @input="saveSearchQuery"/>
-  </div>
-  <div @click="redirectToRegister" class="btn">
-    <v-btn variant="tonal"> Criar </v-btn>
+  <AppBar/>
+  <div class="btn-pointer" @click="redirectToRegister()">
+    <font-awesome-icon :icon="['fas', 'plus']" />
   </div>
   <v-data-table
     :headers="headers"
@@ -38,12 +38,9 @@
       </div>
     </template>
   </v-data-table>
-  <div @click="returnToMainPage" class="btn">
-    <v-btn variant="tonal">Retornar </v-btn>
-  </div>
 </template>
 <script>
-import { VDataTable } from "vuetify/lib/labs/VDataTable/index.mjs";
+import { VDataTable } from "vuetify/lib/components/index.mjs";
 import axios from "axios";
 export default {
   components: {
@@ -109,23 +106,20 @@ export default {
     },
   },
   methods: {
-    returnToMainPage() {
-      this.$router.push("/home");
-    },
     redirectToView(id) {
       this.$router.push({
-        name: "ViewBuildTools",
+        name: "predios-equipamentos/index/vizualizar",
         query: {
           id,
         },
       });
     },
     redirectToRegister() {
-      this.$router.push("/RegisterBuildTools");
+      this.$router.push({name:"predios-equipamentos/index/cadastro"});
     },
     redirectToUpdate(id) {
       this.$router.push({
-        name: "UpdateBuildTools",
+        name: "predios-equipamentos/index/atualizar",
         query: {
           id,
         },
@@ -135,7 +129,7 @@ export default {
       try {
         item.excluido = !item.excluido;
         await axios.put(
-          `http://localhost:3000/PrediosEquipamentos/excluir/${item.id}`,
+          `http://localhost:3200/PrediosEquipamentos/excluir/${item.id}`,
           {
             excluido: item.excluido,
           }
@@ -155,7 +149,7 @@ export default {
   },
   mounted() {
     axios
-      .get("http://localhost:3000/PrediosEquipamentos")
+      .get("http://localhost:3200/PrediosEquipamentos")
       .then((response) => {
         this.predios_equipamentos = response.data;
         console.log(this.predios_equipamentos);

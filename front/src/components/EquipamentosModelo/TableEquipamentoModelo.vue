@@ -1,16 +1,13 @@
+
 <script setup>
 import AppBar from "@/layouts/default/AppBar.vue";
 </script>
 
 <template>
-  <AppBar />
-  <!-- <div>
-    <v-text-field v-model="searchQuery" label="Pesquisar" @input="saveSearchQuery"/>
-  </div> -->
+  <AppBar/>
   <div class="btn-pointer" @click="redirectToRegister()">
     <font-awesome-icon :icon="['fas', 'plus']" />
   </div>
-  <!-- eslint-disable vue/valid-v-slot -->
   <v-data-table
     :headers="headers"
     :search="searchQuery"
@@ -19,7 +16,7 @@ import AppBar from "@/layouts/default/AppBar.vue";
     :footer-props="footerProps"
     density="default"
   >
-    <!-- eslint-disable vue/valid-v-slot -->
+  <!-- eslint-disable vue/valid-v-slot -->
     <template v-slot:item.actions="{ item }">
       <div class="custom-td">
         <div class="btn-pointer" @click="redirectToView(item.id)">
@@ -51,27 +48,26 @@ export default {
   },
   data() {
     return {
-      tipos_equipamentos: [],
-      segmentos: [],
+      predios_equipamentos: [],
       searchQuery: "",
       itemsPerPage: [20],
       footerProps: [20],
       headers: [
         {
           title: "Codigo",
-          value: "id",
+          value: "codigo",
         },
         {
           title: "Descrição",
-          value: "descricao",
+          value: "patrimonio",
         },
         {
-          title: "Sistema",
-          value: "sistema",
+          title: "Tipo",
+          value: "tipo",
         },
         {
-          title: "Segmento",
-          value: "segmento",
+          title: "Fabricante",
+          value: "predios_ambientes.descricao",
         },
         {
           title: "Ações",
@@ -84,7 +80,7 @@ export default {
     filteredPrediosEquipamentos() {
       const query = this.searchQuery.toLowerCase().trim();
 
-      const filteredItems = this.tipos_equipamentos.filter((item) => {
+      const filteredItems = this.predios_equipamentos.filter((item) => {
         const descricao = item.descricao.toLowerCase();
         const prediosAreasDescricao = item.predios_areas
           ? item.predios_areas.descricao.toLowerCase()
@@ -104,18 +100,18 @@ export default {
   methods: {
     redirectToView(id) {
       this.$router.push({
-        name: "equipamentos-tipos/index/vizualizar",
+        name: "equipamentos-modelos/index/vizualizar",
         query: {
           id,
         },
       });
     },
     redirectToRegister() {
-      this.$router.push("/equipamentos-tipos/index/cadastro");
+      this.$router.push({name:"equipamentos-modelos/index/cadastro"});
     },
     redirectToUpdate(id) {
       this.$router.push({
-        name: "equipamentos-tipos/index/atualizar",
+        name: "equipamentos-modelos/index/atualizar",
         query: {
           id,
         },
@@ -142,43 +138,18 @@ export default {
       const searchQuery = localStorage.getItem("searchQuery");
       console.log("saveSearchQuery:", searchQuery); // Imprime no console
     },
-
-    carregarSegmentos() {
-      axios
-        .get("http://localhost:3200/listaSegmentos")
-        .then((response) => {
-          this.segmentos = response.data;
-          console.log(this.segmentos);
-        })
-        .catch((error) => {
-          console.error("Erro na chamada de API:", error);
-        });
-    },
-
-    carregarSistemas() {
-      axios
-        .get("http://localhost:3200/listaSistemas")
-        .then((response) => {
-          this.sistemas = response.data;
-          console.log(this.sistemas);
-        })
-        .catch((error) => {
-          console.error("Erro na chamada de API:", error);
-        });
-    },
   },
   mounted() {
     axios
-      .get("http://localhost:3200/getAllEquipamentos")
+      .get("http://localhost:3200/PrediosEquipamentos")
       .then((response) => {
-        this.tipos_equipamentos = response.data;
-        console.log(this.tipos_equipamentos);
+        this.predios_equipamentos = response.data;
+        console.log(this.predios_equipamentos);
       })
       .catch((error) => {
         console.error("Erro na chamada de API:", error);
       });
-    this.carregarSegmentos();
-    this.carregarSistemas();
+    // Recarrega o valor do campo de pesquisa do localStorage
     const searchQuery = localStorage.getItem("searchQuery");
     console.log("Valor carregado do localStorage:", searchQuery); // Imprime no console
     this.searchQuery = searchQuery || "";

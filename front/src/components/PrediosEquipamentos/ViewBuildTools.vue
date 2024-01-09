@@ -1,12 +1,10 @@
-<script setup></script>
+<script setup>import AppBar from "@/layouts/default/AppBar.vue";</script>
 <template>
-  <div class="arrow" @click="returnToMainPage">
-    <font-awesome-icon :icon="['fas', 'arrow-left']" size="2xl" />
-  </div>
   <LoadingComponent v-if="loading">
     <font-awesome-icon :icon="['fas', 'spinner']" spin />
   </LoadingComponent>
   <div v-else>
+    <AppBar/>
     <v-container class="bg-surface-variant">
       <v-row no-gutters>
         <v-col>
@@ -90,7 +88,7 @@ export default {
     async loadPrediosEquipamentos() {
       try {
         const response = await axios.get(
-          `http://localhost:3000/PrediosEquipamentos/${this.dados.id}`
+          `http://localhost:3200/PrediosEquipamentos/${this.dados.id}`
         );
         this.dados = response.data;
       } catch (error) {

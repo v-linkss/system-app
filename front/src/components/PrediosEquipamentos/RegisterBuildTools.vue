@@ -1,7 +1,5 @@
 <template>
-  <div class="arrow" @click="returnToTableTools">
-    <font-awesome-icon :icon="['fas', 'arrow-left']" size="2xl" />
-  </div>
+<AppBar/>
   <form>
     <v-text-field
       v-model="predios_equipamentos.descricao"
@@ -137,7 +135,7 @@ export default {
     async filterAmbientes(searchText) {
       try {
         const response = await axios.get(
-          "http://localhost:3000/PrediosEquipamentosAmb"
+          "http://localhost:3200/PrediosEquipamentosAmb"
         );
         this.ambientes = response.data.filter((ambientes) =>
           ambientes.descricao.toLowerCase().includes(searchText.toLowerCase())
@@ -149,7 +147,7 @@ export default {
     async filterModelos(searchText) {
       try {
         const response = await axios.get(
-          "http://localhost:3000/PrediosEquipamentosMod"
+          "http://localhost:3200/PrediosEquipamentosMod"
         );
         this.modelos = response.data.filter((modelo) =>
           modelo.descricao.toLowerCase().includes(searchText.toLowerCase())
@@ -161,7 +159,7 @@ export default {
     async filterUsers(searchText) {
       try {
         const response = await axios.get(
-          "http://localhost:3000/PrediosEquipamentosUser"
+          "http://localhost:3200/PrediosEquipamentosUser"
         );
         this.users = response.data.filter((user) =>
           user.nome.toLowerCase().includes(searchText.toLowerCase())
@@ -173,7 +171,7 @@ export default {
     async loadAmbientes() {
       try {
         const response = await axios.get(
-          "http://localhost:3000/PrediosEquipamentosAmb"
+          "http://localhost:3200/PrediosEquipamentosAmb"
         );
         this.ambientes = response.data.map((ambiente) => ({
           descricao: ambiente.descricao,
@@ -187,7 +185,7 @@ export default {
     async loadModelos() {
       try {
         const response = await axios.get(
-          "http://localhost:3000/PrediosEquipamentosMod"
+          "http://localhost:3200/PrediosEquipamentosMod"
         );
         this.modelos = response.data.map((modelo) => ({
           descricao: modelo.descricao,
@@ -200,7 +198,7 @@ export default {
     async loadUsers() {
       try {
         const response = await axios.get(
-          "http://localhost:3000/PrediosEquipamentosUser"
+          "http://localhost:3200/PrediosEquipamentosUser"
         );
         this.users = response.data.map((item) => ({
           nome: item.users.nome,
@@ -228,7 +226,7 @@ export default {
 
       try {
         const response = await axios.post(
-          "http://localhost:3000/PrediosEquipamentos",
+          "http://localhost:3200/PrediosEquipamentos",
           data
         );
         this.$router.push("/tabletools"); // Redirecione para a página principal ou faça qualquer outra ação desejada
@@ -261,6 +259,7 @@ export default {
 };
 </script>
 <script setup>
+import AppBar from "@/layouts/default/AppBar.vue";
 import { useField } from "vee-validate";
 
 const descricao = useField("descricao");

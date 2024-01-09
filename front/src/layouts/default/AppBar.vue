@@ -28,7 +28,7 @@
           v-bind:key="item"
           :value="menu.url"
         >
-          <router-link class="router-link" :to="menu.url" target="_blank">
+          <router-link class="router-link" :to="`/${menu.url}`" target="_blank">
             <v-list-item-title>{{ item }}</v-list-item-title>
           </router-link>
         </v-list-item>
@@ -101,7 +101,6 @@ export default {
   },
 
   methods: {
-
     trocarCliente() {
       const selectedPredio = this.comboLocalStorage.find(
         (predio) => predio.predio_token === this.selectedItem

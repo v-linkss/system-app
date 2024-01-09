@@ -35,9 +35,24 @@ const routes = [
       },
       //equipamentos-tipos
       {
-        path: '/equipamentos-tipos/index',
-        name: '/equipamentos-tipos/index',
+        path: 'equipamentos-tipos/index',
+        name: 'equipamentos-tipos/index',
         component: () => import('@/views/TiposEquipamentos/TableTypesTools.vue'),
+      },
+      {
+        path: 'equipamentos-tipos/index/cadastro',
+        name: 'equipamentos-tipos/index/cadastro',
+        component: () => import('@/views/TiposEquipamentos/RegisterTypesTools.vue'),
+      },
+      {
+        path: 'equipamentos-tipos/index/atualizar',
+        name: 'equipamentos-tipos/index/atualizar',
+        component: () => import('@/views/TiposEquipamentos/UpdateTypesTools.vue'),
+      },
+      {
+        path: 'equipamentos-tipos/index/vizualizar',
+        name: 'equipamentos-tipos/index/vizualizar',
+        component: () => import('@/views/TiposEquipamentos/ViewTypesTools.vue'),
       },
       //ambientes
       {
@@ -64,7 +79,43 @@ const routes = [
       {
         path: 'predios-equipamentos/index',
         name: 'predios-equipamentos/index',
-        component: () => import('@/views/TiposEquipamentos/TableTypesTools.vue'),
+        component: () => import('@/views/PrediosEquipamento/TableTools.vue'),
+      },
+      {
+        path: 'predios-equipamentos/index/cadastro',
+        name: 'predios-equipamentos/index/cadastro',
+        component: () => import('@/views/PrediosEquipamento/RegisterTableTools.vue'),
+      },
+      {
+        path: 'predios-equipamentos/index/atualizar',
+        name: 'predios-equipamentos/index/atualizar',
+        component: () => import('@/views/PrediosEquipamento/UpdateTableTools.vue'),
+      },
+      {
+        path: 'predios-equipamentos/index/vizualizar',
+        name: 'predios-equipamentos/index/vizualizar',
+        component: () => import('@/views/PrediosEquipamento/ViewTableTools.vue'),
+      },
+      //Modelos
+      {
+        path: 'equipamentos-modelos/index',
+        name: 'equipamentos-modelos/index',
+        component: () => import('@/views/EquipamentosModelo/TableModelo.vue'),
+      },
+      {
+        path: 'equipamentos-modelos/index/cadastro',
+        name: 'equipamentos-modelos/index/cadastro',
+        component: () => import('@/views/EquipamentosModelo/RegisterModelo.vue'),
+      },
+      {
+        path: 'equipamentos-modelos/index/atualizar',
+        name: 'equipamentos-modelos/index/atualizar',
+        component: () => import('@/views/EquipamentosModelo/UpdateModelo.vue'),
+      },
+      {
+        path: 'equipamentos-modelos/index/vizualizar',
+        name: 'equipamentos-modelos/index/vizualizar',
+        component: () => import('@/views/EquipamentosModelo/ViewModelo.vue'),
       },
     ],
   },

@@ -1,46 +1,43 @@
 <template>
   <AppBar/>
-  <h1>Ambientes</h1>
+  <h1>Modelos</h1>
   <form>
     <v-text-field
-      v-model="predios.descricao"
+      v-model="modelos.descricao"
       :error-messages="descricao.errorMessage.value"
       label="Descrição"
     ></v-text-field>
 
     <v-text-field
-      v-model.number="predios.numero_ocupantes"
-      v-mask="'###'"
-      :error-messages="numero_ocupantes.errorMessage.value"
-      label="Numero Ocupantes"
+      v-model="modelos.fabricante"
+      :error-messages="fabricante.errorMessage.value"
+      label="Fabricante"
     ></v-text-field>
 
     <v-text-field
-      v-mask="'###.##'"
-      v-model.number="predios.area"
-      :error-messages="area.errorMessage.value"
-      label="Área(m2)"
+      v-mask="'##'"
+      v-model.number="modelos.vida_util"
+      :error-messages="vida_util.errorMessage.value"
+      label="Vida Util(Meses)"
+    ></v-text-field>
+
+    <v-text-field
+      v-model="modelos.codigo"
+      :error-messages="codigo.errorMessage.value"
+      label="Codigo"
     ></v-text-field>
 
     <v-autocomplete
-      v-model="predios.tabvalores_tipo_ambiente_id"
+      v-model="modelos.equipamento_tipo_id"
       :items="tipos"
       :item-title="(tipo) => tipo.descricao"
       :item-value="(tipo) => tipo.id"
-      :error-messages="tabvalores_tipo_ambiente_id.errorMessage.value"
+      :error-messages="equipamento_tipo_id.errorMessage.value"
       label="Selecione um Tipo"
       @input="filterTipos"
     ></v-autocomplete>
 
-    <v-autocomplete
-      v-model="predios.predio_area_id"
-      :items="areas"
-      label="Selecione uma Área"
-      :item-title="(area) => area.descricao"
-      :item-value="(area) => area.id"
-      :error-messages="predio_area_id.errorMessage.value"
-      @input="filterAreas"
-    ></v-autocomplete>
+    <v-checkbox v-model="modelos.entra_pmoc" :error-messages="entra_pmoc.errorMessage.value" label="Incluir no PMOC"></v-checkbox>
 
     <v-btn class="me-4" color="green" @click="submit"> Salvar </v-btn>
     <v-btn class="me-4" color="red" @click="returnToMainPage"> Voltar </v-btn>
@@ -52,12 +49,13 @@ import axios from "axios";
 export default {
   data() {
     return {
-      predios: {
+      modelos: {
         descricao: undefined,
-        numero_ocupantes: undefined,
-        area: undefined,
-        tabvalores_tipo_ambiente_id: undefined,
-        predio_area_id: undefined,
+        codigo: undefined,
+        entra_pmoc: undefined,
+        fabricante: undefined,
+        equipamento_tipo_id: undefined,
+        vida_util: undefined
       },
       tipos: [
         {
@@ -65,34 +63,18 @@ export default {
           id: undefined,
         },
       ],
-      areas: [
-        {
-          descricao: undefined,
-          id: undefined,
-        },
-      ], // Inicialize o items como um array vazio
     };
   },
 
   methods: {
     returnToMainPage() {
-      this.$router.push("/predios-ambientes/index");
+      this.$router.push("/equipamentos-modelos/index");
     },
     async filterTipos(searchText) {
       try {
         const response = await axios.get("http://localhost:3200/PrediosAreas");
         this.tipos = response.data.filter((tipo) =>
           tipo.descricao.toLowerCase().includes(searchText.toLowerCase())
-        );
-      } catch (error) {
-        console.error("Erro ao carregar áreas de prédio:", error);
-      }
-    },
-    async filterAreas(searchText) {
-      try {
-        const response = await axios.get("http://localhost:3200/PrediosAreas");
-        this.areas = response.data.filter((area) =>
-          area.descricao.toLowerCase().includes(searchText.toLowerCase())
         );
       } catch (error) {
         console.error("Erro ao carregar áreas de prédio:", error);
@@ -110,24 +92,14 @@ export default {
         console.error("Erro ao carregar tipos:", error);
       }
     },
-    async loadAreas() {
-      try {
-        const response = await axios.get("http://localhost:3200/PrediosAreas");
-        this.areas = response.data.map((area) => ({
-          descricao: area.descricao,
-          id: area.id,
-        }));
-      } catch (error) {
-        console.error("Erro ao carregar áreas:", error);
-      }
-    },
     async submit() {
       const data = {
-        descricao: this.predios.descricao,
-        numero_ocupantes: this.predios.numero_ocupantes,
-        area: this.predios.area,
-        tabvalores_tipo_ambiente_id: this.predios.tabvalores_tipo_ambiente_id,
-        predio_area_id: this.predios.predio_area_id,
+        descricao: this.modelos.descricao,
+        vida_util: this.modelos.vida_util,
+        codigo: this.modelos.codigo,
+        fabricante: this.modelos.fabricante,
+        equipamento_tipo_id: this.equipamento_tipo_id,
+        entra_pmoc:this.modelos.entra_pmoc
       };
 
       try {
@@ -148,15 +120,15 @@ export default {
       }
     },
     async handleReset() {
-      this.predios.descricao = null;
-      this.predios.numero_ocupantes = null;
-      this.predios.area = null;
-      this.predios.tabvalores_tipo_ambiente_id = null;
-      this.predios.predio_area_id = null;
+      this.modelos.descricao = null;
+      this.modelos.equipamento_tipo_id = null;
+      this.modelos.codigo = null;
+      this.modelos.vida_util = null;
+      this.modelos.fabricante = null;
+      this.modelos.entra_pmoc = null;
     },
   },
   mounted() {
-    this.loadAreas();
     this.loadTipos();
   },
 };
@@ -165,10 +137,11 @@ export default {
 import { useField } from "vee-validate";
 import AppBar from "@/layouts/default/AppBar.vue";
 const descricao = useField("descricao");
-const numero_ocupantes = useField("numero_ocupantes");
-const area = useField("area");
-const tabvalores_tipo_ambiente_id = useField("tabvalores_tipo_ambiente_id");
-const predio_area_id = useField("predio_area_id");
+const equipamento_tipo_id = useField("equipamento_tipo_id");
+const vida_util = useField("vida_util");
+const codigo = useField("codigo");
+const fabricante = useField("fabricante");
+const entra_pmoc = useField("entra_pmoc");
 </script>
 <style scoped>
 .arrow {

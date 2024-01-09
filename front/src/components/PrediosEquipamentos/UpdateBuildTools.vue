@@ -1,7 +1,5 @@
 <template>
-  <div class="arrow" @click="returnToTableTools">
-    <font-awesome-icon :icon="['fas', 'arrow-left']" size="2xl" />
-  </div>
+<AppBar/>
   <form>
     <v-text-field
       v-model="predios_equipamentos.descricao"
@@ -295,6 +293,7 @@ export default {
 };
 </script>
 <script setup>
+import AppBar from "@/layouts/default/AppBar.vue";
 import { useField } from "vee-validate";
 
 const descricao = useField("descricao");
