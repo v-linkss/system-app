@@ -125,7 +125,7 @@ export default {
       try {
         item.excluido = !item.excluido;
         await axios.put(
-          `http://localhost:3200/PrediosEquipamentos/excluir/${item.id}`,
+        `${process.env.MANAGEMENT_API_URL}/deleteEquipamentos/excluir/${item.id}`,
           {
             excluido: item.excluido,
           }
@@ -142,43 +142,21 @@ export default {
       const searchQuery = localStorage.getItem("searchQuery");
       console.log("saveSearchQuery:", searchQuery); // Imprime no console
     },
-
-    carregarSegmentos() {
-      axios
-        .get("http://localhost:3200/listaSegmentos")
-        .then((response) => {
-          this.segmentos = response.data;
-          console.log(this.segmentos);
-        })
-        .catch((error) => {
-          console.error("Erro na chamada de API:", error);
-        });
-    },
-
-    carregarSistemas() {
-      axios
-        .get("http://localhost:3200/listaSistemas")
-        .then((response) => {
-          this.sistemas = response.data;
-          console.log(this.sistemas);
-        })
-        .catch((error) => {
-          console.error("Erro na chamada de API:", error);
-        });
-    },
   },
   mounted() {
+    const storedToken = JSON.parse(localStorage.getItem("predio"))
+    const data = {
+      token_predio:storedToken.predio_token
+    }
     axios
-      .get("http://localhost:3200/getAllEquipamentos")
+      .post(`${process.env.MANAGEMENT_API_URL}/listaTiposEquipamentos`,data)
       .then((response) => {
-        this.tipos_equipamentos = response.data;
-        console.log(this.tipos_equipamentos);
+        this.tipos_equipamentos = response.data[0].func_json_tiposequipamentos;
+        console.log("jkjjkjk",this.tipos_equipamentos);
       })
       .catch((error) => {
         console.error("Erro na chamada de API:", error);
       });
-    this.carregarSegmentos();
-    this.carregarSistemas();
     const searchQuery = localStorage.getItem("searchQuery");
     console.log("Valor carregado do localStorage:", searchQuery); // Imprime no console
     this.searchQuery = searchQuery || "";

@@ -12,24 +12,24 @@
       v-model.number="prediosTipos.icone"
       v-mask="'###'"
       :error-messages="icone.errorMessage.value"
-      label="Numero Ocupantes"
+      label="Icone"
     ></v-text-field>
 
     <v-autocomplete
       v-model="prediosTipos.sistema_id"
       :items="sistemas"
-      :item-title="(sistema) => sistema.descricao"
-      :item-value="(sistema) => sistema.id"
+      item-title="descricao"
+      item-value="id"
       :error-messages="sistema_id.errorMessage.value"
-      label="Selecione um Tipo"
+      label="Selecione um Sistema"
     ></v-autocomplete>
 
     <v-autocomplete
       v-model="prediosTipos.tabvalores_segmento_id"
       :items="segmentos"
       label="Selecione um segmento"
-      :item-title="descricao"
-      :item-value="id"
+      item-title="descricao"
+      item-value="id"
       :error-messages="tabvalores_segmento_id.errorMessage.value"
     ></v-autocomplete>
 
@@ -50,15 +50,8 @@ export default {
         tabvalores_segmento_id: undefined,
         icone: undefined,
       },
-      segmentos: [
-
-      ],
-      sistemas: [
-        {
-          descricao: undefined,
-          id: undefined,
-        },
-      ], // Inicialize o items como um array vazio
+      segmentos: [],
+      sistemas: [],
     };
   },
 
@@ -66,33 +59,14 @@ export default {
     returnToMainPage() {
       this.$router.push("/equipamentos-tipos/index");
     },
-    async filterTipos(searchText) {
-      try {
-        const response = await axios.get("http://localhost:3000/PrediosAreas");
-        this.tipos = response.data.filter((tipo) =>
-          tipo.descricao.toLowerCase().includes(searchText.toLowerCase())
-        );
-      } catch (error) {
-        console.error("Erro ao carregar áreas de prédio:", error);
-      }
-    },
-    async filterAreas(searchText) {
-      try {
-        const response = await axios.get("http://localhost:3000/PrediosAreas");
-        this.areas = response.data.filter((area) =>
-          area.descricao.toLowerCase().includes(searchText.toLowerCase())
-        );
-      } catch (error) {
-        console.error("Erro ao carregar áreas de prédio:", error);
-      }
-    },
     async carregarSegmentos() {
       try {
         const response = await axios.get(
-          "http://localhost:3200/listaSegmentos"
+          `${process.env.MANAGEMENT_API_URL}/listaSegmentos`
         );
-        this.segmentos = response.data
-        console.log("vcxvncxn",this.segmentos)
+        const responseData = response.data[0].func_json_segmentos;
+        this.segmentos = responseData;
+        console.log("vcxvncxn", this.segmentos);
       } catch (error) {
         console.error("Erro na chamada de API:", error);
       }
@@ -100,13 +74,10 @@ export default {
 
     async carregarSistemas() {
       try {
-        const response = await axios.get("http://localhost:3200/listaSistemas");
-        this.sistemas = response.data.map((sistema) => ({
-          descricao: sistema.func_json_sistemas.descricao,
-          id: sistema.func_json_sistemas.id,
-        }));
-        console.log(response.data)
-        console.log("asdasd",this.sistemas.descricao)
+        const response = await axios.get(`${process.env.MANAGEMENT_API_URL}/listaSistemas`);
+        const responseData = response.data[0].func_json_sistemas;
+        this.sistemas = responseData;
+        console.log("asdasdas", this.sistemas);
       } catch (error) {
         console.error("Erro na chamada de API:", error);
       }
@@ -114,15 +85,15 @@ export default {
     async submit() {
       const data = {
         descricao: this.prediosTipos.descricao,
-        numero_ocupantes: this.prediosTipos.numero_ocupantes,
-        area: this.prediosTipos.area,
+        icone: this.prediosTipos.icone,
+        sistema_id: this.prediosTipos.sistema_id,
         tabvalores_tipo_ambiente_id:
           this.prediosTipos.tabvalores_tipo_ambiente_id,
       };
 
       try {
         const response = await axios.post(
-          "http://localhost:3200/PrediosAmbiente",
+          `${process.env.MANAGEMENT_API_URL}/PrediosAmbiente`,
           data
         );
         this.$router.push("/home"); // Redirecione para a página principal ou faça qualquer outra ação desejada

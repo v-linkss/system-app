@@ -1,10 +1,9 @@
-
 <script setup>
 import AppBar from "@/layouts/default/AppBar.vue";
 </script>
 
 <template>
-  <AppBar/>
+  <AppBar />
   <div class="btn-pointer" @click="redirectToRegister()">
     <font-awesome-icon :icon="['fas', 'plus']" />
   </div>
@@ -16,7 +15,7 @@ import AppBar from "@/layouts/default/AppBar.vue";
     :footer-props="footerProps"
     density="default"
   >
-  <!-- eslint-disable vue/valid-v-slot -->
+    <!-- eslint-disable vue/valid-v-slot -->
     <template v-slot:item.actions="{ item }">
       <div class="custom-td">
         <div class="btn-pointer" @click="redirectToView(item.id)">
@@ -54,10 +53,6 @@ export default {
       footerProps: [20],
       headers: [
         {
-          title: "ID",
-          value: "id",
-        },
-        {
           title: "Codigo",
           value: "codigo",
         },
@@ -71,11 +66,11 @@ export default {
         },
         {
           title: "Ambiente",
-          value: "predios_ambientes.descricao",
+          value: "ambiente",
         },
         {
-          title: "Modulo",
-          value: "equipamentos_modelo.codigo",
+          title: "Modelo",
+          value: "modelo",
         },
         {
           title: "Ações",
@@ -115,7 +110,7 @@ export default {
       });
     },
     redirectToRegister() {
-      this.$router.push({name:"predios-equipamentos/index/cadastro"});
+      this.$router.push({ name: "predios-equipamentos/index/cadastro" });
     },
     redirectToUpdate(id) {
       this.$router.push({
@@ -129,7 +124,7 @@ export default {
       try {
         item.excluido = !item.excluido;
         await axios.put(
-          `http://localhost:3200/PrediosEquipamentos/excluir/${item.id}`,
+          `${process.env.MANAGEMENT_API_URL}/PrediosEquipamentos/excluir/${item.id}`,
           {
             excluido: item.excluido,
           }
@@ -148,10 +143,14 @@ export default {
     },
   },
   mounted() {
+    const storedToken = JSON.parse(localStorage.getItem("predio"));
+    const data = {
+      predio_token: storedToken.predio_token,
+    };
     axios
-      .get("http://localhost:3200/PrediosEquipamentos")
+      .post(`${process.env.MANAGEMENT_API_URL}/listaEquipamentos`, data)
       .then((response) => {
-        this.predios_equipamentos = response.data;
+        this.predios_equipamentos = response.data[0].func_json_equipamentos;
         console.log(this.predios_equipamentos);
       })
       .catch((error) => {

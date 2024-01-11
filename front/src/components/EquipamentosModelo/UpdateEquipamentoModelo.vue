@@ -30,14 +30,17 @@
     <v-autocomplete
       v-model="modelos.equipamento_tipo_id"
       :items="tipos"
-      :item-title="(tipo) => tipo.descricao"
-      :item-value="(tipo) => tipo.id"
+      item-title="descricao"
+      item-value="id"
       :error-messages="equipamento_tipo_id.errorMessage.value"
       label="Selecione um Tipo"
-      @input="filterTipos"
     ></v-autocomplete>
 
-    <v-checkbox v-model="modelos.entra_pmoc" :error-messages="entra_pmoc.errorMessage.value" label="Incluir no PMOC"></v-checkbox>
+    <v-checkbox
+      v-model="modelos.entra_pmoc"
+      :error-messages="entra_pmoc.errorMessage.value"
+      label="Incluir no PMOC"
+    ></v-checkbox>
 
     <v-btn class="me-4" color="green" @click="submit"> Salvar </v-btn>
     <v-btn class="me-4" color="red" @click="returnToMainPage"> Voltar </v-btn>
@@ -55,14 +58,9 @@ export default {
         entra_pmoc: undefined,
         fabricante: undefined,
         equipamento_tipo_id: undefined,
-        vida_util: undefined
+        vida_util: undefined,
       },
-      tipos: [
-        {
-          descricao: undefined,
-          id: undefined,
-        },
-      ],
+      tipos: [],
     };
   },
 
@@ -70,53 +68,59 @@ export default {
     returnToMainPage() {
       this.$router.push("/equipamentos-modelos/index");
     },
-    async filterTipos(searchText) {
-      try {
-        const response = await axios.get("http://localhost:3200/PrediosAreas");
-        this.tipos = response.data.filter((tipo) =>
-          tipo.descricao.toLowerCase().includes(searchText.toLowerCase())
-        );
-      } catch (error) {
-        console.error("Erro ao carregar áreas de prédio:", error);
-      }
-    },
     async loadTipos() {
+      const storedToken = JSON.parse(localStorage.getItem("predio"));
+      const data = {
+        token_predio: storedToken.predio_token,
+      };
       try {
-        const response = await axios.get("http://localhost:3200/TabValores");
-        this.tipos = response.data.map((tipo) => ({
-          descricao: tipo.descricao,
-          id: tipo.id,
-        }));
-        console.log(response);
+        const response = await axios.post(
+           `${process.env.MANAGEMENT_API_URL}/listaTiposEquipamentos`,
+          data
+        );
+        const responseData = response.data[0].func_json_tiposequipamentos;
+        this.tipos = responseData;
       } catch (error) {
         console.error("Erro ao carregar tipos:", error);
       }
     },
+    async loadPredioModelosDetails() {
+    try {
+      const response = await axios.get(`${process.env.MANAGEMENT_API_URL}/getModeloEquipamentosById/${this.modelos.id}`);
+      // Preencha os campos com os detalhes carregados
+      this.modelos.descricao = response.data.descricao;
+      this.modelos.codigo = response.data.codigo;
+      this.modelos.equipamento_tipo_id = response.data.equipamento_tipo_id;
+      this.modelos.entra_pmoc= response.data.entra_pmoc;
+      this.modelos.fabricante = response.data.fabricante;
+      this.modelos.vida_util = response.data.vida_util;
+
+      console.log("dad",response)
+    } catch (error) {
+      console.error("Erro ao carregar detalhes do prédio_equipamentos:", error);
+    }
+  },
     async submit() {
+      const entra_pmoc = Boolean(this.modelos.entra_pmoc);
       const data = {
         descricao: this.modelos.descricao,
         vida_util: this.modelos.vida_util,
         codigo: this.modelos.codigo,
         fabricante: this.modelos.fabricante,
-        equipamento_tipo_id: this.equipamento_tipo_id,
-        entra_pmoc:this.modelos.entra_pmoc
+        equipamento_tipo_id: this.modelos.equipamento_tipo_id,
+        entra_pmoc:entra_pmoc,
       };
 
       try {
-        const response = await axios.post(
-          "http://localhost:3200/PrediosAmbiente",
+        const response = await axios.put(
+          `${process.env.MANAGEMENT_API_URL}/updateModeloEquipamentos/${this.modelos.id}`,
           data
-        );
-        this.$router.push("/home"); // Redirecione para a página principal ou faça qualquer outra ação desejada
+        ); // Redirecione para a página principal ou faça qualquer outra ação desejada
         if (response.status === 200) {
-          console.log("Resgistro criado com sucesso");
+          this.$router.push("/equipamentos-modelos/index");
         }
       } catch (error) {
         console.error("Erro na criação do registro:", error);
-        console.log(
-          typeof this.predios.predio_area_id,
-          typeof this.predios.tabvalores_tipo_ambiente_id
-        );
       }
     },
     async handleReset() {
@@ -128,7 +132,15 @@ export default {
       this.modelos.entra_pmoc = null;
     },
   },
+  created() {
+    if (this.$route.query.id) {
+      this.modelos.id = this.$route.query.id;
+    } else {
+      console.log("Erro em carregar dados");
+    }
+  },
   mounted() {
+    this.loadPredioModelosDetails();
     this.loadTipos();
   },
 };

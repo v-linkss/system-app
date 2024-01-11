@@ -25,21 +25,21 @@
     <v-autocomplete
       v-model="predios.tabvalores_tipo_ambiente_id"
       :items="tipos"
-      :item-title="(tipo) => tipo.descricao"
-      :item-value="(tipo) => tipo.id"
+      item-title="descricao"
+      item-value="id"
       :error-messages="tabvalores_tipo_ambiente_id.errorMessage.value"
       label="Selecione um Tipo"
-      @input="filterTipos"
+
     ></v-autocomplete>
 
     <v-autocomplete
       v-model="predios.predio_area_id"
       :items="areas"
       label="Selecione uma Área"
-      :item-title="(area) => area.descricao"
-      :item-value="(area) => area.id"
+      item-title="descricao"
+      item-value="id"
       :error-messages="predio_area_id.errorMessage.value"
-      @input="filterAreas"
+
     ></v-autocomplete>
 
     <v-btn class="me-4" color="green" @click="submit"> Salvar </v-btn>
@@ -60,16 +60,10 @@ export default {
         predio_area_id: undefined,
       },
       tipos: [
-        {
-          descricao: undefined,
-          id: undefined,
-        },
+
       ],
       areas: [
-        {
-          descricao: undefined,
-          id: undefined,
-        },
+
       ], // Inicialize o items como um array vazio
     };
   },
@@ -78,72 +72,55 @@ export default {
     returnToMainPage() {
       this.$router.push("/predios-ambientes/index");
     },
-    async filterTipos(searchText) {
-      try {
-        const response = await axios.get("http://localhost:3200/PrediosAreas");
-        this.tipos = response.data.filter((tipo) =>
-          tipo.descricao.toLowerCase().includes(searchText.toLowerCase())
-        );
-      } catch (error) {
-        console.error("Erro ao carregar áreas de prédio:", error);
-      }
-    },
-    async filterAreas(searchText) {
-      try {
-        const response = await axios.get("http://localhost:3200/PrediosAreas");
-        this.areas = response.data.filter((area) =>
-          area.descricao.toLowerCase().includes(searchText.toLowerCase())
-        );
-      } catch (error) {
-        console.error("Erro ao carregar áreas de prédio:", error);
-      }
-    },
     async loadTipos() {
       try {
-        const response = await axios.get("http://localhost:3200/TabValores");
-        this.tipos = response.data.map((tipo) => ({
-          descricao: tipo.descricao,
-          id: tipo.id,
-        }));
-        console.log(response);
+        const response = await axios.get(`${process.env.MANAGEMENT_API_URL}/listaTiposAmbientes`);
+        const responseData = response.data[0].func_json_tiposambientes
+        this.tipos = responseData
       } catch (error) {
         console.error("Erro ao carregar tipos:", error);
       }
     },
     async loadAreas() {
+      const storedToken = JSON.parse(localStorage.getItem("predio"))
+      const data = {
+       predio_token:storedToken.predio_token
+      }
       try {
-        const response = await axios.get("http://localhost:3200/PrediosAreas");
-        this.areas = response.data.map((area) => ({
-          descricao: area.descricao,
-          id: area.id,
-        }));
+        const response = await axios.post(`${process.env.MANAGEMENT_API_URL}/listaAreasAmbientes`,data);
+        const responseData = response.data[0].func_json_areas
+        this.areas = responseData
+        console.log(this.areas)
       } catch (error) {
         console.error("Erro ao carregar áreas:", error);
       }
     },
     async submit() {
+      const storedIdPredio= JSON.parse(localStorage.getItem("predio"))
+      const storedIdUser= JSON.parse(localStorage.getItem("user"))
       const data = {
         descricao: this.predios.descricao,
         numero_ocupantes: this.predios.numero_ocupantes,
         area: this.predios.area,
         tabvalores_tipo_ambiente_id: this.predios.tabvalores_tipo_ambiente_id,
         predio_area_id: this.predios.predio_area_id,
+        predio_id:storedIdPredio.predio_id,
+        user_created:storedIdUser.id
       };
 
       try {
         const response = await axios.post(
-          "http://localhost:3200/PrediosAmbiente",
+          `${process.env.MANAGEMENT_API_URL}/PrediosAmbienteCadastro`,
           data
         );
-        this.$router.push("/home"); // Redirecione para a página principal ou faça qualquer outra ação desejada
+        this.$router.push("/predios-ambientes/index"); // Redirecione para a página principal ou faça qualquer outra ação desejada
         if (response.status === 200) {
           console.log("Resgistro criado com sucesso");
         }
       } catch (error) {
         console.error("Erro na criação do registro:", error);
         console.log(
-          typeof this.predios.predio_area_id,
-          typeof this.predios.tabvalores_tipo_ambiente_id
+          typeof this.data,
         );
       }
     },

@@ -1,7 +1,7 @@
 
 <template>
   <AppBar/>
-  <h1>Ambientes</h1>
+  <h1>Modelos</h1>
   <div class="arrow" @click="returnToMainPage">
     <font-awesome-icon :icon="['fas', 'arrow-left']" size="2xl" />
   </div>
@@ -24,32 +24,19 @@
 
         <v-col>
           <v-sheet class="pa-2 ma-2">
-            Tipo: {{ dados.tabelas_valores.descricao }}
+            Vida Util: {{ dados.vida_util }}
           </v-sheet>
         </v-col>
 
         <v-col>
           <v-sheet class="pa-2 ma-2"
-            >Area:
+            >Fabricante:
             {{
-              dados.predio_area_id ? dados.predios_areas.descricao : "N/A"
+              dados.fabricante
             }}</v-sheet
           >
         </v-col>
 
-        <v-responsive width="100%"></v-responsive>
-
-        <v-col>
-          <v-sheet class="pa-2 ma-2">
-            Predio_id: {{ dados.predio_id }}
-          </v-sheet>
-        </v-col>
-
-        <v-col>
-          <v-sheet class="pa-2 ma-2">
-            Numero Ocupantes: {{ dados.numero_ocupantes }}
-          </v-sheet>
-        </v-col>
       </v-row>
     </v-container>
   </div>
@@ -67,11 +54,11 @@ export default {
     },
     methods: {
         returnToMainPage() {
-            this.$router.push("/home");
+            this.$router.push("/equipamentos-modelos/index");
         },
         async loadPredios() {
             try {
-                const response = await axios.get(`http://localhost:3200/PrediosAmbiente/${this.dados.id}`);
+                const response = await axios.get(`${process.env.MANAGEMENT_API_URL}/getModeloEquipamentosById/${this.dados.id}`);
                 this.dados = response.data;
             }
             catch (error) {

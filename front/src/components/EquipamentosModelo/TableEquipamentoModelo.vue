@@ -48,18 +48,18 @@ export default {
   },
   data() {
     return {
-      predios_equipamentos: [],
+      equipamentos_modelos: [],
       searchQuery: "",
       itemsPerPage: [20],
       footerProps: [20],
       headers: [
         {
           title: "Codigo",
-          value: "codigo",
+          value: "id",
         },
         {
           title: "Descrição",
-          value: "patrimonio",
+          value: "descricao",
         },
         {
           title: "Tipo",
@@ -67,7 +67,7 @@ export default {
         },
         {
           title: "Fabricante",
-          value: "predios_ambientes.descricao",
+          value: "fabricante",
         },
         {
           title: "Ações",
@@ -80,7 +80,7 @@ export default {
     filteredPrediosEquipamentos() {
       const query = this.searchQuery.toLowerCase().trim();
 
-      const filteredItems = this.predios_equipamentos.filter((item) => {
+      const filteredItems = this.equipamentos_modelos.filter((item) => {
         const descricao = item.descricao.toLowerCase();
         const prediosAreasDescricao = item.predios_areas
           ? item.predios_areas.descricao.toLowerCase()
@@ -121,7 +121,7 @@ export default {
       try {
         item.excluido = !item.excluido;
         await axios.put(
-          `http://localhost:3200/PrediosEquipamentos/excluir/${item.id}`,
+          ` ${process.env.MANAGEMENT_API_URL}/deleteModeloEquipamentos/${item.id}`,
           {
             excluido: item.excluido,
           }
@@ -140,11 +140,14 @@ export default {
     },
   },
   mounted() {
+    const storedToken = JSON.parse(localStorage.getItem("predio"))
+      const data = {
+       token_predio:storedToken.predio_token
+      }
     axios
-      .get("http://localhost:3200/PrediosEquipamentos")
+      .post( `${process.env.MANAGEMENT_API_URL}/listaModeloEquipamentos`,data)
       .then((response) => {
-        this.predios_equipamentos = response.data;
-        console.log(this.predios_equipamentos);
+        this.equipamentos_modelos = response.data[0].func_json_modelos_equipamentos;
       })
       .catch((error) => {
         console.error("Erro na chamada de API:", error);

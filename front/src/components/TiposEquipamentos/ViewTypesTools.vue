@@ -21,7 +21,7 @@
 
         <v-responsive width="100%"></v-responsive>
 
-        <v-col>
+        <!-- <v-col>
           <v-sheet class="pa-2 ma-2">
             Tipo: {{ dados.tabelas_valores.descricao }}
           </v-sheet>
@@ -34,21 +34,7 @@
               dados.predio_area_id ? dados.predios_areas.descricao : "N/A"
             }}</v-sheet
           >
-        </v-col>
-
-        <v-responsive width="100%"></v-responsive>
-
-        <v-col>
-          <v-sheet class="pa-2 ma-2">
-            Predio_id: {{ dados.predio_id }}
-          </v-sheet>
-        </v-col>
-
-        <v-col>
-          <v-sheet class="pa-2 ma-2">
-            Numero Ocupantes: {{ dados.numero_ocupantes }}
-          </v-sheet>
-        </v-col>
+        </v-col> -->
       </v-row>
     </v-container>
   </div>
@@ -70,7 +56,7 @@ export default {
     async loadPredios() {
       try {
         const response = await axios.get(
-          `http://localhost:3000/PrediosAmbiente/${this.dados.id}`
+          `${process.env.MANAGEMENT_API_URL}/getEquipamentosById/${this.dados.id}`
         );
         this.dados = response.data;
       } catch (error) {

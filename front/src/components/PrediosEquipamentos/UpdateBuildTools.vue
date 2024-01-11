@@ -57,35 +57,34 @@
     <v-autocomplete
       v-model="predios_equipamentos.modelo_id"
       :items="modelos"
-      :item-title="(modelo) => modelo.descricao"
-      :item-value="(modelo) => modelo.id"
+      item-title="descricao"
+      item-value="id"
       :error-messages="modelo_id.errorMessage.value"
       label="Selecione um Modelo"
-      @input="filterModelos"
+
     ></v-autocomplete>
 
     <v-autocomplete
       v-model="predios_equipamentos.predio_ambiente_id"
       :items="ambientes"
-      :item-title="(ambiente) => ambiente.descricao"
-      :item-value="(ambiente) => ambiente.id"
+      item-title="descricao"
+      item-value="id"
       :error-messages="predio_ambiente_id.errorMessage.value"
       label="Selecione um Ambiente"
-      @input="filterAmbientes"
     ></v-autocomplete>
 
     <v-autocomplete
       v-model="predios_equipamentos.user_gestor"
       :items="users"
       label="Selecione um Gestor"
-      :item-title="(item) => item.nome"
-      :item-value="(item) => item.id"
+      item-title="nome"
+      item-value="id"
       :error-messages="user_gestor.errorMessage.value"
-      @input="filterUsers"
+
     ></v-autocomplete>
 
-    <v-btn class="me-4" @click="updatePrediosEquipamento"> Alterar </v-btn>
-
+    <v-btn class="me-4" color="green" @click="updatePrediosEquipamento"> Alterar </v-btn>
+    <v-btn class="me-4" color="red" @click="returnToTableTools"> Voltar </v-btn>
     <v-btn @click="handleReset"> Limpar </v-btn>
   </form>
 </template>
@@ -108,103 +107,63 @@ export default {
         user_gestor:undefined,
       },
       ambientes: [
-        {
-          id: undefined,
-          descricao: undefined,
-        },
+
       ],
       modelos: [
-        {
-          id: undefined,
-          descricao: undefined,
-        },
+
       ],
       users:[
-        {
-          id:undefined,
-          nome:undefined,
-        }
+
       ]
     };
   },
 
   methods: {
     returnToTableTools() {
-      this.$router.push("/tabletools");
-    },
-    async filterAmbientes(searchText) {
-      try {
-        const response = await axios.get(
-          "http://localhost:3000/PrediosEquipamentosAmb"
-        );
-        this.ambientes = response.data.filter((ambientes) =>
-          ambientes.descricao.toLowerCase().includes(searchText.toLowerCase())
-        );
-      } catch (error) {
-        console.error("Erro ao carregar áreas de prédio:", error);
-      }
-    },
-    async filterModelos(searchText) {
-      try {
-        const response = await axios.get(
-          "http://localhost:3000/PrediosEquipamentosMod"
-        );
-        this.modelos = response.data.filter((modelo) =>
-          modelo.descricao.toLowerCase().includes(searchText.toLowerCase())
-        );
-      } catch (error) {
-        console.error("Erro ao carregar áreas de prédio:", error);
-      }
-    },
-    async filterUsers(searchText) {
-      try {
-        const response = await axios.get(
-          "http://localhost:3000/PrediosEquipamentosUser"
-        );
-        this.users = response.data.filter((user) =>
-          user.nome.toLowerCase().includes(searchText.toLowerCase())
-        );
-      } catch (error) {
-        console.error("Erro ao carregar áreas de prédio:", error);
-      }
+      this.$router.push("/predios-equipamentos/index");
     },
     async loadAmbientes() {
+      const storedToken = JSON.parse(localStorage.getItem("predio"))
+      const data = {
+       predio_token:storedToken.predio_token
+      }
       try {
-        const response = await axios.get(
-          "http://localhost:3000/PrediosEquipamentosAmb"
+        const response = await axios.post(
+          `${process.env.MANAGEMENT_API_URL}/listaAmbientes`,data
         );
-        this.ambientes = response.data.map((ambiente) => ({
-          descricao: ambiente.descricao,
-          id: ambiente.id,
-        }));
+        const responseData = response.data[0].func_json_ambientes
+        this.ambientes = responseData
         console.log(response)
       } catch (error) {
         console.error("Erro ao carregar tipos:", error);
       }
     },
     async loadModelos() {
+      const storedToken = JSON.parse(localStorage.getItem("predio"))
+      const data = {
+       token_predio:storedToken.predio_token
+      }
       try {
-        const response = await axios.get(
-          "http://localhost:3000/PrediosEquipamentosMod"
+        const response = await axios.post(
+          `${process.env.MANAGEMENT_API_URL}/listaModeloEquipamentos`,data
         );
-        this.modelos = response.data.map((modelo) => ({
-          descricao: modelo.descricao,
-          id: modelo.id,
-        }));
+        const responseData = response.data[0].func_json_modelos_equipamentos
+        this.modelos = responseData
       } catch (error) {
         console.error("Erro ao carregar áreas:", error);
       }
     },
     async loadUsers() {
+      const storedToken = JSON.parse(localStorage.getItem("predio"))
+      const data = {
+       predio_token:storedToken.predio_token
+      }
       try {
-        const response = await axios.get(
-          "http://localhost:3000/PrediosEquipamentosUser"
+        const response = await axios.post(
+          `${process.env.MANAGEMENT_API_URL}/PrediosEquipamentosGestores`,data
         );
-        this.users = response.data.map((item) => ({
-          nome: item.users.nome,
-          id: item.users.id,
-        }));
-        console.log(response)
+        const responseData = response.data[0].func_json_gestores
+        this.users = responseData
       } catch (error) {
         console.error("Erro ao carregar áreas:", error);
       }
@@ -226,12 +185,13 @@ export default {
 
       try {
         const response = await axios.put(
-         `http://localhost:3000/PrediosEquipamentos/${this.predios_equipamentos.id}`,
+         `${process.env.MANAGEMENT_API_URL}/PrediosEquipamentosAtualizar/${this.predios_equipamentos.id}`,
           data
         );
-        this.$router.push("/tabletools"); // Redirecione para a página principal ou faça qualquer outra ação desejada
-        if (response.status === 200) {
+        console.log(response)
+        if (response.status === 201) {
           console.log("Resgistro criado com sucesso");
+          this.$router.push("/predios-equipamentos/index");
         }
       } catch (error) {
         console.error("Erro na criação do registro:", error);
@@ -244,7 +204,7 @@ export default {
     },
     async loadPredioEquipamentosDetails() {
     try {
-      const response = await axios.get(`http://localhost:3000/PrediosEquipamentos/${this.predios_equipamentos.id}`);
+      const response = await axios.get(`${process.env.MANAGEMENT_API_URL}/PrediosEquipamentos/${this.predios_equipamentos.id}`);
       // Preencha os campos com os detalhes carregados
       this.predios_equipamentos.descricao = response.data.descricao;
       this.predios_equipamentos.codigo = response.data.codigo;
@@ -257,7 +217,7 @@ export default {
       this.predios_equipamentos.user_gestor = response.data.user_gestor;
       this.predios_equipamentos.data_operacao = response.data.data_operacao;
       this.predios_equipamentos.patrimonio = response.data.patrimonio
-      console.log(response)
+
     } catch (error) {
       console.error("Erro ao carregar detalhes do prédio_equipamentos:", error);
     }

@@ -67,11 +67,11 @@ export default {
     },
     methods: {
         returnToMainPage() {
-            this.$router.push("/home");
+            this.$router.push("/predios-ambientes/index");
         },
         async loadPredios() {
             try {
-                const response = await axios.get(`http://localhost:3200/PrediosAmbiente/${this.dados.id}`);
+                const response = await axios.get(`${process.env.MANAGEMENT_API_URL}/PrediosAmbiente/${this.dados.id}`);
                 this.dados = response.data;
             }
             catch (error) {

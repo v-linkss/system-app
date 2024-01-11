@@ -53,7 +53,7 @@ export default {
       footerProps: [20],
       headers: [
         {
-          title: "ID",
+          title: "Código",
           value: "id",
         },
         {
@@ -62,11 +62,7 @@ export default {
         },
         {
           title: "Area",
-          value: "predios_areas.descricao",
-        },
-        {
-          title: "Tipo",
-          value: "tabelas_valores.descricao",
+          value: "area",
         },
         {
           title: "Ações",
@@ -117,10 +113,11 @@ export default {
       });
     },
     async toggleExclusion(item) {
+
       try {
         item.excluido = !item.excluido;
         await axios.put(
-          `http://localhost:3200/PrediosAmbiente/excluir/${item.id}`,
+          `${process.env.MANAGEMENT_API_URL}/PrediosAmbiente/excluir/${item.id}`,
           {
             excluido: item.excluido,
           }
@@ -139,11 +136,14 @@ export default {
     },
   },
   mounted() {
+    const storedToken = JSON.parse(localStorage.getItem("predio"))
+      const data = {
+       predio_token:storedToken.predio_token
+      }
     axios
-      .get("http://localhost:3200/PrediosAmbiente")
+      .post(`${process.env.MANAGEMENT_API_URL}/listaAmbientes`,data)
       .then((response) => {
-        this.predios_ambientes = response.data;
-        console.log(this.predios_ambientes);
+        this.predios_ambientes = response.data[0].func_json_ambientes;
       })
       .catch((error) => {
         console.error("Erro na chamada de API:", error);
