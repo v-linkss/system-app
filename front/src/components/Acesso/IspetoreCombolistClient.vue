@@ -61,7 +61,6 @@ export default {
         const combo = JSON.parse(comboSalvo);
 
         this.comboLocalStorage = combo
-        console.log("Combo carregado do localStorage:",this.comboLocalStorage);
       }
     },
   },

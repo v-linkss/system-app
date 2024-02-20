@@ -8,6 +8,7 @@ export default createStore({
     menu: null,
     predio:null,
     combo:null,
+    relatorio:null,
     equipamento:null
   },
   mutations: {
@@ -26,6 +27,10 @@ export default createStore({
     setMenu(state, menu) {
       state.menu = menu;
       localStorage.setItem("menu", JSON.stringify(menu));
+    },
+    setRelatorio(state, relatorio) {
+      state.relatorio = relatorio;
+      localStorage.setItem("relatorio", JSON.stringify(relatorio));
     },
     setEquipamento(state, equipamento) {
       state.equipamento = equipamento;
@@ -78,6 +83,25 @@ export default createStore({
         console.log(error);
       }
     },
+    async listarRelatorios({ commit }) {
+      const storedTokenUser = JSON.parse(localStorage.getItem("user"))
+      const storedTokenPredio = JSON.parse(localStorage.getItem("predio"))
+      const data = {
+        user_token:storedTokenUser.token,
+        predio_token:storedTokenPredio.predio_token
+      }
+      try {
+        const response = await axios.post(
+          `${process.env.MANAGEMENT_API_URL}/relatoriosCombolist`,
+          data
+        );
+        const responseData = response.data;
+        console.log(response)
+        commit("setRelatorio", responseData[0].func_json_relatorios_v2);
+      } catch (error) {
+        console.log(error);
+      }
+    },
   },
   getters: {
     user(state) {
@@ -85,6 +109,9 @@ export default createStore({
     },
     menu(state) {
       return state.menu;
+    },
+    relatorio(state) {
+      return state.relatorio;
     },
     prediosState(state) {
       return state.predio;

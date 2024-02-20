@@ -58,7 +58,9 @@
           :key="item"
           :value="menu.url"
         >
+        <router-link class="router-link" :to="`/${menu.url}`" target="_blank">
           <v-list-item-title>{{ item }}</v-list-item-title>
+        </router-link>
         </v-list-item>
       </v-list>
     </v-menu>

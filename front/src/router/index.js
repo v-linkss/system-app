@@ -117,41 +117,15 @@ const routes = [
         name: 'equipamentos-modelos/index/vizualizar',
         component: () => import('@/views/EquipamentosModelo/ViewModelo.vue'),
       },
+      //Relatorios
+      {
+        path: 'relatorios/index',
+        name: 'relatorios/index',
+        component: () => import('@/views/Relatorios/Relatorios.vue'),
+      },
     ],
   },
 ]
-
-// {
-//   path: "/",
-//   redirect: { path: "/login" }, // redirect property
-//   component: () => import('@/layouts/default/Default.vue'),
-//   children: [
-//     {path:"/login",
-//     name:"Login",
-//     component: () => import('@/views/Login.vue')},
-//     //Areas
-//     {
-//       path: '/home',
-//       name: 'Home',
-//       component: () => import('@/views/PrediosAmbientes/AreasHome.vue'),
-//     },
-//     {
-//       path: 'register',
-//       name: 'Register',
-//       component: () => import( '@/views/PrediosAmbientes/AreasRegister.vue'),
-//     },
-//     {
-//       path: 'update',
-//       name: 'Update',
-//       component: () => import( '@/views/PrediosAmbientes/AreasUpdate.vue'),
-//     },
-//     {
-//       path: 'view',
-//       name: 'View',
-//       component: () => import( '@/views/PrediosAmbientes/AreasView.vue'),
-//     },
-//   ]
-// }
 const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
   routes,
