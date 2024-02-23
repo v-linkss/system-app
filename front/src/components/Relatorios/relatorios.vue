@@ -20,7 +20,7 @@
           cols="12"
           md="6"
         >
-          {{ parametro.label }}:
+        {{ index }} {{ comboSelecao[index] }} {{ parametro.label }}
           <v-text-field
             v-if="parametro.tipo === 'DATE'"
             v-model="parametro.valor"
@@ -46,17 +46,17 @@
             v-model="parametro.valor"
             outlined
           ></v-text-field>
+
           <v-autocomplete
-            v-if="parametro.tipo === 'TABLE'"
-            :items="comboSelecao"
-            item-title="chave"
-            item-value="valor"
+            v-if="parametro.tipo === 'ARRAY'"
             v-model="parametro.valor"
             outlined
           ></v-autocomplete>
           <v-autocomplete
-            v-if="parametro.tipo === 'ARRAY'"
-            v-model="parametro.valor"
+            v-if="parametro.tipo === 'TABLE' && parametro.dominio !== null"
+            :items="comboSelecao[1]?.resultado[0].func_json_consulta "
+            item-title="chave"
+            item-value="valor"
             outlined
           ></v-autocomplete>
         </v-col>
@@ -81,6 +81,7 @@ export default {
   created() {
     this.combolistRelatorios();
   },
+
   methods: {
     async combolistRelatorios() {
       this.$store.dispatch("listarRelatorios");
@@ -98,8 +99,8 @@ export default {
           `${process.env.MANAGEMENT_API_URL}/relatoriosQuery`,
           relatorio
         );
-        this.comboSelecao = response.data[0].resultado[0].func_json_consulta;
-        console.log(this.comboSelecao);
+        this.comboSelecao = response.data;
+        console.log(this.parametrosArray);
       } else {
         this.parametrosArray = [];
       }
