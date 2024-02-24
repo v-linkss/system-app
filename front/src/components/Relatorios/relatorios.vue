@@ -20,7 +20,8 @@
           cols="12"
           md="6"
         >
-        {{ index }} {{ comboSelecao[index] }} {{ parametro.label }}
+          {{ index }} {{ parametro.tipo === 'TABLE' &&
+              parametro.dominio !== null &&  comboSelecao.filter(item => item.tipo === 'TABLE').length > 0}} {{ parametro.label }}
           <v-text-field
             v-if="parametro.tipo === 'DATE'"
             v-model="parametro.valor"
@@ -53,8 +54,12 @@
             outlined
           ></v-autocomplete>
           <v-autocomplete
-            v-if="parametro.tipo === 'TABLE' && parametro.dominio !== null"
-            :items="comboSelecao[1]?.resultado[0].func_json_consulta "
+            v-if="
+              parametro.tipo === 'TABLE' &&
+              comboSelecao[index]?.tipo === 'TABLE'
+            "
+            :key="index"
+            :items="comboSelecao[index]?.resultado[0].func_json_consulta"
             item-title="chave"
             item-value="valor"
             outlined
@@ -99,8 +104,10 @@ export default {
           `${process.env.MANAGEMENT_API_URL}/relatoriosQuery`,
           relatorio
         );
-        this.comboSelecao = response.data;
-        console.log(this.parametrosArray);
+        this.comboSelecao = response.data
+        console.log(this.parametrosArray)
+        console.log(this.comboSelecao)
+
       } else {
         this.parametrosArray = [];
       }
