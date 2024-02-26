@@ -23,4 +23,11 @@ export default createVuetify({
       },
     },
   },
+  components:{
+    VAutocomplete: {
+      noDataText: 'Não há dados correspondentes',
+      density: 'compact',
+      hideDetails: true
+    },
+  }
 })
