@@ -13,7 +13,7 @@
         :items="comboLocalStorage"
         item-title="predio_descricao"
         item-value="predio_token"
-        @keyup.enter="trocarCliente"
+       @update:search="trocarCliente"
       ></v-autocomplete>
       <h4 v-else>{{ usuarioLocalStorage.predios[0].predio_descricao }}</h4>
     </div>
