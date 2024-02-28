@@ -8,7 +8,7 @@
       item-title="codigo"
       item-value="codigo"
       v-model="selectedRelatorio"
-      :change="montarPainelFiltros()"
+      @update:search="montarPainelFiltros()"
       variant="outlined"
     ></v-autocomplete>
 
@@ -88,12 +88,19 @@ export default {
     parametrosArray: [],
     relatorioLink: [],
     comboSelecao: [],
+    previousSelectedRelatorio: null,
   }),
   created() {
     this.combolistRelatorios();
   },
 
   methods: {
+    async onChangeSelectedRelatorio() {
+      if (this.selectedRelatorio !== this.previousSelectedRelatorio) {
+        await this.montarPainelFiltros();
+        this.previousSelectedRelatorio = this.selectedRelatorio;
+      }
+    },
     async combolistRelatorios() {
       this.$store.dispatch("listarRelatorios");
       const relatorioDados = localStorage.getItem("relatorio");
@@ -104,6 +111,7 @@ export default {
       const relatorio = this.relatoriosLocalStorage.find(
         (item) => item.codigo === this.selectedRelatorio
       );
+      console.log(this.selectedRelatorio)
       if (relatorio) {
         this.parametrosArray = [...relatorio.parametros];
         this.parametrosArray.forEach((parametro) => {
