@@ -29,8 +29,10 @@ export default defineConfig({
       },
     }),
   ],
-  define: { 'process.env': {AUTH_API_URL: 'http://localhost:3333',MANAGEMENT_API_URL: 'http://localhost:3200'} },
-  resolve: {
+//  define: { 'process.env': {AUTH_API_URL: 'http://localhost:3333',MANAGEMENT_API_URL: 'http://localhost:3200'} },
+  define: { 'process.env': {AUTH_API_URL: 'http://http://45.55.192.246/:3333',MANAGEMENT_API_URL: 'http://http://45.55.192.246/:3200'} },
+  
+resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url))
     },
