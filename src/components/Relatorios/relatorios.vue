@@ -110,7 +110,7 @@ export default {
           parametro.valor = "";
         });
         const response = await axios.post(
-          `${process.env.MANAGEMENT_API_URL}/relatoriosQuery`,
+          `${process.env.MANAGEMENT_API_URL}/relatorios_query`,
           relatorio
         );
         this.comboSelecao = response.data;
@@ -129,7 +129,7 @@ export default {
       });
       console.log(relatorio.parametros_url);
       const response = await axios.post(
-        `${process.env.MANAGEMENT_API_URL}/gerarRelatorios`,
+        `${process.env.MANAGEMENT_API_URL}/gerar_url`,
         relatorio.parametros_url
       );
       this.relatorioLink = response.data;

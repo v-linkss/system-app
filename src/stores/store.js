@@ -92,7 +92,7 @@ export default createStore({
       }
       try {
         const response = await axios.post(
-          `${process.env.MANAGEMENT_API_URL}/relatoriosCombolist`,
+          `${process.env.MANAGEMENT_API_URL}/relatorios_combolist`,
           data
         );
         const responseData = response.data;
