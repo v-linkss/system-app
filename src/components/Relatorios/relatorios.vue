@@ -31,20 +31,20 @@
         <v-text-field
           v-mask="'####'"
           v-if="parametro.tipo === 'INTEGER'"
-          v-model="parametro.parametro"
+          v-model="parametro.valor"
           type="number"
           outlined
         ></v-text-field>
         <v-text-field
           v-mask="'###.##'"
           v-if="parametro.tipo === 'NUMERIC'"
-          v-model="parametro.parametro"
+          v-model="parametro.valor"
           type="number"
           outlined
         ></v-text-field>
         <v-text-field
           v-if="parametro.tipo === 'TEXT'"
-          v-model="parametro.parametro"
+          v-model="parametro.valor"
           outlined
         ></v-text-field>
 
@@ -53,7 +53,7 @@
           :items="JSON.parse(parametro.dominio)"
           item-title="chave"
           item-value="valor"
-          v-model="parametro.parametro"
+          v-model="parametro.valor"
           outlined
         ></v-autocomplete>
         <v-autocomplete
@@ -111,15 +111,24 @@ export default {
       const relatorio = this.relatoriosLocalStorage.find(
         (item) => item.codigo === this.selectedRelatorio
       );
-      console.log(this.selectedRelatorio)
       if (relatorio) {
         this.parametrosArray = [...relatorio.parametros];
         this.parametrosArray.forEach((parametro) => {
           parametro.valor = "";
         });
+        const user = JSON.parse(localStorage.getItem("user"));
+        const predio = JSON.parse(localStorage.getItem("predio"));
+        const data = {
+          prédioToken: predio.predio_token,
+          prédioId: predio.predio_id,
+          userToken: user.token,
+          userId: user.id,
+          parametros: relatorio.parametros,
+        };
+        console.log(data)
         const response = await axios.post(
           `${process.env.MANAGEMENT_API_URL}/relatorios_query`,
-          relatorio
+          data
         );
         this.comboSelecao = response.data;
       } else {

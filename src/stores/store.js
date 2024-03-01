@@ -59,8 +59,6 @@ export default createStore({
           data
         );
         const responseData = response.data;
-        console.log(response)
-        console.log(responseData)
         commit("setMenu", responseData[0].func_menu[0].menu);
       } catch (error) {
         console.log(error);
@@ -77,7 +75,6 @@ export default createStore({
           data
         );
         const responseData = response.data;
-        console.log(response)
         commit("setEquipamento", responseData[0].func_json_equipamentos);
       } catch (error) {
         console.log(error);
@@ -96,7 +93,6 @@ export default createStore({
           data
         );
         const responseData = response.data;
-        console.log(response)
         commit("setRelatorio", responseData[0].func_json_relatorios_v2);
       } catch (error) {
         console.log(error);
