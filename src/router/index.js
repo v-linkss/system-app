@@ -123,6 +123,33 @@ const routes = [
         name: 'relatorios/index',
         component: () => import('@/views/Relatorios/Relatorios.vue'),
       },
+      //Lotes
+      {
+        path: 'pi-lotes-receitas/index',
+        name: 'pi-lotes-receitas/index',
+        component: () => import('@/views/Lotes/LotesTable.vue'),
+      },
+      {
+        path: 'pi-lotes-receitas/index/cadastro',
+        name: 'pi-lotes-receitas/index/cadastro',
+        component: () => import('@/views/Lotes/LotesRegister.vue'),
+      },
+      {
+        path: 'pi-lotes-receitas/index/atualizar',
+        name: 'pi-lotes-receitas/index/atualizar',
+        component: () => import('@/views/Lotes/LotesUpdate.vue'),
+      },
+      {
+        path: 'pi-lotes-receitas/index/vizualizar',
+        name: 'pi-lotes-receitas/index/vizualizar',
+        component: () => import('@/views/Lotes/LotesView.vue'),
+      },
+      //Gerar-titulos
+      {
+        path: 'gestao-perimetros/titulos',
+        name: 'gestao-perimetros/titulos',
+        component: () => import('@/views/GerarTitulos/GerarTitulosHome.vue'),
+      },
     ],
   },
 ]
