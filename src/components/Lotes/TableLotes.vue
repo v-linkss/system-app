@@ -143,8 +143,12 @@ export default {
     },
   },
   mounted() {
+    const storedToken = JSON.parse(localStorage.getItem("predio"))
+        const data = {
+         predio_id:storedToken.predio_id
+        }
     axios
-      .post(`${process.env.MANAGEMENT_API_URL}/loteLista`)
+      .post(`${process.env.MANAGEMENT_API_URL}/listaLotesReceita`,data)
       .then((response) => {
         this.lotes = response.data;
         console.log('ASDA',this.lotes);

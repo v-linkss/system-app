@@ -35,7 +35,7 @@ import AppBar from "@/layouts/default/AppBar.vue";
     <!-- eslint-disable vue/valid-v-slot -->
     <template v-slot:item.actions="{ item }">
       <div class="custom-td">
-        <v-checkbox label="Checkbox" @click="item"></v-checkbox>
+        <v-checkbox @click="item"></v-checkbox>
       </div>
     </template>
   </v-data-table>
@@ -164,8 +164,12 @@ export default {
   },
   mounted() {
     this.loadLotes();
+    const storedToken = JSON.parse(localStorage.getItem("predio"))
+        const data = {
+         predio_id:storedToken.predio_id
+        }
     axios
-      .post(`${process.env.MANAGEMENT_API_URL}/loteLista`)
+      .post(`${process.env.MANAGEMENT_API_URL}/listaLotesReceita`,data)
       .then((response) => {
         this.lotes = response.data;
         console.log("ASDA", this.lotes);
