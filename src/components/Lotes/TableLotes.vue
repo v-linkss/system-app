@@ -10,7 +10,7 @@ import AppBar from "@/layouts/default/AppBar.vue";
   <v-data-table
     :headers="headers"
     :search="searchQuery"
-    :items="filteredPrediosEquipamentos"
+    :items="lotes"
     :rows-per-page-items="itemsPerPage"
     :footer-props="footerProps"
     density="default"
@@ -47,30 +47,30 @@ export default {
   },
   data() {
     return {
-      predios_equipamentos: [],
+      lotes: [],
       searchQuery: "",
       itemsPerPage: [20],
       footerProps: [20],
       headers: [
         {
           title: "Data",
-          value: "codigo",
+          value: "data",
         },
         {
           title: "Lote",
-          value: "patrimonio",
+          value: "lote",
         },
         {
           title: "Conta",
-          value: "descricao",
+          value: "conta",
         },
         {
           title: "Valor",
-          value: "ambiente",
+          value: "valor",
         },
         {
           title: "Cobrar/Devolver",
-          value: "modelo",
+          value: "cobrar",
         },
         {
           title: "Ações",
@@ -80,11 +80,11 @@ export default {
     };
   },
   computed: {
-    filteredPrediosEquipamentos() {
+    filteredLotes() {
       const query = this.searchQuery.toLowerCase().trim();
 
-      const filteredItems = this.predios_equipamentos.filter((item) => {
-        const descricao = item.descricao.toLowerCase();
+      const filteredItems = this.lotes.filter((item) => {
+        const descricao = item.lote.toLowerCase();
         const prediosAreasDescricao = item.predios_areas
           ? item.predios_areas.descricao.toLowerCase()
           : "";
@@ -103,18 +103,18 @@ export default {
   methods: {
     redirectToView(id) {
       this.$router.push({
-        name: "predios-equipamentos/index/vizualizar",
+        name: "pi-lotes-receitas/index/vizualizar",
         query: {
           id,
         },
       });
     },
     redirectToRegister() {
-      this.$router.push({ name: "predios-equipamentos/index/cadastro" });
+      this.$router.push({ name: "pi-lotes-receitas/index/cadastro" });
     },
     redirectToUpdate(id) {
       this.$router.push({
-        name: "predios-equipamentos/index/atualizar",
+        name: "pi-lotes-receitas/index/atualizar",
         query: {
           id,
         },
@@ -143,22 +143,17 @@ export default {
     },
   },
   mounted() {
-    const storedToken = JSON.parse(localStorage.getItem("predio"));
-    const data = {
-      predio_token: storedToken.predio_token,
-    };
     axios
-      .post(`${process.env.MANAGEMENT_API_URL}/listaEquipamentos`, data)
+      .post(`${process.env.MANAGEMENT_API_URL}/loteLista`)
       .then((response) => {
-        this.predios_equipamentos = response.data[0].func_json_equipamentos;
-        console.log(this.predios_equipamentos);
+        this.lotes = response.data;
+        console.log('ASDA',this.lotes);
       })
       .catch((error) => {
         console.error("Erro na chamada de API:", error);
       });
     // Recarrega o valor do campo de pesquisa do localStorage
     const searchQuery = localStorage.getItem("searchQuery");
-    console.log("Valor carregado do localStorage:", searchQuery); // Imprime no console
     this.searchQuery = searchQuery || "";
   },
 };

@@ -10,7 +10,7 @@
 
       <v-autocomplete
         v-model="pi_lotes_receitas.lote_id"
-        :items="users"
+        :items="lotes"
         label="Selecione um lote"
         item-title="nome"
         item-value="id"
@@ -19,9 +19,9 @@
 
       <v-autocomplete
         v-model="pi_lotes_receitas.conta_id"
-        :items="users"
+        :items="contas"
         label="Selecione uma Conta"
-        item-title="nome"
+        item-title="descricao"
         item-value="id"
         :error-messages="conta_id.errorMessage.value"
       ></v-autocomplete>
@@ -35,7 +35,7 @@
 
       <v-autocomplete
         v-model="pi_lotes_receitas.equipamento_id"
-        :items="modelos"
+        :items="equipamentos"
         item-title="descricao"
         item-value="id"
         :error-messages="equipamento_id.errorMessage.value"
@@ -44,7 +44,7 @@
 
       <v-autocomplete
         v-model="pi_lotes_receitas.cobrar"
-        :items="modelos"
+        :items="cobranca"
         item-title="descricao"
         item-value="id"
         :error-messages="cobrar.errorMessage.value"
@@ -58,7 +58,7 @@
       ></v-text-field>
 
       <v-btn class="me-4" color="green" @click="submit"> Salvar </v-btn>
-      <v-btn class="me-4" color="red" @click="returnToTableTools"> Voltar </v-btn>
+      <v-btn class="me-4" color="red" @click="returnToTableLotes"> Voltar </v-btn>
       <v-btn @click="handleReset"> Limpar </v-btn>
     </form>
   </template>
@@ -76,64 +76,70 @@
           cobrar: undefined,
           observacao: undefined,
         },
-        ambientes: [
+        lotes: [
 
         ],
-        modelos: [
+        contas: [
 
         ],
-        users:[
+        equipamentos:[
 
-        ]
+        ],
+        cobranca: [
+        { id: true, descricao: 'COBRAR' },
+        { id: false, descricao: 'DEVOLVER' }
+      ],
+
       };
     },
 
     methods: {
-      returnToTableTools() {
-        this.$router.push("/predios-equipamentos/index");
+      returnToTableLotes() {
+        this.$router.push("/pi-lotes-receitas/index/");
       },
-      async loadAmbientes() {
+      async loadEquipamentos() {
         const storedToken = JSON.parse(localStorage.getItem("predio"))
         const data = {
          predio_token:storedToken.predio_token
         }
         try {
           const response = await axios.post(
-            `${process.env.MANAGEMENT_API_URL}/listaAmbientes`,data
+            `${process.env.MANAGEMENT_API_URL}/loteEquipamentos`,data
           );
-          const responseData = response.data[0].func_json_ambientes
-          this.ambientes = responseData
-          console.log(response)
+          const responseData = response.data[0].func_json_equipamentos_combolist
+          this.equipamentos = responseData
         } catch (error) {
           console.error("Erro ao carregar tipos:", error);
         }
       },
-      async loadModelos() {
-        const storedToken = JSON.parse(localStorage.getItem("predio"))
-        const data = {
-         token_predio:storedToken.predio_token
-        }
-        try {
-          const response = await axios.post(
-            `${process.env.MANAGEMENT_API_URL}/listaModeloEquipamentos`,data
-          );
-          const responseData = response.data[0].func_json_modelos_equipamentos
-          this.modelos = responseData
-        } catch (error) {
-          console.error("Erro ao carregar áreas:", error);
-        }
-      },
-      async loadUsers() {
+      async loadContas() {
         const storedToken = JSON.parse(localStorage.getItem("predio"))
         const data = {
          predio_token:storedToken.predio_token
         }
         try {
           const response = await axios.post(
-            `${process.env.MANAGEMENT_API_URL}/PrediosEquipamentosGestores`,data
+            `${process.env.MANAGEMENT_API_URL}/contasPredios`,data
           );
-          const responseData = response.data[0].func_json_gestores
-          this.users = responseData
+          const responseData = response.data[0].func_json_contas_predio
+          this.contas = responseData
+          console.log(this.contas)
+        } catch (error) {
+          console.error("Erro ao carregar áreas:", error);
+        }
+      },
+      async loadLotes() {
+        const storedToken = JSON.parse(localStorage.getItem("predio"))
+        const data = {
+         predio_token:storedToken.predio_token
+        }
+        try {
+          const response = await axios.post(
+            `${process.env.MANAGEMENT_API_URL}/lotesPredios`,data
+          );
+          const responseData = response.data[0].func_json_lotes_predio
+          this.lotes = responseData
+          console.log(this.lotes)
         } catch (error) {
           console.error("Erro ao carregar áreas:", error);
         }
@@ -182,9 +188,9 @@
       },
     },
     mounted() {
-      this.loadModelos();
-      this.loadAmbientes();
-      this.loadUsers();
+      this.loadContas();
+      this.loadEquipamentos();
+      this.loadLotes();
     },
   };
   </script>
