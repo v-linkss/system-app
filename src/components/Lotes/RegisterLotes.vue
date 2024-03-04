@@ -148,17 +148,13 @@
         const storedIdPredio= JSON.parse(localStorage.getItem("predio"))
         const storedIdUser= JSON.parse(localStorage.getItem("user"))
         const data = {
-          descricao: this.predios_equipamentos.descricao,
-          codigo: this.predios_equipamentos.codigo,
-          ano_fabricacao: this.predios_equipamentos.ano_fabricacao,
-          patrimonio: this.predios_equipamentos.patrimonio,
-          potencia: this.predios_equipamentos.potencia,
-          vlr_compra: this.predios_equipamentos.vlr_compra,
-          numero_serie: this.predios_equipamentos.numero_serie,
-          data_operacao: this.predios_equipamentos.data_operacao,
-          modelo_id: this.predios_equipamentos.modelo_id,
-          predio_ambiente_id: this.predios_equipamentos.predio_ambiente_id,
-          user_gestor:this.predios_equipamentos.user_gestor,
+          cobrar: this.pi_lotes_receitas.cobrar,
+          conta_id: this.pi_lotes_receitas.conta_id,
+          equipamento_id: this.pi_lotes_receitas.equipamento_id,
+          data: this.pi_lotes_receitas.data,
+          valor: this.pi_lotes_receitas.valor,
+          observacao: this.pi_lotes_receitas.observacao,
+          lote_id: this.pi_lotes_receitas.lote_id,
           predio_id:storedIdPredio.predio_id,
           user_created:storedIdUser.id
         };
