@@ -33,9 +33,12 @@ import AppBar from "@/layouts/default/AppBar.vue";
     density="default"
   >
     <!-- eslint-disable vue/valid-v-slot -->
-    <template v-slot:item.actions="{ item }">
+    <template v-slot:item.actions="{ item, index }">
       <div class="custom-td">
-        <v-checkbox @click="item"></v-checkbox>
+        <v-checkbox
+          v-model="lotesChecked[index]"
+          @change="sumCheckedValues"
+        ></v-checkbox>
       </div>
     </template>
   </v-data-table>
@@ -49,6 +52,7 @@ export default {
   },
   data() {
     return {
+      lotesChecked: [],
       lotes: [],
       lotesCombo: [],
       test: [],
@@ -121,58 +125,68 @@ export default {
         console.error("Erro ao carregar áreas:", error);
       }
     },
-    redirectToView(id) {
-      this.$router.push({
-        name: "pi-lotes-receitas/index/vizualizar",
-        query: {
-          id,
-        },
-      });
-    },
-    redirectToRegister() {
-      this.$router.push({ name: "pi-lotes-receitas/index/cadastro" });
-    },
-    redirectToUpdate(id) {
-      this.$router.push({
-        name: "pi-lotes-receitas/index/atualizar",
-        query: {
-          id,
-        },
-      });
-    },
-    async toggleExclusion(item) {
-      try {
-        item.excluido = !item.excluido;
-        await axios.put(
-          `${process.env.MANAGEMENT_API_URL}/PrediosEquipamentos/excluir/${item.id}`,
-          {
-            excluido: item.excluido,
-          }
-        );
-        console.log(item.excluido);
-      } catch (error) {
-        console.error("Erro ao atualizar exclusão:", error);
-        item.excluido = !item.excluido;
-      }
-    },
+
     saveSearchQuery() {
       // Salva o valor do campo de pesquisa no localStorage
       localStorage.setItem("searchQuery", this.searchQuery);
       const searchQuery = localStorage.getItem("searchQuery");
       console.log("saveSearchQuery:", searchQuery); // Imprime no console
     },
+
+    // sumCheckedValues() {
+    //   // Filtra os itens marcados
+    //   const checkedItems = this.lotes.filter(
+    //     (item, index) => this.lotesChecked[index]
+    //   );
+    //   // Calcula a soma dos valores
+    //   if (item.cobrar === "COBRAR") {
+    //     console.log("##################################\n", item.cobrar);
+    //   }
+    //   const sum = checkedItems.reduce(
+    //     (total, item) => total + parseFloat(item.valor),
+    //     0
+    //   );
+    //   // Exibe o resultado
+    //   alert(A soma dos valores das checkboxes marcadas é: ${sum});
+    // },
+    sumCheckedValues() {
+      // Filtra os itens marcados
+      const checkedItems = this.lotes.filter(
+        (item, index) => this.lotesChecked[index]
+      );
+
+      // Inicializa a soma
+      let sum = 0;
+
+      // Itera sobre os itens marcados
+      checkedItems.forEach((item) => {
+        // Verifica se o item deve ser cobrado
+        if (item.cobrar === "COBRAR") {
+          // Adiciona o valor apenas se a condição for atendida
+          sum += parseFloat(item.valor);
+        } else if (item.cobrar === "DEVOLVER") {
+          const checkSum = sum - parseFloat(item.valor);
+          if (checkSum >= 0) {
+            sum = checkSum;
+          } else {
+            alert(
+              "Alerta: Valor inválido encontrado (o valor devolvido não pode ser superior ao cobtrado)."
+            );
+          }
+        }
+      });
+    },
   },
   mounted() {
     this.loadLotes();
-    const storedToken = JSON.parse(localStorage.getItem("predio"))
-        const data = {
-         predio_id:storedToken.predio_id
-        }
+    const storedToken = JSON.parse(localStorage.getItem("predio"));
+    const data = {
+      predio_id: storedToken.predio_id,
+    };
     axios
-      .post(`${process.env.MANAGEMENT_API_URL}/listaLotesReceita`,data)
+      .post(`${process.env.MANAGEMENT_API_URL}/listaLotesReceita`, data)
       .then((response) => {
         this.lotes = response.data;
-        console.log("ASDA", this.lotes);
       })
       .catch((error) => {
         console.error("Erro na chamada de API:", error);
