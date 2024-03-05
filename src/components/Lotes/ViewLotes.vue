@@ -6,70 +6,44 @@ import AppBar from "@/layouts/default/AppBar.vue";
     <font-awesome-icon :icon="['fas', 'spinner']" spin />
   </LoadingComponent>
   <div v-else>
-    <AppBar/>
+    <AppBar />
     <v-container class="bg-surface-variant">
       <v-row no-gutters>
         <v-col>
-          <v-sheet class="pa-2 ma-2"> ID: {{ dados.id }} </v-sheet>
+          <v-sheet class="pa-2 ma-2"> Data: {{ dados.data }} </v-sheet>
+        </v-col>
+        <v-col>
+          <v-sheet class="pa-2 ma-2"> Valor: {{ dados.valor }} </v-sheet>
+        </v-col>
+
+        <v-responsive width="100%"></v-responsive>
+        <v-col>
+          <v-sheet class="pa-2 ma-2">
+            Cobrar: {{ dados.cobrar ? "Cobrar" : "Devolver" }}
+          </v-sheet>
         </v-col>
         <v-col>
           <v-sheet class="pa-2 ma-2">
-            Descrição: {{ dados.descricao }}
+            Observação: {{ dados.observacao }}
           </v-sheet>
         </v-col>
 
         <v-responsive width="100%"></v-responsive>
 
         <v-col>
-          <v-sheet class="pa-2 ma-2">
-            Codigo: {{ dados.codigo }}
-          </v-sheet>
+          <v-sheet class="pa-2 ma-2"> Conta: {{ dados.conta_id }} </v-sheet>
+        </v-col>
+
+        <v-col>
+          <v-sheet class="pa-2 ma-2"> Lote: {{ dados.lote_id }} </v-sheet>
         </v-col>
 
         <v-col>
           <v-sheet class="pa-2 ma-2">
-            Patrimonio: {{ dados.patrimonio }}
-          </v-sheet>
-        </v-col>
-
-        <!-- <v-col>
-          <v-sheet class="pa-2 ma-2"
-            >Gestor:
-            {{
-              dados.user_gestor
-            }}</v-sheet
-          >
-        </v-col> -->
-
-        <v-responsive width="100%"></v-responsive>
-
-        <v-col>
-          <v-sheet class="pa-2 ma-2">
-            Modelo: {{ dados.equipamentos_modelo.codigo }}
-          </v-sheet>
-        </v-col>
-
-        <v-col>
-          <v-sheet class="pa-2 ma-2">
-            Ambiente: {{ dados.predios_ambientes.descricao }}
-          </v-sheet>
-        </v-col>
-
-        <v-col>
-          <v-sheet class="pa-2 ma-2">
-            Ano Fabricação: {{ dados.ano_fabricacao }}
-          </v-sheet>
-        </v-col>
-
-        <v-col>
-          <v-sheet class="pa-2 ma-2">
-            Data Operação: {{ dados.data_operacao }}
+            Equipamento: {{ dados.predio_equipamento_id }}
           </v-sheet>
         </v-col>
       </v-row>
-
-
-
     </v-container>
   </div>
 </template>
@@ -89,8 +63,8 @@ export default {
     },
     async loadLotes() {
       try {
-        const response = await axios.post(
-          `${process.env.MANAGEMENT_API_URL}/PrediosEquipamentos/${this.dados.id}`
+        const response = await axios.get(
+          `${process.env.MANAGEMENT_API_URL}/ReceitaLotes/${this.dados.id}`
         );
         this.dados = response.data;
       } catch (error) {

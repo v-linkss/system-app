@@ -95,7 +95,6 @@ export default {
       this.modelos.fabricante = response.data.fabricante;
       this.modelos.vida_util = response.data.vida_util;
 
-      console.log("dad",response)
     } catch (error) {
       console.error("Erro ao carregar detalhes do prédio_equipamentos:", error);
     }

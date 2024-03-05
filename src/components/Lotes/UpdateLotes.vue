@@ -27,18 +27,18 @@
     ></v-autocomplete>
 
     <v-text-field
-      v-mask="'#####.##'"
+
       v-model.number="pi_lotes_receitas.valor"
       :error-messages="valor.errorMessage.value"
       label="Valor"
     ></v-text-field>
 
     <v-autocomplete
-      v-model="pi_lotes_receitas.equipamento_id"
+      v-model="pi_lotes_receitas.predio_equipamento_id"
       :items="equipamentos"
       item-title="descricao"
       item-value="id"
-      :error-messages="equipamento_id.errorMessage.value"
+      :error-messages="predio_equipamento_id.errorMessage.value"
       label="Selecione um Equipamento"
     ></v-autocomplete>
 
@@ -72,7 +72,7 @@ export default {
         lote_id: undefined,
         conta_id: undefined,
         valor: undefined,
-        equipamento_id: undefined,
+        predio_equipamento_id: undefined,
         cobrar: undefined,
         observacao: undefined,
       },
@@ -90,6 +90,22 @@ export default {
     returnToTableLotes() {
       this.$router.push("/pi-lotes-receitas/index/");
     },
+    async loadLotesDetails() {
+    try {
+      const response = await axios.get(`${process.env.MANAGEMENT_API_URL}/ReceitaLotes/${this.pi_lotes_receitas.id}`);
+      // Preencha os campos com os detalhes carregados
+      this.pi_lotes_receitas.cobrar =response.data.cobrar;
+      this.pi_lotes_receitas.conta_id =response.data.conta_id;
+      this.pi_lotes_receitas.predio_equipamento_id =response.data.predio_equipamento_id;
+      this.pi_lotes_receitas.data =response.data.data;
+      this.pi_lotes_receitas.valor =response.data.valor;
+      this.pi_lotes_receitas.observacao =response.data.observacao;
+      this.pi_lotes_receitas.lote_id =response.data.lote_id;
+      console.log(response)
+    } catch (error) {
+      console.error("Erro ao carregar detalhes do prédio_equipamentos:", error);
+    }
+  },
     async loadEquipamentos() {
       const storedToken = JSON.parse(localStorage.getItem("predio"));
       const data = {
@@ -146,7 +162,7 @@ export default {
       const data = {
         cobrar: this.pi_lotes_receitas.cobrar,
         conta_id: this.pi_lotes_receitas.conta_id,
-        equipamento_id: this.pi_lotes_receitas.equipamento_id,
+        predio_equipamento_id: this.pi_lotes_receitas.predio_equipamento_id,
         data: this.pi_lotes_receitas.data,
         valor: this.pi_lotes_receitas.valor,
         observacao: this.pi_lotes_receitas.observacao,
@@ -156,14 +172,12 @@ export default {
       };
 
       try {
-        const response = await axios.post(
-          `${process.env.MANAGEMENT_API_URL}/PrediosEquipamentosCadastro`,
+        const response = await axios.put(
+          `${process.env.MANAGEMENT_API_URL}/updateReceitaLotes/${this.pi_lotes_receitas.id}`,
           data
         );
-        console.log("asdasdas", response.data); // Redirecione para a página principal ou faça qualquer outra ação desejada
-        if (response.status === 200) {
-          console.log("Resgistro criado com sucesso");
-        }
+        this.$router.push("/pi-lotes-receitas/index/");
+          return response
       } catch (error) {
         console.error("Erro na criação do registro:", error);
       }
@@ -171,7 +185,7 @@ export default {
     async handleReset() {
       this.pi_lotes_receitas.cobrar = null;
       this.pi_lotes_receitas.conta_id = null;
-      this.pi_lotes_receitas.equipamento_id = null;
+      this.pi_lotes_receitas.predio_equipamento_id = null;
       this.pi_lotes_receitas.data = null;
       this.pi_lotes_receitas.valor = null;
       this.pi_lotes_receitas.observacao = null;
@@ -189,6 +203,7 @@ export default {
     this.loadContas();
     this.loadEquipamentos();
     this.loadLotes();
+    this.loadLotesDetails();
   },
 };
 </script>
@@ -197,7 +212,7 @@ import AppBar from "@/layouts/default/AppBar.vue";
 import { useField } from "vee-validate";
 
 const data = useField("data");
-const equipamento_id = useField("equipamento_id");
+const predio_equipamento_id = useField("predio_equipamento_id");
 const cobrar = useField("cobrar");
 const lote_id = useField("lote_id");
 const observacao = useField("observacao");

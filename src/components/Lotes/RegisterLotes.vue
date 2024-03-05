@@ -34,11 +34,11 @@
       ></v-text-field>
 
       <v-autocomplete
-        v-model="pi_lotes_receitas.equipamento_id"
+        v-model="pi_lotes_receitas.predio_equipamento_id"
         :items="equipamentos"
         item-title="descricao"
         item-value="id"
-        :error-messages="equipamento_id.errorMessage.value"
+        :error-messages="predio_equipamento_id.errorMessage.value"
         label="Selecione um Equipamento"
       ></v-autocomplete>
 
@@ -72,7 +72,7 @@
           lote_id: undefined,
           conta_id: undefined,
           valor: undefined,
-          equipamento_id: undefined,
+          predio_equipamento_id: undefined,
           cobrar: undefined,
           observacao: undefined,
         },
@@ -146,28 +146,27 @@
       },
       async submit() {
         const storedIdPredio= JSON.parse(localStorage.getItem("predio"))
-        const storedIdUser= JSON.parse(localStorage.getItem("user"))
+        const storedIdUser = JSON.parse(localStorage.getItem("user"));
         const data = {
           cobrar: this.pi_lotes_receitas.cobrar,
           conta_id: this.pi_lotes_receitas.conta_id,
-          equipamento_id: this.pi_lotes_receitas.equipamento_id,
+          predio_equipamento_id: this.pi_lotes_receitas.predio_equipamento_id,
           data: this.pi_lotes_receitas.data,
           valor: this.pi_lotes_receitas.valor,
           observacao: this.pi_lotes_receitas.observacao,
           lote_id: this.pi_lotes_receitas.lote_id,
           predio_id:storedIdPredio.predio_id,
-          user_created:storedIdUser.id
+          user_created: storedIdUser.id,
         };
 
         try {
           const response = await axios.post(
-            `${process.env.MANAGEMENT_API_URL}/PrediosEquipamentosCadastro`,
+            `${process.env.MANAGEMENT_API_URL}/createReceitaLotes`,
             data
           );
-          console.log("asdasdas",response.data) // Redirecione para a página principal ou faça qualquer outra ação desejada
-          if (response.status === 200) {
-            console.log("Resgistro criado com sucesso");
-          }
+          this.$router.push("/pi-lotes-receitas/index/");
+          return response
+
         } catch (error) {
           console.error("Erro na criação do registro:", error);
         }
@@ -175,7 +174,7 @@
       async handleReset() {
         this.pi_lotes_receitas.cobrar = null;
         this.pi_lotes_receitas.conta_id = null;
-        this.pi_lotes_receitas.equipamento_id = null;
+        this.pi_lotes_receitas.predio_equipamento_id = null;
         this.pi_lotes_receitas.data = null;
         this.pi_lotes_receitas.valor = null;
         this.pi_lotes_receitas.observacao = null;
@@ -195,7 +194,7 @@
   import { useField } from "vee-validate";
 
   const data = useField("data");
-  const equipamento_id = useField("equipamento_id");
+  const predio_equipamento_id = useField("predio_equipamento_id");
   const cobrar = useField("cobrar");
   const lote_id = useField("lote_id");
   const observacao = useField("observacao");

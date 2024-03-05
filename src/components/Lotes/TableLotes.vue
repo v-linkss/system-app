@@ -29,8 +29,8 @@ import AppBar from "@/layouts/default/AppBar.vue";
             :icon="['fas', 'trash']"
             @click="toggleExclusion(item)"
             :class="{
-              'red-icon': item.excluido,
-              'gray-icon': !item.excluido,
+              'red-icon': item.altera,
+              'gray-icon': !item.altera,
             }"
           />
         </div>
@@ -122,17 +122,17 @@ export default {
     },
     async toggleExclusion(item) {
       try {
-        item.excluido = !item.excluido;
+        item.altera = !item.altera;
         await axios.put(
-          `${process.env.MANAGEMENT_API_URL}/PrediosEquipamentos/excluir/${item.id}`,
+          `${process.env.MANAGEMENT_API_URL}/updateReceitaLotes/${item.id}`,
           {
-            excluido: item.excluido,
+            altera: item.altera,
           }
         );
-        console.log(item.excluido);
+        console.log(item.altera);
       } catch (error) {
         console.error("Erro ao atualizar exclusão:", error);
-        item.excluido = !item.excluido;
+        item.altera = !item.altera;
       }
     },
     saveSearchQuery() {
@@ -151,7 +151,7 @@ export default {
       .post(`${process.env.MANAGEMENT_API_URL}/listaLotesReceita`,data)
       .then((response) => {
         this.lotes = response.data;
-        console.log('ASDA',this.lotes);
+        console.log(this.lotes)
       })
       .catch((error) => {
         console.error("Erro na chamada de API:", error);
