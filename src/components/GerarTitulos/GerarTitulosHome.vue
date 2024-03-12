@@ -128,7 +128,6 @@ export default {
     async gerarReceitas(selectedItem) {
       try {
         const selectedToken = selectedItem;
-        console.log(selectedToken);
         const data = {
           lote_token: selectedToken,
         };
@@ -170,6 +169,19 @@ export default {
         const responseData = response.data[0].func_gera_boleto_lote;
         this.boleto = responseData;
         console.log(this.boleto);
+        if (this.boleto[0].integra_banco === true) {
+          const dataBoleto = {
+            titulo_token: this.boleto[0].titulo_token,
+          };
+          const response = await axios.post(
+            `${process.env.MANAGEMENT_API_URL}/integraBanco`,
+            dataBoleto
+          );
+          const responseDataBoleto = response.data[0].func_integra_banco;
+          window.open(responseDataBoleto.link_boleto, "_blank");
+        } else {
+          [];
+        }
       } catch (error) {
         console.error("Erro ao carregar receitas:", error);
       }
@@ -265,6 +277,5 @@ export default {
 
 .disabled {
   pointer-events: none;
-  opacity: 0.5;
 }
 </style>
