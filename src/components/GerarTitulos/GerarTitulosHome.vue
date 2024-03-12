@@ -178,7 +178,7 @@ export default {
             dataBoleto
           );
           const responseDataBoleto = response.data[0].func_integra_banco;
-          window.open(responseDataBoleto.link_boleto, "_blank");
+          window.open(responseDataBoleto[0].link_boleto, "_blank");
         } else {
           [];
         }
