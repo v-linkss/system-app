@@ -168,7 +168,6 @@ export default {
         );
         const responseData = response.data[0].func_gera_boleto_lote;
         this.boleto = responseData;
-        console.log(this.boleto);
         if (this.boleto[0].integra_banco === true) {
           const dataBoleto = {
             titulo_token: this.boleto[0].titulo_token,
@@ -250,7 +249,9 @@ export default {
 .container {
   margin-right: 10px;
 }
-
+.btn-pointer {
+  cursor: pointer;
+}
 .btn {
   display: flex;
   justify-content: center;
