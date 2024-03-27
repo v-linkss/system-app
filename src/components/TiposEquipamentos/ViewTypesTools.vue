@@ -1,27 +1,24 @@
 <script setup>
-  import AppBar from "@/layouts/default/AppBar.vue";
+import AppBar from "@/layouts/default/AppBar.vue";
 </script>
 
 <template>
-<AppBar/>
+  <AppBar />
   <LoadingComponent v-if="loading">
     <font-awesome-icon :icon="['fas', 'spinner']" spin />
   </LoadingComponent>
   <div v-else>
-    <v-container class="bg-surface-variant">
-      <v-row no-gutters>
-        <v-col>
-          <v-sheet class="pa-2 ma-2"> ID: {{ dados.id }} </v-sheet>
-        </v-col>
-        <v-col>
-          <v-sheet class="pa-2 ma-2">
-            Descrição: {{ dados.descricao }}
-          </v-sheet>
-        </v-col>
+    <v-container class="data-container mt-16">
+      <v-col>
+        <v-sheet > ID: {{ dados.id }} </v-sheet>
+      </v-col>
+      <v-col>
+        <v-sheet > Descrição: {{ dados.descricao }} </v-sheet>
+      </v-col>
 
-        <v-responsive width="100%"></v-responsive>
+      <v-responsive width="100%"></v-responsive>
 
-        <!-- <v-col>
+      <!-- <v-col>
           <v-sheet class="pa-2 ma-2">
             Tipo: {{ dados.tabelas_valores.descricao }}
           </v-sheet>
@@ -35,7 +32,6 @@
             }}</v-sheet
           >
         </v-col> -->
-      </v-row>
     </v-container>
   </div>
 </template>
@@ -82,6 +78,11 @@ export default {
 };
 </script>
 <style scoped>
+.data-container {
+  border: 1px solid black;
+  border-radius: 8px;
+  padding: 16px;
+}
 .arrow {
   cursor: pointer;
   margin-bottom: 20px;

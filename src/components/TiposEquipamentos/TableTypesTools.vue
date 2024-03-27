@@ -4,11 +4,8 @@ import AppBar from "@/layouts/default/AppBar.vue";
 
 <template>
   <AppBar />
-  <!-- <div>
-    <v-text-field v-model="searchQuery" label="Pesquisar" @input="saveSearchQuery"/>
-  </div> -->
-  <div class="btn-pointer" @click="redirectToRegister()">
-    <font-awesome-icon :icon="['fas', 'plus']" />
+  <div class="btn-pointer mt-5 mb-2" @click="redirectToRegister()">
+    <font-awesome-icon :icon="['fas', 'plus']" size="lg"/>
   </div>
   <!-- eslint-disable vue/valid-v-slot -->
   <v-data-table

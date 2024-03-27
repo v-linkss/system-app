@@ -4,8 +4,8 @@
     <div class="container">
       <v-img
         class="image"
-        :width="250"
-        height="180"
+        :width="300"
+        height="230"
         src="../../assets/Logo.png"
       ></v-img>
       <div class="text">Log in</div>
@@ -29,37 +29,68 @@
         variant="outlined"
         @click:append-inner="visible = !visible"
       ></v-text-field>
+      <v-dialog v-model="dialog" max-width="400" persistent>
+        <template v-slot:activator="{ props: activatorProps }">
+          <v-btn
+            block
+            rounded
+            class="button mb-10 mt-4"
+            v-bind="activatorProps"
+            v-on:click="login"
+            v-model="dialog"
+          >
+            Acessar
+          </v-btn>
+        </template>
 
-      <v-btn block rounded class="button" v-on:click="login"> Acessar </v-btn>
+        <v-card v-if="showPasswordError" text="Senha inválida2.">
+          <template v-slot:actions>
+            <v-spacer></v-spacer>
 
+            <v-btn
+              @click="closeAlert"
+              style="background-color: #1b5175; color: white"
+            >
+              OK
+            </v-btn>
+          </template>
+        </v-card>
+        <v-card
+          v-if="showEmailError"
+          text="Esse email não está cadastrado no Durabil."
+        >
+          <template v-slot:actions>
+            <v-spacer></v-spacer>
+
+            <v-btn
+              @click="closeAlert"
+              style="background-color: #1b5175; color: white"
+            >
+              OK
+            </v-btn>
+          </template>
+        </v-card>
+        <v-card v-if="showError" text="Erro no sistema">
+          <template v-slot:actions>
+            <v-spacer></v-spacer>
+              adad
+            <v-btn
+              @click="closeAlert"
+              style="background-color: #1b5175; color: white"
+            >
+              OK
+            </v-btn>
+          </template>
+        </v-card>
+      </v-dialog>
       <a
-        class="text-caption text-decoration-none text-blue"
+        class="text-decoration-none"
         href="/esqueci-senha"
         rel="noopener noreferrer"
+        style="color: #1b5175"
       >
         Esqueceu a senha?</a
       >
-      <v-container v-if="showError">
-        <v-alert text="Erro no sistema" type="error">
-          <v-spacer></v-spacer>
-          <v-btn text="Fechar" @click="showError = false">Fechar</v-btn>
-        </v-alert>
-      </v-container>
-      <v-container v-if="showEmailError">
-        <v-alert
-          text="Erro na autenticação de login: Email não cadastrado"
-          type="error"
-        >
-          <v-spacer></v-spacer>
-          <v-btn text="Fechar" @click="showEmailError = false">Fechar</v-btn>
-        </v-alert>
-      </v-container>
-      <v-container v-if="showPasswordError">
-        <v-alert text="Erro na autenticação da senha" type="error">
-          <v-spacer></v-spacer>
-          <v-btn text="Fechar" @click="showPasswordError = false">Fechar</v-btn>
-        </v-alert>
-      </v-container>
     </div>
 
     <div class="background-image"></div>
@@ -72,6 +103,7 @@ export default {
     visible: false,
     email: "",
     senha: "",
+    dialog: false,
     showError: false,
     showEmailError: false,
     showPasswordError: false, // Adiciona variável para controlar exibição do modal
@@ -85,7 +117,10 @@ export default {
       };
 
       try {
-        const response = await axios.post(`${process.env.AUTH_API_URL}/login`, data);
+        const response = await axios.post(
+          `${process.env.AUTH_API_URL}/login`,
+          data
+        );
 
         if (response.status === 200) {
           const responseData = response.data;
@@ -121,11 +156,16 @@ export default {
       } catch (error) {
         console.error("Erro ao fazer login", error);
         if (error.response && error.response.status === 400) {
-          const errorData = error.response.data;
-
-          if (errorData.error === "Erro de autenticação: Usuario Invalido ou Email nao cadastrado") {
+          const errorData = error.response.data[0].func_autentica_acesso_v1[0];
+          console.log(errorData)
+          if (
+            errorData.status_mensagem ===
+            "Esse email não está cadastrado no Durabil."
+          ) {
             this.showEmailError = true;
-          } else if (errorData.error === "Erro de autenticação: Senha inválida") {
+          } else if (
+            errorData.status_mensagem === "Senha inválida2."
+          ) {
             this.showPasswordError = true;
           } else if (errorData.error === "Erro ao autenticar usuário") {
             this.showError = true;
@@ -138,6 +178,7 @@ export default {
       this.showError = false;
       this.showEmailError = false;
       this.showPasswordError = false;
+      this.dialog = false;
     },
   },
 };
@@ -159,6 +200,7 @@ export default {
 }
 .container {
   width: 500px;
+  height: 650px;
 }
 
 .container1 {

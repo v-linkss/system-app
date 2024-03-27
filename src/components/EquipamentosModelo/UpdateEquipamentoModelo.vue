@@ -1,33 +1,11 @@
 <template>
-  <AppBar/>
-  <h1>Modelos</h1>
-  <form>
-    <v-text-field
-      v-model="modelos.descricao"
-      :error-messages="descricao.errorMessage.value"
-      label="Descrição"
-    ></v-text-field>
+  <AppBar />
+  <h1 class="mt-5 mb-5" style="color: #777777">Equipamentos Modelo</h1>
 
-    <v-text-field
-      v-model="modelos.fabricante"
-      :error-messages="fabricante.errorMessage.value"
-      label="Fabricante"
-    ></v-text-field>
-
-    <v-text-field
-      v-mask="'##'"
-      v-model.number="modelos.vida_util"
-      :error-messages="vida_util.errorMessage.value"
-      label="Vida Util(Meses)"
-    ></v-text-field>
-
-    <v-text-field
-      v-model="modelos.codigo"
-      :error-messages="codigo.errorMessage.value"
-      label="Codigo"
-    ></v-text-field>
-
+  <v-row no-gutters>
     <v-autocomplete
+      density="compact"
+      class="ml-5 mr-5"
       v-model="modelos.equipamento_tipo_id"
       :items="tipos"
       item-title="descricao"
@@ -36,16 +14,48 @@
       label="Selecione um Tipo"
     ></v-autocomplete>
 
-    <v-checkbox
-      v-model="modelos.entra_pmoc"
-      :error-messages="entra_pmoc.errorMessage.value"
-      label="Incluir no PMOC"
-    ></v-checkbox>
+    <v-text-field
+      class="ml-5 mr-5"
+      v-model="modelos.fabricante"
+      :error-messages="fabricante.errorMessage.value"
+      label="Fabricante"
+    ></v-text-field>
+  </v-row>
 
-    <v-btn class="me-4" color="green" @click="submit"> Salvar </v-btn>
-    <v-btn class="me-4" color="red" @click="returnToMainPage"> Voltar </v-btn>
-    <v-btn @click="handleReset"> Limpar </v-btn>
-  </form>
+  <v-text-field
+    class="ml-5 mr-5"
+    v-model="modelos.descricao"
+    :error-messages="descricao.errorMessage.value"
+    label="Descrição"
+  ></v-text-field>
+
+  <v-row no-gutters>
+    <v-text-field
+      class="ml-5 mr-5"
+      v-mask="'##'"
+      v-model.number="modelos.vida_util"
+      :error-messages="vida_util.errorMessage.value"
+      label="Vida Util(Meses)"
+    ></v-text-field>
+
+    <v-text-field
+      class="ml-5 mr-5"
+      v-model="modelos.codigo"
+      :error-messages="codigo.errorMessage.value"
+      label="Codigo"
+    ></v-text-field>
+  </v-row>
+
+  <v-checkbox
+    class="ml-5 mr-5"
+    v-model="modelos.entra_pmoc"
+    :error-messages="entra_pmoc.errorMessage.value"
+    label="Incluir no PMOC"
+  ></v-checkbox>
+
+  <v-btn class="ml-5 me-4" @click="handleReset"> Limpar </v-btn>
+  <v-btn class="me-4" color="red" @click="returnToMainPage"> Voltar </v-btn>
+  <v-btn class="me-4" color="green" @click="submit"> Atualizar </v-btn>
 </template>
 <script>
 import axios from "axios";
@@ -75,7 +85,7 @@ export default {
       };
       try {
         const response = await axios.post(
-           `${process.env.MANAGEMENT_API_URL}/listaTiposEquipamentos`,
+          `${process.env.MANAGEMENT_API_URL}/listaTiposEquipamentos`,
           data
         );
         const responseData = response.data[0].func_json_tiposequipamentos;
@@ -85,20 +95,24 @@ export default {
       }
     },
     async loadPredioModelosDetails() {
-    try {
-      const response = await axios.get(`${process.env.MANAGEMENT_API_URL}/getModeloEquipamentosById/${this.modelos.id}`);
-      // Preencha os campos com os detalhes carregados
-      this.modelos.descricao = response.data.descricao;
-      this.modelos.codigo = response.data.codigo;
-      this.modelos.equipamento_tipo_id = response.data.equipamento_tipo_id;
-      this.modelos.entra_pmoc= response.data.entra_pmoc;
-      this.modelos.fabricante = response.data.fabricante;
-      this.modelos.vida_util = response.data.vida_util;
-
-    } catch (error) {
-      console.error("Erro ao carregar detalhes do prédio_equipamentos:", error);
-    }
-  },
+      try {
+        const response = await axios.get(
+          `${process.env.MANAGEMENT_API_URL}/getModeloEquipamentosById/${this.modelos.id}`
+        );
+        // Preencha os campos com os detalhes carregados
+        this.modelos.descricao = response.data.descricao;
+        this.modelos.codigo = response.data.codigo;
+        this.modelos.equipamento_tipo_id = response.data.equipamento_tipo_id;
+        this.modelos.entra_pmoc = response.data.entra_pmoc;
+        this.modelos.fabricante = response.data.fabricante;
+        this.modelos.vida_util = response.data.vida_util;
+      } catch (error) {
+        console.error(
+          "Erro ao carregar detalhes do prédio_equipamentos:",
+          error
+        );
+      }
+    },
     async submit() {
       const entra_pmoc = Boolean(this.modelos.entra_pmoc);
       const data = {
@@ -107,7 +121,7 @@ export default {
         codigo: this.modelos.codigo,
         fabricante: this.modelos.fabricante,
         equipamento_tipo_id: this.modelos.equipamento_tipo_id,
-        entra_pmoc:entra_pmoc,
+        entra_pmoc: entra_pmoc,
       };
 
       try {

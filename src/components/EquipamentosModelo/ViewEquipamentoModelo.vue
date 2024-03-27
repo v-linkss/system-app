@@ -1,15 +1,12 @@
 
 <template>
   <AppBar/>
-  <h1>Modelos</h1>
-  <div class="arrow" @click="returnToMainPage">
-    <font-awesome-icon :icon="['fas', 'arrow-left']" size="2xl" />
-  </div>
+
   <LoadingComponent v-if="loading">
     <font-awesome-icon :icon="['fas', 'spinner']" spin />
   </LoadingComponent>
   <div v-else>
-    <v-container class="bg-surface-variant">
+    <v-container class="data-container mt-16">
       <v-row no-gutters>
         <v-col>
           <v-sheet class="pa-2 ma-2"> ID: {{ dados.id }} </v-sheet>
@@ -87,6 +84,11 @@ export default {
 };
 </script>
 <style scoped>
+.data-container {
+  border: 1px solid black;
+  border-radius: 8px;
+  padding: 16px;
+}
 .arrow {
   cursor: pointer;
   margin-bottom: 20px;

@@ -1,33 +1,11 @@
 <template>
   <AppBar />
-  <h1>Modelos</h1>
-  <form>
-    <v-text-field
-      v-model="modelos.descricao"
-      :error-messages="descricao.errorMessage.value"
-      label="Descrição"
-    ></v-text-field>
+  <h1 class="mt-5 mb-5" style="color: #777777">Equipamentos Modelo</h1>
 
-    <v-text-field
-      v-model="modelos.fabricante"
-      :error-messages="fabricante.errorMessage.value"
-      label="Fabricante"
-    ></v-text-field>
-
-    <v-text-field
-      v-mask="'##'"
-      v-model.number="modelos.vida_util"
-      :error-messages="vida_util.errorMessage.value"
-      label="Vida Util(Meses)"
-    ></v-text-field>
-
-    <v-text-field
-      v-model="modelos.codigo"
-      :error-messages="codigo.errorMessage.value"
-      label="Codigo"
-    ></v-text-field>
-
+  <v-row no-gutters>
     <v-autocomplete
+      density="compact"
+      class="ml-5 mr-5"
       v-model="modelos.equipamento_tipo_id"
       :items="tipos"
       item-title="descricao"
@@ -36,16 +14,48 @@
       label="Selecione um Tipo"
     ></v-autocomplete>
 
-    <v-checkbox
-      v-model="modelos.entra_pmoc"
-      :error-messages="entra_pmoc.errorMessage.value"
-      label="Incluir no PMOC"
-    ></v-checkbox>
+    <v-text-field
+      class="ml-5 mr-5"
+      v-model="modelos.fabricante"
+      :error-messages="fabricante.errorMessage.value"
+      label="Fabricante"
+    ></v-text-field>
+  </v-row>
 
-    <v-btn class="me-4" color="green" @click="submit"> Salvar </v-btn>
-    <v-btn class="me-4" color="red" @click="returnToMainPage"> Voltar </v-btn>
-    <v-btn @click="handleReset"> Limpar </v-btn>
-  </form>
+  <v-text-field
+    class="ml-5 mr-5"
+    v-model="modelos.descricao"
+    :error-messages="descricao.errorMessage.value"
+    label="Descrição"
+  ></v-text-field>
+
+  <v-row no-gutters>
+    <v-text-field
+      class="ml-5 mr-5"
+      v-mask="'##'"
+      v-model.number="modelos.vida_util"
+      :error-messages="vida_util.errorMessage.value"
+      label="Vida Util(Meses)"
+    ></v-text-field>
+
+    <v-text-field
+      class="ml-5 mr-5"
+      v-model="modelos.codigo"
+      :error-messages="codigo.errorMessage.value"
+      label="Codigo"
+    ></v-text-field>
+  </v-row>
+
+  <v-checkbox
+    class="ml-5 mr-5"
+    v-model="modelos.entra_pmoc"
+    :error-messages="entra_pmoc.errorMessage.value"
+    label="Incluir no PMOC"
+  ></v-checkbox>
+
+  <v-btn class="ml-5 me-4" @click="handleReset"> Limpar </v-btn>
+  <v-btn class="me-4" color="red" @click="returnToMainPage"> Voltar </v-btn>
+  <v-btn class="me-4" color="green" @click="submit"> Salvar </v-btn>
 </template>
 <script>
 import axios from "axios";
@@ -82,13 +92,12 @@ export default {
         this.tipos = responseData;
       } catch (error) {
         console.error("Erro ao carregar tipos:", error);
-
       }
     },
 
     async submit() {
-      const storedIdPredio= JSON.parse(localStorage.getItem("predio"))
-      const storedIdUser= JSON.parse(localStorage.getItem("user"))
+      const storedIdPredio = JSON.parse(localStorage.getItem("predio"));
+      const storedIdUser = JSON.parse(localStorage.getItem("user"));
       const entra_pmoc = Boolean(this.modelos.entra_pmoc);
       const data = {
         descricao: this.modelos.descricao,
@@ -96,9 +105,9 @@ export default {
         codigo: this.modelos.codigo,
         fabricante: this.modelos.fabricante,
         equipamento_tipo_id: this.modelos.equipamento_tipo_id,
-        entra_pmoc:entra_pmoc,
-        predio_id:storedIdPredio.predio_id,
-        user_created:storedIdUser.id
+        entra_pmoc: entra_pmoc,
+        predio_id: storedIdPredio.predio_id,
+        user_created: storedIdUser.id,
       };
 
       try {
@@ -107,7 +116,7 @@ export default {
           data
         );
         // Redirecione para a página principal ou faça qualquer outra ação desejada
-        console.log(data)
+        console.log(data);
         if (response.status === 200) {
           this.$router.push("/equipamentos-modelos/index");
         }

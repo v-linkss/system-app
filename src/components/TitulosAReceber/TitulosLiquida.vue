@@ -66,6 +66,7 @@ export default {
       loading: true,
       imprimir: false,
       valor: null,
+      acao:"LIQUIDAR"
     };
   },
   methods: {
@@ -80,15 +81,18 @@ export default {
           dt_pagamento: this.data_pagamento,
           vlr_pago: this.valor,
           user_token: storedTokenUser.token,
+          acao:this.acao
         };
         const response = await axios.post(
           `${process.env.MANAGEMENT_API_URL}/gerarTitulos`,
           data
         );
+        console.log(response)
+        const tokenTitulo = response.data[0].func_ger_titulos[0].titulo_token
         if (this.imprimir === true) {
           try {
             const data = {
-              token_titulo: this.dados.token,
+              token_titulo: tokenTitulo,
             };
             const response = await axios.post(
               `${process.env.MANAGEMENT_API_URL}/imprimirRecibo`,
@@ -121,7 +125,7 @@ export default {
       try {
         const data = {
           titulo_token: this.dados.token,
-          dt_pagamento: this.data_pagamento,
+          data: this.data_pagamento,
         };
         const response = await axios.post(
           `${process.env.MANAGEMENT_API_URL}/calcularAcrescimo`,

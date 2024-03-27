@@ -5,8 +5,8 @@ import AppBar from "@/layouts/default/AppBar.vue";
 
 <template>
   <AppBar/>
-  <div class="btn-pointer" @click="redirectToRegister()">
-    <font-awesome-icon :icon="['fas', 'plus']" />
+  <div class="btn-pointer mt-5 mb-2" @click="redirectToRegister()">
+    <font-awesome-icon :icon="['fas', 'plus']" size="lg"/>
   </div>
   <v-data-table
     :headers="headers"

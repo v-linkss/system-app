@@ -1,14 +1,38 @@
 <template>
-  <AppBar/>
-  <h1>Ambientes</h1>
-  <form>
-    <v-text-field
-      v-model="predios.descricao"
-      :error-messages="descricao.errorMessage.value"
-      label="Descrição"
-    ></v-text-field>
+  <AppBar />
+  <h1 class="mt-5 mb-5" style="color: #777777">Ambientes</h1>
 
+  <v-text-field
+    class="ml-5 mr-5"
+    v-model="predios.descricao"
+    :error-messages="descricao.errorMessage.value"
+    label="Descrição"
+  ></v-text-field>
+
+  <v-row no-gutters>
+    <v-autocomplete
+      class="ml-5"
+      v-model="predios.tabvalores_tipo_ambiente_id"
+      :items="tipos"
+      item-title="descricao"
+      item-value="id"
+      :error-messages="tabvalores_tipo_ambiente_id.errorMessage.value"
+      label="Selecione um Tipo"
+    ></v-autocomplete>
+
+    <v-autocomplete
+      class="ml-5 mr-5"
+      v-model="predios.predio_area_id"
+      :items="areas"
+      label="Selecione uma Área"
+      item-title="descricao"
+      item-value="id"
+      :error-messages="predio_area_id.errorMessage.value"
+    ></v-autocomplete>
+  </v-row>
+  <v-row class="mt-5" no-gutters>
     <v-text-field
+      class="ml-5"
       v-model.number="predios.numero_ocupantes"
       v-mask="'###'"
       :error-messages="numero_ocupantes.errorMessage.value"
@@ -16,36 +40,19 @@
     ></v-text-field>
 
     <v-text-field
+      class="ml-5 mr-5"
       v-mask="'###.##'"
       v-model.number="predios.area"
       :error-messages="area.errorMessage.value"
       label="Área(m2)"
     ></v-text-field>
+  </v-row>
 
-    <v-autocomplete
-      v-model="predios.tabvalores_tipo_ambiente_id"
-      :items="tipos"
-      item-title="descricao"
-      item-value="id"
-      :error-messages="tabvalores_tipo_ambiente_id.errorMessage.value"
-      label="Selecione um Tipo"
-
-    ></v-autocomplete>
-
-    <v-autocomplete
-      v-model="predios.predio_area_id"
-      :items="areas"
-      label="Selecione uma Área"
-      item-title="descricao"
-      item-value="id"
-      :error-messages="predio_area_id.errorMessage.value"
-
-    ></v-autocomplete>
-
-    <v-btn class="me-4" color="green" @click="submit"> Salvar </v-btn>
-    <v-btn class="me-4" color="red" @click="returnToMainPage"> Voltar </v-btn>
-    <v-btn @click="handleReset"> Limpar </v-btn>
-  </form>
+  <v-btn class="ml-5 me-4 mt-8" @click="handleReset"> Limpar </v-btn>
+  <v-btn class="me-4 mt-8" color="red" @click="returnToMainPage">
+    Voltar
+  </v-btn>
+  <v-btn class="me-4 mt-8" color="green" @click="submit"> Salvar </v-btn>
 </template>
 <script>
 import axios from "axios";
@@ -59,12 +66,8 @@ export default {
         tabvalores_tipo_ambiente_id: undefined,
         predio_area_id: undefined,
       },
-      tipos: [
-
-      ],
-      areas: [
-
-      ], // Inicialize o items como um array vazio
+      tipos: [],
+      areas: [], // Inicialize o items como um array vazio
     };
   },
 
@@ -74,38 +77,43 @@ export default {
     },
     async loadTipos() {
       try {
-        const response = await axios.get(`${process.env.MANAGEMENT_API_URL}/listaTiposAmbientes`);
-        const responseData = response.data[0].func_json_tiposambientes
-        this.tipos = responseData
+        const response = await axios.get(
+          `${process.env.MANAGEMENT_API_URL}/listaTiposAmbientes`
+        );
+        const responseData = response.data[0].func_json_tiposambientes;
+        this.tipos = responseData;
       } catch (error) {
         console.error("Erro ao carregar tipos:", error);
       }
     },
     async loadAreas() {
-      const storedToken = JSON.parse(localStorage.getItem("predio"))
+      const storedToken = JSON.parse(localStorage.getItem("predio"));
       const data = {
-       predio_token:storedToken.predio_token
-      }
+        predio_token: storedToken.predio_token,
+      };
       try {
-        const response = await axios.post(`${process.env.MANAGEMENT_API_URL}/listaAreasAmbientes`,data);
-        const responseData = response.data[0].func_json_areas
-        this.areas = responseData
-        console.log(this.areas)
+        const response = await axios.post(
+          `${process.env.MANAGEMENT_API_URL}/listaAreasAmbientes`,
+          data
+        );
+        const responseData = response.data[0].func_json_areas;
+        this.areas = responseData;
+        console.log(this.areas);
       } catch (error) {
         console.error("Erro ao carregar áreas:", error);
       }
     },
     async submit() {
-      const storedIdPredio= JSON.parse(localStorage.getItem("predio"))
-      const storedIdUser= JSON.parse(localStorage.getItem("user"))
+      const storedIdPredio = JSON.parse(localStorage.getItem("predio"));
+      const storedIdUser = JSON.parse(localStorage.getItem("user"));
       const data = {
         descricao: this.predios.descricao,
         numero_ocupantes: this.predios.numero_ocupantes,
         area: this.predios.area,
         tabvalores_tipo_ambiente_id: this.predios.tabvalores_tipo_ambiente_id,
         predio_area_id: this.predios.predio_area_id,
-        predio_id:storedIdPredio.predio_id,
-        user_created:storedIdUser.id
+        predio_id: storedIdPredio.predio_id,
+        user_created: storedIdUser.id,
       };
 
       try {
@@ -119,9 +127,7 @@ export default {
         }
       } catch (error) {
         console.error("Erro na criação do registro:", error);
-        console.log(
-          typeof this.data,
-        );
+        console.log(typeof this.data);
       }
     },
     async handleReset() {

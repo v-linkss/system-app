@@ -8,18 +8,20 @@
         src="../../assets/Logo.png"
       ></v-img>
       <v-autocomplete
+        class="mb-7"
         label="Acessar Cliente"
         v-model="selectedPredio"
         :items="comboLocalStorage"
         item-title="predio_descricao"
         item-value="predio_token"
       ></v-autocomplete>
-      <v-btn block rounded class="button" @click="login"> Acessar </v-btn>
+      <v-btn block rounded class="button mb-5" @click="login"> Acessar </v-btn>
 
       <a
-        class="text-caption text-decoration-none text-blue"
+        class="text-decoration-none "
         href="login"
         rel="noopener noreferrer"
+        style="color: #1b5175"
       >
         Retornar ao Login</a
       >
