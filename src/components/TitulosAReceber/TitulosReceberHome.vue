@@ -38,7 +38,7 @@ import AppBar from "@/layouts/default/AppBar.vue";
         label="Data de emissão fim"
       ></v-text-field>
     </v-col>
-    <v-btn class="me-4 ml-4" color="green" @click="gerarTitulos()">
+    <v-btn class="me-4 ml-4" style="height: 55px;" color="green" @click="gerarTitulos()">
       Pesquisar
     </v-btn>
   </v-row>

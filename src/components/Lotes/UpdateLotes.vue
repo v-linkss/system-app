@@ -1,23 +1,31 @@
 <template>
   <AppBar />
-  <form>
-    <v-text-field
-      v-model="pi_lotes_receitas.data"
-      :error-messages="data.errorMessage.value"
-      type="date"
-      label="Data"
-    ></v-text-field>
+  <h1 class="mt-5 mb-5" style="color: #777777">Receita dos Lotes</h1>
 
-    <v-autocomplete
-      v-model="pi_lotes_receitas.lote_id"
-      :items="lotes"
-      label="Selecione um lote"
-      item-title="nome"
-      item-value="id"
-      :error-messages="lote_id.errorMessage.value"
-    ></v-autocomplete>
+  <v-text-field
+    style="width: 300px"
+    class="ml-5 mr-5"
+    v-model="pi_lotes_receitas.data"
+    :error-messages="data.errorMessage.value"
+    type="date"
+    label="Data"
+  ></v-text-field>
 
+  <v-autocomplete
+    style="width: 700px"
+    class="ml-5 mr-5"
+    v-model="pi_lotes_receitas.lote_id"
+    :items="lotes"
+    label="Selecione um lote"
+    item-title="nome"
+    item-value="id"
+    :error-messages="lote_id.errorMessage.value"
+  ></v-autocomplete>
+  <v-row no-gutters>
     <v-autocomplete
+      style="width: 10px"
+      class="ml-5 mr-5 mt-5"
+      density="compact"
       v-model="pi_lotes_receitas.conta_id"
       :items="contas"
       label="Selecione uma Conta"
@@ -27,13 +35,17 @@
     ></v-autocomplete>
 
     <v-text-field
-
+      class="ml-5 mr-5 mt-5"
+      v-mask="'#####.##'"
       v-model.number="pi_lotes_receitas.valor"
       :error-messages="valor.errorMessage.value"
       label="Valor"
     ></v-text-field>
-
+  </v-row>
+  <v-row no-gutters>
     <v-autocomplete
+      style="width: 90px"
+      class="ml-5 mr-5 mt-1"
       v-model="pi_lotes_receitas.predio_equipamento_id"
       :items="equipamentos"
       item-title="descricao"
@@ -43,6 +55,7 @@
     ></v-autocomplete>
 
     <v-autocomplete
+      class="ml-5 mr-5 mt-1"
       v-model="pi_lotes_receitas.cobrar"
       :items="cobranca"
       item-title="descricao"
@@ -50,17 +63,21 @@
       :error-messages="cobrar.errorMessage.value"
       label="Cobrar"
     ></v-autocomplete>
+  </v-row>
 
-    <v-text-field
-      v-model="pi_lotes_receitas.observacao"
-      :error-messages="observacao.errorMessage.value"
-      label="Observação"
-    ></v-text-field>
+  <v-text-field
+    class="ml-5 mr-5 mt-5"
+    style="height: 100px"
+    v-model="pi_lotes_receitas.observacao"
+    :error-messages="observacao.errorMessage.value"
+    label="Observação"
+  ></v-text-field>
 
-    <v-btn class="me-4" color="green" @click="submit"> Salvar </v-btn>
-    <v-btn class="me-4" color="red" @click="returnToTableLotes"> Voltar </v-btn>
-    <v-btn @click="handleReset"> Limpar </v-btn>
-  </form>
+  <v-btn class="ml-5 me-4 mt-4" @click="handleReset"> Limpar </v-btn>
+  <v-btn class="me-4 mt-4" color="red" @click="returnToTableLotes">
+    Voltar
+  </v-btn>
+  <v-btn class="me-4 mt-4" color="green" @click="submit"> Salvar </v-btn>
 </template>
 <script>
 import axios from "axios";
@@ -91,21 +108,27 @@ export default {
       this.$router.push("/pi-lotes-receitas/index/");
     },
     async loadLotesDetails() {
-    try {
-      const response = await axios.get(`${process.env.MANAGEMENT_API_URL}/ReceitaLotes/${this.pi_lotes_receitas.id}`);
-      // Preencha os campos com os detalhes carregados
-      this.pi_lotes_receitas.cobrar =response.data.cobrar;
-      this.pi_lotes_receitas.conta_id =response.data.conta_id;
-      this.pi_lotes_receitas.predio_equipamento_id =response.data.predio_equipamento_id;
-      this.pi_lotes_receitas.data =response.data.data;
-      this.pi_lotes_receitas.valor =response.data.valor;
-      this.pi_lotes_receitas.observacao =response.data.observacao;
-      this.pi_lotes_receitas.lote_id =response.data.lote_id;
-      console.log(response)
-    } catch (error) {
-      console.error("Erro ao carregar detalhes do prédio_equipamentos:", error);
-    }
-  },
+      try {
+        const response = await axios.get(
+          `${process.env.MANAGEMENT_API_URL}/ReceitaLotes/${this.pi_lotes_receitas.id}`
+        );
+        // Preencha os campos com os detalhes carregados
+        this.pi_lotes_receitas.cobrar = response.data.cobrar;
+        this.pi_lotes_receitas.conta_id = response.data.conta_id;
+        this.pi_lotes_receitas.predio_equipamento_id =
+          response.data.predio_equipamento_id;
+        this.pi_lotes_receitas.data = response.data.data;
+        this.pi_lotes_receitas.valor = response.data.valor;
+        this.pi_lotes_receitas.observacao = response.data.observacao;
+        this.pi_lotes_receitas.lote_id = response.data.lote_id;
+
+      } catch (error) {
+        console.error(
+          "Erro ao carregar detalhes do prédio_equipamentos:",
+          error
+        );
+      }
+    },
     async loadEquipamentos() {
       const storedToken = JSON.parse(localStorage.getItem("predio"));
       const data = {
@@ -177,7 +200,7 @@ export default {
           data
         );
         this.$router.push("/pi-lotes-receitas/index/");
-          return response
+        return response;
       } catch (error) {
         console.error("Erro na criação do registro:", error);
       }

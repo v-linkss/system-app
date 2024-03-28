@@ -6,9 +6,9 @@ import AppBar from "@/layouts/default/AppBar.vue";
     <font-awesome-icon :icon="['fas', 'spinner']" spin />
   </LoadingComponent>
   <div v-else>
+    <h1 class="ml-10 mt-5 " style="color: #777777">Liquidar Titulo</h1>
     <AppBar />
-    <v-container class="bg-surface-variant">
-      <v-row no-gutters>
+    <v-container class="data-container mt-7 mb-8">
         <v-col>
           <v-sheet class="pa-2 ma-2"> Lote: </v-sheet>
         </v-col>
@@ -41,17 +41,26 @@ import AppBar from "@/layouts/default/AppBar.vue";
             Link do Boleto: {{ dados.link_boleto }}
           </v-sheet>
         </v-col>
-      </v-row>
+
     </v-container>
-    <v-text-field
-      v-model="data_pagamento"
-      type="date"
-      label="Data de pagamento"
-      @change="calcularValor"
-    ></v-text-field>
-    <v-text-field v-model="valor" label="Valor"></v-text-field>
-    <v-checkbox v-model="imprimir" label="Imprimir recibo" @click="botao"></v-checkbox>
-    <v-btn class="me-4" color="red" @click="returnToMainPage"> Voltar </v-btn>
+    <v-row no-gutters class="justify-center align-center">
+      <v-text-field
+        style="width: 10px; margin-left: 170px"
+        v-model="data_pagamento"
+        type="date"
+        label="Data de pagamento"
+        @change="calcularValor"
+      ></v-text-field>
+      <v-text-field v-model="valor" class="ml-5" label="Valor"></v-text-field>
+      <v-checkbox
+        v-model="imprimir"
+        class="ml-5"
+        label="Imprimir recibo"
+        @click="botao"
+      ></v-checkbox>
+    </v-row>
+
+    <v-btn class="me-4" style=" margin-left: 170px" color="red" @click="returnToMainPage"> Voltar </v-btn>
     <v-btn class="me-4" color="green" @click="updateLiquida"> Salvar </v-btn>
   </div>
 </template>
@@ -66,7 +75,7 @@ export default {
       loading: true,
       imprimir: false,
       valor: null,
-      acao:"LIQUIDAR"
+      acao: "LIQUIDAR",
     };
   },
   methods: {
@@ -81,14 +90,14 @@ export default {
           dt_pagamento: this.data_pagamento,
           vlr_pago: this.valor,
           user_token: storedTokenUser.token,
-          acao:this.acao
+          acao: this.acao,
         };
         const response = await axios.post(
           `${process.env.MANAGEMENT_API_URL}/gerarTitulos`,
           data
         );
-        console.log(response)
-        const tokenTitulo = response.data[0].func_ger_titulos[0].titulo_token
+        console.log(response);
+        const tokenTitulo = response.data[0].func_ger_titulos[0].titulo_token;
         if (this.imprimir === true) {
           try {
             const data = {
@@ -131,15 +140,16 @@ export default {
           `${process.env.MANAGEMENT_API_URL}/calcularAcrescimo`,
           data
         );
-        this.valor = response.data[0].func_calcula_acrescimo_titulo;
+        const acrescimo = response.data[0].func_calcula_acrescimo_titulo;
+        this.valor = parseFloat(this.dados.valor) + parseFloat(acrescimo);
         console.log(this.valor);
         return response;
       } catch (error) {
         console.error("Erro na chamada de API:", error);
       }
     },
-    async botao(){
-      console.log(this.imprimir)
+    async botao() {
+      console.log(this.imprimir);
     },
     async loadLotes() {
       try {
@@ -171,6 +181,11 @@ export default {
 };
 </script>
 <style scoped>
+.data-container {
+  border: 1px solid black;
+  border-radius: 8px;
+  padding: 16px;
+}
 .arrow {
   cursor: pointer;
   margin-bottom: 20px;

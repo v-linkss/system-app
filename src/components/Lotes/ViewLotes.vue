@@ -7,7 +7,7 @@ import AppBar from "@/layouts/default/AppBar.vue";
   </LoadingComponent>
   <div v-else>
     <AppBar />
-    <v-container class="bg-surface-variant">
+    <v-container class="data-container mt-16">
       <v-row no-gutters>
         <v-col>
           <v-sheet class="pa-2 ma-2"> Data: {{ dados.data }} </v-sheet>
@@ -90,6 +90,11 @@ export default {
 };
 </script>
 <style scoped>
+.data-container {
+  border: 1px solid black;
+  border-radius: 8px;
+  padding: 16px;
+}
 .arrow {
   cursor: pointer;
   margin-bottom: 20px;
