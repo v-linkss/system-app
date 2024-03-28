@@ -101,7 +101,7 @@ export default {
         if (this.imprimir === true) {
           try {
             const data = {
-              token_titulo: tokenTitulo,
+              titulo_token: tokenTitulo,
             };
             const response = await axios.post(
               `${process.env.MANAGEMENT_API_URL}/imprimirRecibo`,

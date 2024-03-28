@@ -104,7 +104,7 @@ import AppBar from "@/layouts/default/AppBar.vue";
           />
           <img
             v-else
-            src="../../assets/ativo.png"
+            src="../../assets/excluir.png"
             alt="Excluir"
             class="trash-icon"
             style="width: 30px; height: 30px"
