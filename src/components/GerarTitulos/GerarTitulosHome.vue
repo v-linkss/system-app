@@ -16,7 +16,7 @@ import AppBar from "@/layouts/default/AppBar.vue";
     </v-col>
     <div>
       <v-col class="btn-pointer" @click="gerarReceitas(selectedItem)">
-        <font-awesome-icon :icon="['fas', 'magnifying-glass']" size="lg" />
+        <img style="width: 40px; height: 40px;" src="../../assets/visualizar.png" alt="Visualizar" />
       </v-col>
     </div>
     <v-col>
@@ -43,7 +43,7 @@ import AppBar from "@/layouts/default/AppBar.vue";
         @click="gerarBoletos()"
         :class="{ disabled: valorTotal <= 0 }"
       >
-        <font-awesome-icon :icon="['fas', 'plus']" size="lg" />
+      <img style="width: 40px; height: 40px;" src="../../assets/novo.png" alt="novo" />
       </v-col>
     </div>
   </v-row>

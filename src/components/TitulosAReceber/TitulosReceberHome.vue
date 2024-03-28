@@ -4,7 +4,6 @@ import AppBar from "@/layouts/default/AppBar.vue";
 
 <template>
   <AppBar />
-
   <v-row class="mt-6" no-gutters>
     <v-col>
       <v-text-field
@@ -38,7 +37,12 @@ import AppBar from "@/layouts/default/AppBar.vue";
         label="Data de emissão fim"
       ></v-text-field>
     </v-col>
-    <v-btn class="me-4 ml-4" style="height: 55px;" color="green" @click="gerarTitulos()">
+    <v-btn
+      class="me-4 ml-4"
+      style="height: 55px"
+      color="green"
+      @click="gerarTitulos()"
+    >
       Pesquisar
     </v-btn>
   </v-row>
@@ -68,45 +72,83 @@ import AppBar from "@/layouts/default/AppBar.vue";
           class="btn-pointer"
           @click="item.btn_prorroga ? btnProrroga(item.documento) : null"
           :class="{
-            'red-icon': !item.btn_prorroga,
-            'gray-icon': item.btn_prorroga,
             disabled: !item.btn_prorroga,
           }"
         >
-          <font-awesome-icon :icon="['fas', 'calendar-days']" />
+          <img
+            v-if="item.btn_prorroga"
+            src="../../assets/titulo_prorroga.png"
+            alt="Prorrogar"
+            class="calendar-icon"
+          />
+          <img
+            v-else
+            src="../../assets/titulo_prorroga_red.png"
+            alt="Prorrogar"
+            class="calendar-icon"
+          />
         </div>
         <div
           class="btn-pointer"
           @click="item.btn_cancela ? btnCancela(item.documento) : null"
           :class="{
-            'red-icon': !item.btn_cancela,
-            'gray-icon': item.btn_cancela,
             disabled: !item.btn_cancela,
           }"
         >
-          <font-awesome-icon :icon="['fas', 'trash']" />
+        <img
+            v-if="!item.btn_cancela"
+            src="../../assets/excluido.png"
+            alt="Excluir"
+            class="trash-icon"
+            style="width: 30px; height: 30px"
+          />
+          <img
+            v-else
+            src="../../assets/ativo.png"
+            alt="Excluir"
+            class="trash-icon"
+            style="width: 30px; height: 30px"
+          />
         </div>
         <div
           class="btn-pointer"
           @click="item.btn_liquida ? btnLiquida(item.documento) : null"
           :class="{
-            'red-icon': !item.btn_liquida,
-            'gray-icon': item.btn_liquida,
             disabled: !item.btn_liquida,
           }"
         >
-          <font-awesome-icon :icon="['fas', 'money-bill-wave']" />
+        <img
+            v-if="!item.btn_liquida"
+            src="../../assets/titulo_liquida_red.png"
+            alt="Prorrogar"
+            class="calendar-icon"
+          />
+          <img
+            v-else
+            src="../../assets/titulo_liquida.png"
+            alt="Prorrogar"
+            class="calendar-icon"
+          />
         </div>
         <div
           class="btn-pointer"
           :class="{
-            'red-icon': !item.btn_boleto,
-            'gray-icon': item.btn_boleto,
             disabled: !item.btn_boleto,
           }"
-          @click="item.btn_boleto ? btnRecibo(item) : null"
+          @click="item.btn_boleto ? btnRecibo(item.documento) : null"
         >
-          <font-awesome-icon :icon="['fas', 'print']" />
+        <img
+            v-if="!item.btn_boleto"
+            src="../../assets/imprimir_red.png"
+            alt="Prorrogar"
+            class="calendar-icon"
+          />
+          <img
+            v-else
+            src="../../assets/imprimir.png"
+            alt="Prorrogar"
+            class="calendar-icon"
+          />
         </div>
       </div>
     </template>
@@ -241,7 +283,7 @@ export default {
         );
         this.recibo = response.data;
         const data = {
-          token_titulo: this.recibo.token,
+          titulo_token: this.recibo.token,
         };
         const imprimirRecibo = await axios.post(
           `${process.env.MANAGEMENT_API_URL}/imprimirRecibo`,
@@ -285,27 +327,17 @@ export default {
 
 .btn {
   display: flex;
-  justify-content: center;
   align-items: center;
 }
 .custom-td {
   display: flex;
-  align-items: center;
+
 }
 
 .btn-pointer {
   margin-left: 20px;
   cursor: pointer;
 }
-
-.red-icon {
-  color: red;
-}
-
-.gray-icon {
-  color: gray;
-}
-
 .disabled {
   pointer-events: none;
 }

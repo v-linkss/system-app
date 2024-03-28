@@ -5,7 +5,7 @@ import AppBar from "@/layouts/default/AppBar.vue";
 <template>
   <AppBar />
   <div class="btn-pointer mt-5 mb-2" @click="redirectToRegister()">
-    <font-awesome-icon :icon="['fas', 'plus']" size="lg"/>
+    <img style="width: 40px; height: 40px;" src="../../assets/novo.png" alt="novo" />
   </div>
   <!-- eslint-disable vue/valid-v-slot -->
   <v-data-table
@@ -20,19 +20,33 @@ import AppBar from "@/layouts/default/AppBar.vue";
     <template v-slot:item.actions="{ item }">
       <div class="custom-td">
         <div class="btn-pointer" @click="redirectToView(item.id)">
-          <font-awesome-icon :icon="['fas', 'magnifying-glass']" />
+          <img
+            style="width: 40px; height: 40px"
+            src="../../assets/visualizar.png"
+            alt="Visualizar"
+          />
         </div>
         <div class="btn-pointer" @click="redirectToUpdate(item.id)">
-          <font-awesome-icon :icon="['fas', 'pen-to-square']" />
+          <img
+            style="width: 40px; height: 40px"
+            src="../../assets/editar.png"
+            alt="Visualizar"
+          />
         </div>
-        <div class="btn-pointer" id="exclusão">
-          <font-awesome-icon
-            :icon="['fas', 'trash']"
-            @click="toggleExclusion(item)"
-            :class="{
-              'red-icon': item.excluido,
-              'gray-icon': !item.excluido,
-            }"
+        <div class="btn-pointer" id="exclusão" @click="toggleExclusion(item)">
+          <img
+            v-if="item.excluido"
+            src="../../assets/excluido.png"
+            alt="Excluir"
+            class="trash-icon"
+            style="width: 40px; height: 40px"
+          />
+          <img
+            v-else
+            src="../../assets/ativo.png"
+            alt="Excluir"
+            class="trash-icon"
+            style="width: 40px; height: 40px"
           />
         </div>
       </div>
