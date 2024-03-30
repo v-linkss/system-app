@@ -56,11 +56,28 @@ import AppBar from "@/layouts/default/AppBar.vue";
       item-value="token"
     ></v-autocomplete>
   </v-col>
-
+  <v-row>
+    <v-col v-for="(header, index) in headers" :key="header.key" cols="auto">
+      <!-- Verifica se não é a última coluna -->
+      <template v-if="index < headers.length - 1">
+        <v-text-field
+          v-model="header.search"
+          :label="'Search ' + header.title"
+          prepend-inner-icon="mdi-magnify"
+          outlined
+          hide-details
+          single-line
+          @keydown.enter="filterOnEnter"
+          @blur="filterOnBlur"
+          ref="searchFields"
+        ></v-text-field>
+      </template>
+    </v-col>
+  </v-row>
   <v-data-table
     :headers="headers"
     :search="search"
-    :items="receitas"
+    :items="receita_filtrada"
     :rows-per-page-items="itemsPerPage"
     :footer-props="footerProps"
     density="default"
@@ -95,7 +112,7 @@ import AppBar from "@/layouts/default/AppBar.vue";
             disabled: !item.btn_cancela,
           }"
         >
-        <img
+          <img
             v-if="!item.btn_cancela"
             src="../../assets/excluido.png"
             alt="Excluir"
@@ -117,7 +134,7 @@ import AppBar from "@/layouts/default/AppBar.vue";
             disabled: !item.btn_liquida,
           }"
         >
-        <img
+          <img
             v-if="!item.btn_liquida"
             src="../../assets/titulo_liquida_red.png"
             alt="Prorrogar"
@@ -137,7 +154,7 @@ import AppBar from "@/layouts/default/AppBar.vue";
           }"
           @click="item.btn_boleto ? btnRecibo(item.documento) : null"
         >
-        <img
+          <img
             v-if="!item.btn_boleto"
             src="../../assets/imprimir_red.png"
             alt="Prorrogar"
@@ -173,6 +190,7 @@ export default {
         dt_vencimento_inicio: null,
         dt_vencimento_fim: null,
       },
+      receita_filtrada: [],
       receitas: [],
       lotesCombo: [],
       boleto: [],
@@ -184,33 +202,41 @@ export default {
         {
           title: "Documento",
           value: "documento",
+          search: "",
         },
         {
           title: "Lote",
           value: "lote",
+          search: "",
         },
         {
           title: "Emissão",
           value: "dt_emissao",
+          search: "",
         },
         {
           title: "Vencimento",
           value: "dt_vencimento",
+          search: "",
         },
         {
           title: "Valor",
           value: "valor",
+          search: "",
         },
         {
           title: "Situação",
           value: "situacao",
+          search: "",
         },
         {
           title: "Pagamento",
           value: "dt_pagamento",
+          search: "",
         },
         {
           value: "actions",
+          search: "",
         },
       ],
     };
@@ -235,6 +261,7 @@ export default {
         );
         const responseData = response.data[0].func_json_titulos_lote;
         this.receitas = responseData;
+        this.receita_filtrada = this.receitas;
         console.log(this.receitas);
       } catch (error) {
         console.error("Erro ao carregar receitas:", error);
@@ -313,6 +340,25 @@ export default {
       const searchQuery = localStorage.getItem("searchQuery");
       console.log("saveSearchQuery:", searchQuery); // Imprime no console
     },
+    filterTable() {
+      this.receita_filtrada = this.receitas.filter((item) => {
+        return this.headers.every((header) => {
+          if (header.search.trim() === "") return true;
+          const value = String(item[header.value]).toLowerCase();
+          const search = header.search.toLowerCase();
+
+          return value.includes(search);
+        });
+      });
+    },
+    filterOnEnter() {
+      console.log("Enter pressionado");
+      this.filterTable();
+    },
+    filterOnBlur() {
+      console.log("Campo perdeu o foco");
+      this.filterTable();
+    },
   },
   mounted() {
     this.loadLotes();
@@ -331,7 +377,6 @@ export default {
 }
 .custom-td {
   display: flex;
-
 }
 
 .btn-pointer {
