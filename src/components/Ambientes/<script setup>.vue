@@ -1,15 +1,13 @@
 <script setup>
-import AppBar from "@/layouts/default/AppBar.vue";
+{
+  /* import AppBar from "@/layouts/default/AppBar.vue"; */
+}
 </script>
 
 <template>
   <AppBar />
   <div class="btn-pointer mt-5 mb-2" @click="redirectToRegister()">
-    <img
-      style="width: 40px; height: 40px"
-      src="../../assets/novo.png"
-      alt="novo"
-    />
+    <font-awesome-icon :icon="['fas', 'plus']" size="lg" />
   </div>
   <v-row>
     <v-col v-for="(header, index) in headers" :key="header.key" cols="auto">
@@ -31,7 +29,6 @@ import AppBar from "@/layouts/default/AppBar.vue";
   </v-row>
   <v-data-table
     :headers="headers"
-    :search="searchQuery"
     :items="filteredPrediosAmbientes"
     :rows-per-page-items="itemsPerPage"
     :footer-props="footerProps"
@@ -41,39 +38,26 @@ import AppBar from "@/layouts/default/AppBar.vue";
     <template v-slot:item.actions="{ item }">
       <div class="custom-td">
         <div class="btn-pointer" @click="redirectToView(item.id)">
-          <img
-            style="width: 40px; height: 40px"
-            src="../../assets/visualizar.png"
-            alt="Visualizar"
-          />
+          <font-awesome-icon :icon="['fas', 'magnifying-glass']" />
         </div>
         <div class="btn-pointer" @click="redirectToUpdate(item.id)">
-          <img
-            style="width: 40px; height: 40px"
-            src="../../assets/editar.png"
-            alt="Visualizar"
-          />
+          <font-awesome-icon :icon="['fas', 'pen-to-square']" />
         </div>
-        <div class="btn-pointer" id="exclusão" @click="toggleExclusion(item)">
-          <img
-            v-if="item.excluido"
-            src="../../assets/excluido.png"
-            alt="Excluir"
-            class="trash-icon"
-            style="width: 40px; height: 40px"
-          />
-          <img
-            v-else
-            src="../../assets/ativo.png"
-            alt="Excluir"
-            class="trash-icon"
-            style="width: 40px; height: 40px"
+        <div class="btn-pointer" id="exclusão">
+          <font-awesome-icon
+            :icon="['fas', 'trash']"
+            @click="toggleExclusion(item)"
+            :class="{
+              'red-icon': item.excluido,
+              'gray-icon': !item.excluido,
+            }"
           />
         </div>
       </div>
     </template>
   </v-data-table>
 </template>
+
 <script>
 import { VDataTable } from "vuetify/lib/components/index.mjs";
 import axios from "axios";
@@ -85,8 +69,12 @@ export default {
     return {
       filteredPrediosAmbientes: [],
 
+      // Flag para indicar se a tecla "Enter" foi pressionada
+      enterPressed: false,
+      // Flag para indicar se o input perdeu o foco
+      inputBlurred: false,
       predios_ambientes: [],
-      searchQuery: "",
+      searchQueries: {}, // Object to store search queries for each column
       itemsPerPage: [20],
       footerProps: [20],
       headers: [
@@ -115,45 +103,23 @@ export default {
   },
   computed: {
     // filteredPrediosAmbientes() {
-    //   const query = this.searchQuery.toLowerCase().trim();
-    //   const filteredItems = this.predios_ambientes.filter((item) => {
-    //     const descricao = item.descricao.toLowerCase();
-    //     const prediosAreasDescricao = item.predios_areas
-    //       ? item.predios_areas.descricao.toLowerCase()
-    //       : "";
-    //     return (
-    //       descricao.includes(query) || prediosAreasDescricao.includes(query)
-    //     );
-    //   });
-    //   // Ordena os itens pelo nome da descrição
-    //   return filteredItems.sort((a, b) =>
-    //     a.descricao.localeCompare(b.descricao)
-    //   );
+    //   const a = this.shouldFilter();
+    //   console.log("!@!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n", a);
+    //   if (this.shouldFilter() === false) {
+    //     return this.predios_ambientes;
+    //   } else {
+    //     return this.predios_ambientes.filter((item) => {
+    //       return this.headers.every((header) => {
+    //         if (header.search.trim() === "") return true;
+    //         const value = String(item[header.value]).toLowerCase();
+    //         const search = header.search.toLowerCase();
+    //         return value.includes(search);
+    //       });
+    //     });
+    //   }
     // },
   },
   methods: {
-    filterTable() {
-      console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n", this.headers.search);
-
-      this.filteredPrediosAmbientes = this.predios_ambientes.filter((item) => {
-        return this.headers.every((header) => {
-          if (header.search.trim() === "") return true;
-          const value = String(item[header.value]).toLowerCase();
-          const search = header.search.toLowerCase();
-
-          return value.includes(search);
-        });
-      });
-      console.log(this.filteredPrediosAmbientes); // Pa
-    },
-    filterOnEnter() {
-      console.log("Enter pressionado");
-      this.filterTable();
-    },
-    filterOnBlur() {
-      console.log("Campo perdeu o foco");
-      this.filterTable();
-    },
     redirectToView(id) {
       this.$router.push({
         name: "predios-ambientes/index/vizualizar",
@@ -188,11 +154,51 @@ export default {
         item.excluido = !item.excluido;
       }
     },
+    shouldFilter() {
+      // this.filteredPrediosAmbientes = this.predios_ambientes.filter((item) => {
+      //   return this.headers.every((header) => {
+      //     return (
+      //       !header.search ||
+      //       String(item[header.value])
+      //         .toLowerCase()
+      //         .includes(header.search.toLowerCase())
+      //     );
+      //   });
+      // });
+    },
+    filterTable() {
+      this.filteredPrediosAmbientes = this.predios_ambientes.filter((item) => {
+        return this.headers.every((header) => {
+          if (header.search.trim() === "") return true;
+          const value = String(item[header.value]).toLowerCase();
+          const search = header.search.toLowerCase();
+
+          return value.includes(search);
+        });
+      });
+      console.log(this.filteredPrediosAmbientes); // Pa
+    },
+    filterOnEnter() {
+      console.log("Enter pressionado");
+      this.filterTable();
+    },
+    filterOnBlur() {
+      console.log("Campo perdeu o foco");
+      this.filterTable();
+    },
     saveSearchQuery() {
       // Salva o valor do campo de pesquisa no localStorage
-      localStorage.setItem("searchQuery", this.searchQuery);
-      const searchQuery = localStorage.getItem("searchQuery");
-      console.log("saveSearchQuery:", searchQuery); // Imprime no console
+      this.headers.forEach((header) => {
+        localStorage.setItem(`searchQuery_${header.value}, header.search`);
+      });
+    },
+    loadSearchQuery() {
+      this.headers.forEach((header) => {
+        const searchQuery = localStorage.getItem(`searchQuery_${header.value}`);
+        if (searchQuery !== null) {
+          header.search = searchQuery;
+        }
+      });
     },
   },
   mounted() {
@@ -201,7 +207,7 @@ export default {
       predio_token: storedToken.predio_token,
     };
     axios
-      .post(`${process.env.MANAGEMENT_API_URL}/listaAmbientes`, data)
+      .post(`${process.env.MANAGEMENT_API_URL}/listaAmbientes, data`)
       .then((response) => {
         this.predios_ambientes = response.data[0].func_json_ambientes;
         this.filteredPrediosAmbientes = this.predios_ambientes;
@@ -209,10 +215,14 @@ export default {
       .catch((error) => {
         console.error("Erro na chamada de API:", error);
       });
-    // Recarrega o valor do campo de pesquisa do localStorage
-    const searchQuery = localStorage.getItem("searchQuery");
-    console.log("Valor carregado do localStorage:", searchQuery); // Imprime no console
-    this.searchQuery = searchQuery || "";
+
+    this.loadSearchQuery(); // Load search queries from localStorage
+  },
+  watch: {
+    headers: {
+      handler: "saveSearchQuery",
+      deep: true,
+    },
   },
 };
 </script>
