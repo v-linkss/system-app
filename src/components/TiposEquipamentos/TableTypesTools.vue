@@ -5,9 +5,31 @@ import AppBar from "@/layouts/default/AppBar.vue";
 <template>
   <AppBar />
   <div class="btn-pointer mt-5 mb-2" @click="redirectToRegister()">
-    <img style="width: 40px; height: 40px;" src="../../assets/novo.png" alt="novo" />
+    <img
+      style="width: 40px; height: 40px"
+      src="../../assets/novo.png"
+      alt="novo"
+    />
   </div>
   <!-- eslint-disable vue/valid-v-slot -->
+  <v-row>
+    <v-col v-for="(header, index) in headers" :key="header.key" cols="auto">
+      <!-- Verifica se não é a última coluna -->
+      <template v-if="index < headers.length - 1">
+        <v-text-field
+          v-model="header.search"
+          :label="'Search ' + header.title"
+          prepend-inner-icon="mdi-magnify"
+          outlined
+          hide-details
+          single-line
+          @keydown.enter="filterOnEnter"
+          @blur="filterOnBlur"
+          ref="searchFields"
+        ></v-text-field>
+      </template>
+    </v-col>
+  </v-row>
   <v-data-table
     :headers="headers"
     :search="searchQuery"
@@ -62,6 +84,7 @@ export default {
   },
   data() {
     return {
+      filteredPrediosEquipamentos: [],
       tipos_equipamentos: [],
       segmentos: [],
       searchQuery: "",
@@ -71,46 +94,48 @@ export default {
         {
           title: "Codigo",
           value: "id",
+          search: "",
         },
         {
           title: "Descrição",
           value: "descricao",
+          search: "",
         },
         {
           title: "Sistema",
           value: "sistema",
+          search: "",
         },
         {
           title: "Segmento",
           value: "segmento",
+          search: "",
         },
         {
           title: "Ações",
           value: "actions",
+          search: "",
         },
       ],
     };
   },
   computed: {
-    filteredPrediosEquipamentos() {
-      const query = this.searchQuery.toLowerCase().trim();
-
-      const filteredItems = this.tipos_equipamentos.filter((item) => {
-        const descricao = item.descricao.toLowerCase();
-        const prediosAreasDescricao = item.predios_areas
-          ? item.predios_areas.descricao.toLowerCase()
-          : "";
-
-        return (
-          descricao.includes(query) || prediosAreasDescricao.includes(query)
-        );
-      });
-
-      // Ordena os itens pelo nome da descrição
-      return filteredItems.sort((a, b) =>
-        a.descricao.localeCompare(b.descricao)
-      );
-    },
+    // filteredPrediosEquipamentos() {
+    //   const query = this.searchQuery.toLowerCase().trim();
+    //   const filteredItems = this.tipos_equipamentos.filter((item) => {
+    //     const descricao = item.descricao.toLowerCase();
+    //     const prediosAreasDescricao = item.predios_areas
+    //       ? item.predios_areas.descricao.toLowerCase()
+    //       : "";
+    //     return (
+    //       descricao.includes(query) || prediosAreasDescricao.includes(query)
+    //     );
+    //   });
+    //   // Ordena os itens pelo nome da descrição
+    //   return filteredItems.sort((a, b) =>
+    //     a.descricao.localeCompare(b.descricao)
+    //   );
+    // },
   },
   methods: {
     redirectToView(id) {
@@ -136,7 +161,7 @@ export default {
       try {
         item.excluido = !item.excluido;
         await axios.put(
-        `${process.env.MANAGEMENT_API_URL}/deleteEquipamentos/excluir/${item.id}`,
+          `${process.env.MANAGEMENT_API_URL}/deleteEquipamentos/excluir/${item.id}`,
           {
             excluido: item.excluido,
           }
@@ -153,17 +178,40 @@ export default {
       const searchQuery = localStorage.getItem("searchQuery");
       console.log("saveSearchQuery:", searchQuery); // Imprime no console
     },
+    filterTable() {
+      this.filteredPrediosEquipamentos = this.tipos_equipamentos.filter(
+        (item) => {
+          return this.headers.every((header) => {
+            if (header.search.trim() === "") return true;
+            const value = String(item[header.value]).toLowerCase();
+            const search = header.search.toLowerCase();
+
+            return value.includes(search);
+          });
+        }
+      );
+      console.log(this.filteredPrediosAmbientes); // Pa
+    },
+    filterOnEnter() {
+      console.log("Enter pressionado");
+      this.filterTable();
+    },
+    filterOnBlur() {
+      console.log("Campo perdeu o foco");
+      this.filterTable();
+    },
   },
   mounted() {
-    const storedToken = JSON.parse(localStorage.getItem("predio"))
+    const storedToken = JSON.parse(localStorage.getItem("predio"));
     const data = {
-      token_predio:storedToken.predio_token
-    }
+      token_predio: storedToken.predio_token,
+    };
     axios
-      .post(`${process.env.MANAGEMENT_API_URL}/listaTiposEquipamentos`,data)
+      .post(`${process.env.MANAGEMENT_API_URL}/listaTiposEquipamentos`, data)
       .then((response) => {
         this.tipos_equipamentos = response.data[0].func_json_tiposequipamentos;
-        console.log("jkjjkjk",this.tipos_equipamentos);
+        this.filteredPrediosEquipamentos = this.tipos_equipamentos;
+        console.log("jkjjkjk", this.tipos_equipamentos);
       })
       .catch((error) => {
         console.error("Erro na chamada de API:", error);
