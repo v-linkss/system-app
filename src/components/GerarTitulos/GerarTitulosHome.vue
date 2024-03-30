@@ -16,7 +16,11 @@ import AppBar from "@/layouts/default/AppBar.vue";
     </v-col>
     <div>
       <v-col class="btn-pointer" @click="gerarReceitas(selectedItem)">
-        <img style="width: 40px; height: 40px;" src="../../assets/visualizar.png" alt="Visualizar" />
+        <img
+          style="width: 40px; height: 40px"
+          src="../../assets/visualizar.png"
+          alt="Visualizar"
+        />
       </v-col>
     </div>
     <v-col>
@@ -43,7 +47,11 @@ import AppBar from "@/layouts/default/AppBar.vue";
         @click="gerarBoletos()"
         :class="{ disabled: valorTotal <= 0 }"
       >
-      <img style="width: 40px; height: 40px;" src="../../assets/novo.png" alt="novo" />
+        <img
+          style="width: 40px; height: 40px"
+          src="../../assets/novo.png"
+          alt="novo"
+        />
       </v-col>
     </div>
   </v-row>
@@ -54,6 +62,24 @@ import AppBar from "@/layouts/default/AppBar.vue";
     label="Observação"
   ></v-text-field>
 
+  <v-row>
+    <v-col v-for="(header, index) in headers" :key="header.key" cols="auto">
+      <!-- Verifica se não é a última coluna -->
+      <template v-if="index < headers.length - 1">
+        <v-text-field
+          v-model="header.search"
+          :label="'Search ' + header.title"
+          prepend-inner-icon="mdi-magnify"
+          outlined
+          hide-details
+          single-line
+          @keydown.enter="filterOnEnter"
+          @blur="filterOnBlur"
+          ref="searchFields"
+        ></v-text-field>
+      </template>
+    </v-col>
+  </v-row>
   <v-data-table
     :headers="headers"
     :search="searchQuery"
@@ -79,6 +105,8 @@ export default {
   },
   data() {
     return {
+      filteredPrediosAmbientes: [], // preocurar o correspondente e alterar
+
       selected: [],
       selectedItem: null,
       lotesChecked: [],
@@ -197,6 +225,7 @@ export default {
           data
         );
         const responseData = response.data[0].func_json_lotes_predio;
+        console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n", responseData);
         this.lotesCombo = responseData;
       } catch (error) {
         console.error("Erro ao carregar áreas:", error);
@@ -237,6 +266,26 @@ export default {
         }
       });
       this.lotes.valor = sum; // Atualiza o valor do campo lotes.valor
+    },
+    filterTable() {
+      this.filteredPrediosAmbientes = this.predios_ambientes.filter((item) => {
+        return this.headers.every((header) => {
+          if (header.search.trim() === "") return true;
+          const value = String(item[header.value]).toLowerCase();
+          const search = header.search.toLowerCase();
+
+          return value.includes(search);
+        });
+      });
+      console.log(this.filteredPrediosAmbientes); // Pa
+    },
+    filterOnEnter() {
+      console.log("Enter pressionado");
+      this.filterTable();
+    },
+    filterOnBlur() {
+      console.log("Campo perdeu o foco");
+      this.filterTable();
     },
   },
   mounted() {

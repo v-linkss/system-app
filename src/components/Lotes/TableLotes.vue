@@ -5,12 +5,35 @@ import AppBar from "@/layouts/default/AppBar.vue";
 <template>
   <AppBar />
   <div class="btn-pointer mt-5 mb-2" @click="redirectToRegister()">
-    <img style="width: 40px; height: 40px;" src="../../assets/novo.png" alt="novo" />
+    <img
+      style="width: 40px; height: 40px"
+      src="../../assets/novo.png"
+      alt="novo"
+    />
   </div>
+
+  <v-row>
+    <v-col v-for="(header, index) in headers" :key="header.key" cols="auto">
+      <!-- Verifica se não é a última coluna -->
+      <template v-if="index < headers.length - 1">
+        <v-text-field
+          v-model="header.search"
+          :label="'Search ' + header.title"
+          prepend-inner-icon="mdi-magnify"
+          outlined
+          hide-details
+          single-line
+          @keydown.enter="filterOnEnter"
+          @blur="filterOnBlur"
+          ref="searchFields"
+        ></v-text-field>
+      </template>
+    </v-col>
+  </v-row>
   <v-data-table
     :headers="headers"
     :search="searchQuery"
-    :items="lotes"
+    :items="filtrados_lotes"
     :rows-per-page-items="itemsPerPage"
     :footer-props="footerProps"
     density="default"
@@ -61,6 +84,7 @@ export default {
   },
   data() {
     return {
+      filtrados_lotes: [],
       lotes: [],
       searchQuery: "",
       itemsPerPage: [20],
@@ -69,50 +93,53 @@ export default {
         {
           title: "Data",
           value: "data",
+          search: "",
         },
         {
           title: "Lote",
           value: "lote",
+          search: "",
         },
         {
           title: "Conta",
           value: "conta",
+          search: "",
         },
         {
           title: "Valor",
           value: "valor",
+          search: "",
         },
         {
           title: "Cobrar/Devolver",
           value: "cobrar",
+          search: "",
         },
         {
           title: "Ações",
           value: "actions",
+          search: "",
         },
       ],
     };
   },
   computed: {
-    filteredLotes() {
-      const query = this.searchQuery.toLowerCase().trim();
-
-      const filteredItems = this.lotes.filter((item) => {
-        const descricao = item.lote.toLowerCase();
-        const prediosAreasDescricao = item.predios_areas
-          ? item.predios_areas.descricao.toLowerCase()
-          : "";
-
-        return (
-          descricao.includes(query) || prediosAreasDescricao.includes(query)
-        );
-      });
-
-      // Ordena os itens pelo nome da descrição
-      return filteredItems.sort((a, b) =>
-        a.descricao.localeCompare(b.descricao)
-      );
-    },
+    // filteredLotes() {
+    //   const query = this.searchQuery.toLowerCase().trim();
+    //   const filteredItems = this.lotes.filter((item) => {
+    //     const descricao = item.lote.toLowerCase();
+    //     const prediosAreasDescricao = item.predios_areas
+    //       ? item.predios_areas.descricao.toLowerCase()
+    //       : "";
+    //     return (
+    //       descricao.includes(query) || prediosAreasDescricao.includes(query)
+    //     );
+    //   });
+    //   // Ordena os itens pelo nome da descrição
+    //   return filteredItems.sort((a, b) =>
+    //     a.descricao.localeCompare(b.descricao)
+    //   );
+    // },
   },
   methods: {
     redirectToView(id) {
@@ -155,17 +182,37 @@ export default {
       const searchQuery = localStorage.getItem("searchQuery");
       console.log("saveSearchQuery:", searchQuery); // Imprime no console
     },
+    filterTable() {
+      this.filtrados_lotes = this.lotes.filter((item) => {
+        return this.headers.every((header) => {
+          if (header.search.trim() === "") return true;
+          const value = String(item[header.value]).toLowerCase();
+          const search = header.search.toLowerCase();
+
+          return value.includes(search);
+        });
+      });
+    },
+    filterOnEnter() {
+      console.log("Enter pressionado");
+      this.filterTable();
+    },
+    filterOnBlur() {
+      console.log("Campo perdeu o foco");
+      this.filterTable();
+    },
   },
   mounted() {
-    const storedToken = JSON.parse(localStorage.getItem("predio"))
-        const data = {
-         predio_id:storedToken.predio_id
-        }
+    const storedToken = JSON.parse(localStorage.getItem("predio"));
+    const data = {
+      predio_id: storedToken.predio_id,
+    };
     axios
-      .post(`${process.env.MANAGEMENT_API_URL}/listaLotesReceita`,data)
+      .post(`${process.env.MANAGEMENT_API_URL}/listaLotesReceita`, data)
       .then((response) => {
         this.lotes = response.data;
-        console.log(this.lotes)
+        this.filtrados_lotes = this.lotes;
+        console.log(this.lotes);
       })
       .catch((error) => {
         console.error("Erro na chamada de API:", error);
