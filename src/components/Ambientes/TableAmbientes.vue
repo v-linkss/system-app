@@ -1,3 +1,4 @@
+<!-- Feito -->
 <script setup>
 import AppBar from "@/layouts/default/AppBar.vue";
 </script>

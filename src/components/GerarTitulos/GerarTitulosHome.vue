@@ -83,7 +83,7 @@ import AppBar from "@/layouts/default/AppBar.vue";
   <v-data-table
     :headers="headers"
     :search="searchQuery"
-    :items="receitas"
+    :items="filteredReceita"
     v-model="selected"
     :rows-per-page-items="itemsPerPage"
     :footer-props="footerProps"
@@ -105,7 +105,7 @@ export default {
   },
   data() {
     return {
-      filteredPrediosAmbientes: [], // preocurar o correspondente e alterar
+      filteredReceita: [], // preocurar o correspondente e alterar
 
       selected: [],
       selectedItem: null,
@@ -127,22 +127,27 @@ export default {
         {
           title: "Data",
           value: "data",
+          search: "",
         },
         {
           title: "Conta",
           value: "conta",
+          search: "",
         },
         {
           title: "Valor",
           value: "valor",
+          search: "",
         },
         {
           title: "Cobrar/Devolver",
           value: "cobrar",
+          search: "",
         },
         {
           title: "Observação",
           value: "observacao",
+          search: "",
         },
       ],
     };
@@ -165,6 +170,7 @@ export default {
         );
         const responseData = response.data[0].func_json_receitas_lote;
         this.receitas = responseData;
+        this.filteredReceita = this.receitas;
         console.log(this.receitas);
       } catch (error) {
         console.error("Erro ao carregar receitas:", error);
@@ -268,7 +274,7 @@ export default {
       this.lotes.valor = sum; // Atualiza o valor do campo lotes.valor
     },
     filterTable() {
-      this.filteredPrediosAmbientes = this.predios_ambientes.filter((item) => {
+      this.filteredReceita = this.receitas.filter((item) => {
         return this.headers.every((header) => {
           if (header.search.trim() === "") return true;
           const value = String(item[header.value]).toLowerCase();
@@ -277,7 +283,6 @@ export default {
           return value.includes(search);
         });
       });
-      console.log(this.filteredPrediosAmbientes); // Pa
     },
     filterOnEnter() {
       console.log("Enter pressionado");
