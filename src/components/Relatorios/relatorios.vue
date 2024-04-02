@@ -1,88 +1,91 @@
 <!-- eslint-disable vue/multi-word-component-names -->
 <template>
-  <AppBar />
-  <v-container>
-    <v-autocomplete
-      label="Selecione o Relatório"
-      :items="relatoriosLocalStorage"
-      item-title="codigo"
-      item-value="codigo"
-      v-model="selectedRelatorio"
-      @update:search="montarPainelFiltros()"
-      variant="outlined"
-    ></v-autocomplete>
+  <v-progress-circular class="loading-spinner" indeterminate size="64" v-if="loading"></v-progress-circular>
+  <div v-else>
+    <AppBar />
+    <v-container>
+      <v-autocomplete
+        label="Selecione o Relatório"
+        :items="relatoriosLocalStorage"
+        item-title="codigo"
+        item-value="codigo"
+        v-model="selectedRelatorio"
+        @update:search="montarPainelFiltros()"
+        variant="outlined"
+      ></v-autocomplete>
 
-    <v-progress-circular
-      class="loading-spinner"
-      indeterminate
-      size="64"
-      v-if="loading"
-    ></v-progress-circular>
-    <div v-else>
-    <v-container v-if="parametrosArray.length > 0">
-        <h1>Seleções:</h1>
-        <v-col
-          v-for="(parametro, index) in parametrosArray"
-          :key="index"
-          cols="12"
-          md="6"
-        >
-          {{ parametro.label }}
-
-          <v-text-field
-            v-if="parametro.tipo === 'DATE'"
-            v-model="parametro.valor"
-            type="date"
-            outlined
-          ></v-text-field>
-          <v-text-field
-            v-mask="'####'"
-            v-if="parametro.tipo === 'INTEGER'"
-            v-model="parametro.valor"
-            type="number"
-            outlined
-          ></v-text-field>
-          <v-text-field
-            v-mask="'###.##'"
-            v-if="parametro.tipo === 'NUMERIC'"
-            v-model="parametro.valor"
-            type="number"
-            outlined
-          ></v-text-field>
-          <v-text-field
-            v-if="parametro.tipo === 'TEXT'"
-            v-model="parametro.valor"
-            outlined
-          ></v-text-field>
-
-          <v-autocomplete
-            v-if="parametro.tipo === 'ARRAY'"
-            :items="JSON.parse(parametro.dominio)"
-            item-title="chave"
-            item-value="valor"
-            v-model="parametro.valor"
-            outlined
-          ></v-autocomplete>
-          <v-autocomplete
-            v-if="
-              parametro.tipo === 'TABLE' &&
-              comboSelecao[index]?.tipo === 'TABLE'
-            "
+      <v-progress-circular
+        class="loading-spinner"
+        indeterminate
+        size="64"
+        v-if="loading"
+      ></v-progress-circular>
+      <div v-else>
+      <v-container v-if="parametrosArray.length > 0">
+          <h1>Seleções:</h1>
+          <v-col
+            v-for="(parametro, index) in parametrosArray"
             :key="index"
-            :items="comboSelecao[index]?.resultado[0].func_json_consulta"
-            label="Selecione o item"
-            item-title="chave"
-            item-value="valor"
-            v-model="parametro.valor"
-            outlined
-          ></v-autocomplete>
-        </v-col>
-        <v-btn class="me-4" color="red" @click="gerarRelatorios">
-          Gerar Relatorio
-        </v-btn>
-      </v-container>
-    </div>
-  </v-container>
+            cols="12"
+            md="6"
+          >
+            {{ parametro.label }}
+
+            <v-text-field
+              v-if="parametro.tipo === 'DATE'"
+              v-model="parametro.valor"
+              type="date"
+              outlined
+            ></v-text-field>
+            <v-text-field
+              v-mask="'####'"
+              v-if="parametro.tipo === 'INTEGER'"
+              v-model="parametro.valor"
+              type="number"
+              outlined
+            ></v-text-field>
+            <v-text-field
+              v-mask="'###.##'"
+              v-if="parametro.tipo === 'NUMERIC'"
+              v-model="parametro.valor"
+              type="number"
+              outlined
+            ></v-text-field>
+            <v-text-field
+              v-if="parametro.tipo === 'TEXT'"
+              v-model="parametro.valor"
+              outlined
+            ></v-text-field>
+
+            <v-autocomplete
+              v-if="parametro.tipo === 'ARRAY'"
+              :items="JSON.parse(parametro.dominio)"
+              item-title="chave"
+              item-value="valor"
+              v-model="parametro.valor"
+              outlined
+            ></v-autocomplete>
+            <v-autocomplete
+              v-if="
+                parametro.tipo === 'TABLE' &&
+                comboSelecao[index]?.tipo === 'TABLE'
+              "
+              :key="index"
+              :items="comboSelecao[index]?.resultado[0].func_json_consulta"
+              label="Selecione o item"
+              item-title="chave"
+              item-value="valor"
+              v-model="parametro.valor"
+              outlined
+            ></v-autocomplete>
+          </v-col>
+          <v-btn class="me-4" color="red" @click="gerarRelatorios">
+            Gerar Relatorio
+          </v-btn>
+        </v-container>
+      </div>
+    </v-container>
+  </div>
 </template>
 
 <script setup>
