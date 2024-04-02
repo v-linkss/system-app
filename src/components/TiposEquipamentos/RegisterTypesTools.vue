@@ -1,46 +1,49 @@
 <template>
   <AppBar />
-  <h1 class="mt-5 mb-5" style="color: #777777">Tipos Equipamentos</h1>
+  <v-container>
+    <h1 class="ml-5 mt-5 mb-5" style="color: #777777">Tipos Equipamentos</h1>
 
-  <v-text-field
-    class="ml-5 mr-5"
-    v-model="prediosTipos.descricao"
-    :error-messages="descricao.errorMessage.value"
-    label="Descrição"
-  ></v-text-field>
-
-  <v-row no-gutters>
-    <v-autocomplete
-      class="ml-5"
-      v-model="prediosTipos.sistema_id"
-      :items="sistemas"
-      item-title="descricao"
-      item-value="id"
-      :error-messages="sistema_id.errorMessage.value"
-      label="Selecione um Sistema"
-    ></v-autocomplete>
-
-    <v-autocomplete
+    <v-text-field
       class="ml-5 mr-5"
-      v-model="prediosTipos.tabvalores_segmento_id"
-      :items="segmentos"
-      label="Selecione um segmento"
-      item-title="descricao"
-      item-value="id"
-      :error-messages="tabvalores_segmento_id.errorMessage.value"
-    ></v-autocomplete>
-  </v-row>
-  <v-text-field
-    class="ml-5 mr-5 mt-5"
-    v-model.number="prediosTipos.icone"
-    v-mask="'###'"
-    :error-messages="icone.errorMessage.value"
-    label="Icone"
-  ></v-text-field>
+      v-model="prediosTipos.descricao"
+      :error-messages="descricao.errorMessage.value"
+      label="Descrição"
+    ></v-text-field>
 
-  <v-btn class="ml-5 me-4 mt-8" click="handleReset"> Limpar </v-btn>
-  <v-btn class="me-4 mt-8" color="red" @click="returnToMainPage"> Voltar</v-btn>
-  <v-btn class="me-4 mt-8" color="green" @click="submit"> Salvar </v-btn>
+    <v-row no-gutters>
+      <v-autocomplete
+        class="ml-5"
+        v-model="prediosTipos.sistema_id"
+        :items="sistemas"
+        item-title="descricao"
+        item-value="id"
+        :error-messages="sistema_id.errorMessage.value"
+        label="Selecione um Sistema"
+      ></v-autocomplete>
+
+      <v-autocomplete
+        class="ml-5 mr-5"
+        v-model="prediosTipos.tabvalores_segmento_id"
+        :items="segmentos"
+        label="Selecione um segmento"
+        item-title="descricao"
+        item-value="id"
+        :error-messages="tabvalores_segmento_id.errorMessage.value"
+      ></v-autocomplete>
+    </v-row>
+    <v-text-field
+      class="ml-5 mr-5 mt-5"
+      v-model.number="prediosTipos.icone"
+      v-mask="'###'"
+      :error-messages="icone.errorMessage.value"
+      label="Icone"
+    ></v-text-field>
+
+    <v-btn class="ml-5 me-4 mt-8" color="red" @click="returnToMainPage">
+      Voltar</v-btn
+    >
+    <v-btn class="me-4 mt-8" color="green" @click="submit"> Salvar </v-btn>
+  </v-container>
 </template>
 <script>
 import axios from "axios";
@@ -106,12 +109,6 @@ export default {
       } catch (error) {
         console.error("Erro na criação do registro:", error);
       }
-    },
-    async handleReset() {
-      this.prediosTipos.descricao = null;
-      this.prediosTipos.tabvalores_segmento_id = null;
-      this.prediosTipos.sistema_id = null;
-      this.prediosTipos.icone = null;
     },
   },
   mounted() {

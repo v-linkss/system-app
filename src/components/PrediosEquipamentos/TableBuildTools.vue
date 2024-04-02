@@ -5,12 +5,16 @@ import AppBar from "@/layouts/default/AppBar.vue";
 
 <template>
   <AppBar />
-  <div class="btn-pointer mt-5 mb-2" @click="redirectToRegister()">
-    <img
-      style="width: 40px; height: 40px"
-      src="../../assets/novo.png"
-      alt="novo"
-    />
+  <div class="btn-pointer mt-8 mb-10" @click="redirectToRegister()">
+    <v-row>
+      <img
+        class="ml-8 mr-2"
+        style="width: 40px; height: 40px"
+        src="../../assets/novo.png"
+        alt="novo"
+      />
+      <h1 style="color:#777777">Predio Equipamentos</h1>
+    </v-row>
   </div>
   <v-row>
     <v-col v-for="(header, index) in headers" :key="header.key" cols="auto">

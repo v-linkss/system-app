@@ -20,6 +20,22 @@
     <v-spacer></v-spacer>
     <v-menu>
       <template v-slot:activator="{ props }">
+        <v-btn class="text" v-bind="props"> Tela Principal </v-btn>
+      </template>
+      <v-list>
+        <v-list-item
+          v-for="(menu, item) in menuLocalStorage.Home"
+          v-bind:key="item"
+          :value="menu.url"
+        >
+          <router-link class="router-link" :to="`/${menu.url}`">
+            <v-list-item-title>{{ item }}</v-list-item-title>
+          </router-link>
+        </v-list-item>
+      </v-list>
+    </v-menu>
+    <v-menu>
+      <template v-slot:activator="{ props }">
         <v-btn class="text" v-bind="props"> Cadastros </v-btn>
       </template>
       <v-list>
@@ -28,7 +44,7 @@
           v-bind:key="item"
           :value="menu.url"
         >
-          <router-link class="router-link" :to="`/${menu.url}`" target="_blank">
+          <router-link class="router-link" :to="`/${menu.url}`" >
             <v-list-item-title>{{ item }}</v-list-item-title>
           </router-link>
         </v-list-item>
@@ -36,7 +52,7 @@
     </v-menu>
     <v-menu>
       <template v-slot:activator="{ props }">
-        <v-btn class="text" v-bind="props"> Prestações de Contas</v-btn>
+        <v-btn class="text" v-bind="props"> Financeiro</v-btn>
       </template>
       <v-list>
         <v-list-item
@@ -44,7 +60,7 @@
           :key="item"
           :value="menu.url"
         >
-        <router-link class="router-link" :to="`/${menu.url}`" target="_blank">
+        <router-link class="router-link" :to="`/${menu.url}`">
           <v-list-item-title>{{ item }}</v-list-item-title>
         </router-link>
         </v-list-item>
@@ -52,7 +68,7 @@
     </v-menu>
     <v-menu>
       <template v-slot:activator="{ props }">
-        <v-btn class="text" v-bind="props"> Processos</v-btn>
+        <v-btn class="text" v-bind="props">Relatórios</v-btn>
       </template>
       <v-list>
         <v-list-item
@@ -60,7 +76,23 @@
           :key="item"
           :value="menu.url"
         >
-        <router-link class="router-link" :to="`/${menu.url}`" target="_blank">
+        <router-link class="router-link" :to="`/${menu.url}`" >
+          <v-list-item-title>{{ item }}</v-list-item-title>
+        </router-link>
+        </v-list-item>
+      </v-list>
+    </v-menu>
+    <v-menu>
+      <template v-slot:activator="{ props }">
+        <v-btn class="text" v-bind="props">Operação</v-btn>
+      </template>
+      <v-list>
+        <v-list-item
+          v-for="(menu, item) in menuLocalStorage.Operação"
+          :key="item"
+          :value="menu.url"
+        >
+        <router-link class="router-link" :to="`/${menu.url}`">
           <v-list-item-title>{{ item }}</v-list-item-title>
         </router-link>
         </v-list-item>
@@ -83,6 +115,7 @@
         </v-list-item>
       </v-list>
     </v-menu>
+
   </v-app-bar>
 </template>
 

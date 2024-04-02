@@ -1,58 +1,60 @@
 <template>
   <AppBar />
-  <h1 class="mt-5 mb-5" style="color: #777777">Ambientes</h1>
-
-  <v-text-field
-    class="ml-5 mr-5"
-    v-model="predios.descricao"
-    :error-messages="descricao.errorMessage.value"
-    label="Descrição"
-  ></v-text-field>
-
-  <v-row no-gutters>
-    <v-autocomplete
-      class="ml-5"
-      v-model="predios.tabvalores_tipo_ambiente_id"
-      :items="tipos"
-      item-title="descricao"
-      item-value="id"
-      :error-messages="tabvalores_tipo_ambiente_id.errorMessage.value"
-      label="Selecione um Tipo"
-    ></v-autocomplete>
-
-    <v-autocomplete
-      class="ml-5 mr-5"
-      v-model="predios.predio_area_id"
-      :items="areas"
-      label="Selecione uma Área"
-      item-title="descricao"
-      item-value="id"
-      :error-messages="predio_area_id.errorMessage.value"
-    ></v-autocomplete>
-  </v-row>
-  <v-row class="mt-5" no-gutters>
-    <v-text-field
-      class="ml-5"
-      v-model.number="predios.numero_ocupantes"
-      v-mask="'###'"
-      :error-messages="numero_ocupantes.errorMessage.value"
-      label="Numero Ocupantes"
-    ></v-text-field>
+  <v-container>
+    <h1 class="ml-5 mt-5 mb-5" style="color: #777777">Ambientes</h1>
 
     <v-text-field
       class="ml-5 mr-5"
-      v-mask="'###.##'"
-      v-model.number="predios.area"
-      :error-messages="area.errorMessage.value"
-      label="Área(m2)"
+      v-model="predios.descricao"
+      :error-messages="descricao.errorMessage.value"
+      label="Descrição"
     ></v-text-field>
-  </v-row>
 
-  <v-btn class="ml-5 me-4 mt-8" @click="handleReset"> Limpar </v-btn>
-  <v-btn class="me-4 mt-8" color="red" @click="returnToMainPage">
-    Voltar
-  </v-btn>
-  <v-btn class="me-4 mt-8" color="green" @click="submit"> Salvar </v-btn>
+    <v-row no-gutters>
+      <v-autocomplete
+        class="ml-5"
+        v-model="predios.tabvalores_tipo_ambiente_id"
+        :items="tipos"
+        item-title="descricao"
+        item-value="id"
+        :error-messages="tabvalores_tipo_ambiente_id.errorMessage.value"
+        label="Selecione um Tipo"
+      ></v-autocomplete>
+
+      <v-autocomplete
+        class="ml-5 mr-5"
+        v-model="predios.predio_area_id"
+        :items="areas"
+        label="Selecione uma Área"
+        item-title="descricao"
+        item-value="id"
+        :error-messages="predio_area_id.errorMessage.value"
+      ></v-autocomplete>
+    </v-row>
+    <v-row class="mt-5" no-gutters>
+      <v-text-field
+        class="ml-5"
+        v-model.number="predios.numero_ocupantes"
+        v-mask="'###'"
+        :error-messages="numero_ocupantes.errorMessage.value"
+        label="Numero Ocupantes"
+      ></v-text-field>
+
+      <v-text-field
+        class="ml-5 mr-5"
+        v-mask="'###.##'"
+        v-model.number="predios.area"
+        :error-messages="area.errorMessage.value"
+        label="Área(m2)"
+      ></v-text-field>
+    </v-row>
+
+
+    <v-btn class="ml-5 me-4 mt-8" color="red" @click="returnToMainPage">
+      Voltar
+    </v-btn>
+    <v-btn class="me-4 mt-8" color="green" @click="submit"> Salvar </v-btn>
+  </v-container>
 </template>
 <script>
 import axios from "axios";
@@ -127,16 +129,10 @@ export default {
         }
       } catch (error) {
         console.error("Erro na criação do registro:", error);
-        console.log(typeof this.data);
+
       }
     },
-    async handleReset() {
-      this.predios.descricao = null;
-      this.predios.numero_ocupantes = null;
-      this.predios.area = null;
-      this.predios.tabvalores_tipo_ambiente_id = null;
-      this.predios.predio_area_id = null;
-    },
+
   },
   mounted() {
     this.loadAreas();

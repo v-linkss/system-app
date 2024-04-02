@@ -1,46 +1,46 @@
 <template>
   <AppBar />
-  <h1 class="mt-5 mb-5" style="color: #777777">Tipos Equipamentos</h1>
+  <v-container>
+    <h1 class="ml-5 mt-5 mb-5" style="color: #777777">Tipos Equipamentos</h1>
 
-  <v-text-field
-    class="ml-5 mr-5"
-    v-model="prediosTipos.descricao"
-    :error-messages="descricao.errorMessage.value"
-    label="Descrição"
-  ></v-text-field>
-
-  <v-row no-gutters>
-    <v-autocomplete
-      class="ml-5"
-      v-model="prediosTipos.sistema_id"
-      :items="sistemas"
-      item-title="descricao"
-      item-value="id"
-      :error-messages="sistema_id.errorMessage.value"
-      label="Selecione um Sistema"
-    ></v-autocomplete>
-
-    <v-autocomplete
+    <v-text-field
       class="ml-5 mr-5"
-      v-model="prediosTipos.tabvalores_segmento_id"
-      :items="segmentos"
-      label="Selecione um segmento"
-      item-title="descricao"
-      item-value="id"
-      :error-messages="tabvalores_segmento_id.errorMessage.value"
-    ></v-autocomplete>
-  </v-row>
-  <v-text-field
-    class="ml-5 mr-5 mt-5"
-    v-model.number="prediosTipos.icone"
-    v-mask="'###'"
-    :error-messages="icone.errorMessage.value"
-    label="Icone"
-  ></v-text-field>
+      v-model="prediosTipos.descricao"
+      :error-messages="descricao.errorMessage.value"
+      label="Descrição"
+    ></v-text-field>
 
-  <v-btn class="ml-5 me-4 mt-8" @click="handleReset"> Limpar </v-btn>
-  <v-btn class="me-4 mt-8" color="red" @click="returnToMainPage"> Voltar</v-btn>
-  <v-btn class="me-4 mt-8" color="green" @click="update"> Atualizar </v-btn>
+    <v-row no-gutters>
+      <v-autocomplete
+        class="ml-5"
+        v-model="prediosTipos.sistema_id"
+        :items="sistemas"
+        item-title="descricao"
+        item-value="id"
+        :error-messages="sistema_id.errorMessage.value"
+        label="Selecione um Sistema"
+      ></v-autocomplete>
+
+      <v-autocomplete
+        class="ml-5 mr-5"
+        v-model="prediosTipos.tabvalores_segmento_id"
+        :items="segmentos"
+        label="Selecione um segmento"
+        item-title="descricao"
+        item-value="id"
+        :error-messages="tabvalores_segmento_id.errorMessage.value"
+      ></v-autocomplete>
+    </v-row>
+    <v-text-field
+      class="ml-5 mr-5 mt-5"
+      v-model="prediosTipos.icone"
+      :error-messages="icone.errorMessage.value"
+      label="Icone"
+    ></v-text-field>
+
+    <v-btn class="ml-5 me-4 mt-8" color="red" @click="returnToMainPage"> Voltar</v-btn>
+    <v-btn class="me-4 mt-8" color="green" @click="update"> Atualizar </v-btn>
+  </v-container>
 </template>
 <script>
 import axios from "axios";
@@ -109,14 +109,34 @@ export default {
         console.error("Erro na criação do registro:", error);
       }
     },
-    async handleReset() {
-      this.prediosTipos.descricao = null;
-      this.prediosTipos.tabvalores_segmento_id = null;
-      this.prediosTipos.sistema_id = null;
-      this.prediosTipos.icone = null;
+    async loadTiposEquipamentos() {
+      try {
+        const response = await axios.get(
+          `${process.env.MANAGEMENT_API_URL}/getEquipamentosById/${this.prediosTipos.id}`
+        );
+        // Preencha os campos com os detalhes carregados
+        console.log(response.data)
+        this.prediosTipos.descricao = response.data.descricao;
+        this.prediosTipos.tabvalores_segmento_id = response.data.tabvalores_segmento_id;
+        this.prediosTipos.sistema_id = response.data.sistema_id;
+        this.prediosTipos.icone = response.data.icone;
+      } catch (error) {
+        console.error(
+          "Erro ao carregar detalhes do prédio_equipamentos:",
+          error
+        );
+      }
     },
   },
+  created() {
+    if (this.$route.query.id) {
+      this.prediosTipos.id = this.$route.query.id;
+    } else {
+      console.log("Erro em carregar dados");
+    }
+  },
   mounted() {
+    this.loadTiposEquipamentos();
     this.carregarSegmentos();
     this.carregarSistemas();
   },

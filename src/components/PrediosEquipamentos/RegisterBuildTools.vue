@@ -1,111 +1,113 @@
 <template>
   <AppBar />
-  <h1 class="mt-5 mb-5" style="color: #777777">Predios Equipamentos</h1>
+  <v-container>
+    <h1 class="mt-5 mb-5" style="color: #777777">Predios Equipamentos</h1>
 
-  <v-text-field
-    class="ml-5 mr-5"
-    v-model="predios_equipamentos.descricao"
-    :error-messages="descricao.errorMessage.value"
-    label="Descrição"
-  ></v-text-field>
-
-  <v-row no-gutters>
-    <v-autocomplete
+    <v-text-field
       class="ml-5 mr-5"
-      v-model="predios_equipamentos.modelo_id"
-      :items="modelos"
-      item-title="descricao"
-      item-value="id"
-      :error-messages="modelo_id.errorMessage.value"
-      label="Selecione um Modelo"
-    ></v-autocomplete>
-
-    <v-autocomplete
-      class="ml-5 mr-5"
-      v-model="predios_equipamentos.predio_ambiente_id"
-      :items="ambientes"
-      item-title="descricao"
-      item-value="id"
-      :error-messages="predio_ambiente_id.errorMessage.value"
-      label="Selecione um Ambiente"
-    ></v-autocomplete>
-  </v-row>
-
-  <v-row no-gutters>
-    <v-text-field
-      class="ml-5 mr-5 mt-5"
-      v-model="predios_equipamentos.codigo"
-      :error-messages="codigo.errorMessage.value"
-      label="Codigo"
+      v-model="predios_equipamentos.descricao"
+      :error-messages="descricao.errorMessage.value"
+      label="Descrição"
     ></v-text-field>
 
-    <v-text-field
-      class="ml-5 mr-5 mt-5"
-      v-mask="'#####.##'"
-      v-model.number="predios_equipamentos.vlr_compra"
-      :error-messages="vlr_compra.errorMessage.value"
-      label="Valor de compra"
-    ></v-text-field>
+    <v-row no-gutters>
+      <v-autocomplete
+        class="ml-5 mr-5"
+        v-model="predios_equipamentos.modelo_id"
+        :items="modelos"
+        item-title="descricao"
+        item-value="id"
+        :error-messages="modelo_id.errorMessage.value"
+        label="Selecione um Modelo"
+      ></v-autocomplete>
 
-    <v-text-field
-      class="ml-5 mr-5 mt-5"
-      v-model.number="predios_equipamentos.data_operacao"
-      v-mask="'####'"
-      :error-messages="data_operacao.errorMessage.value"
-      label="Inicio Operação"
-    ></v-text-field>
-  </v-row>
+      <v-autocomplete
+        class="ml-5 mr-5"
+        v-model="predios_equipamentos.predio_ambiente_id"
+        :items="ambientes"
+        item-title="descricao"
+        item-value="id"
+        :error-messages="predio_ambiente_id.errorMessage.value"
+        label="Selecione um Ambiente"
+      ></v-autocomplete>
+    </v-row>
 
-  <v-row no-gutters>
-    <v-text-field
-    class="ml-5 mr-5"
-      v-model="predios_equipamentos.patrimonio"
-      :error-messages="patrimonio.errorMessage.value"
-      label="Numero Patrimonio"
-    ></v-text-field>
+    <v-row no-gutters>
+      <v-text-field
+        class="ml-5 mr-5 mt-5"
+        v-model="predios_equipamentos.codigo"
+        :error-messages="codigo.errorMessage.value"
+        label="Codigo"
+      ></v-text-field>
 
-    <v-text-field
-    class="ml-5 mr-5"
-      v-mask="'#####'"
-      v-model.number="predios_equipamentos.numero_serie"
-      :error-messages="numero_serie.errorMessage.value"
-      label="Numero Serie"
-    ></v-text-field>
+      <v-text-field
+        class="ml-5 mr-5 mt-5"
+        v-mask="'#####.##'"
+        v-model.number="predios_equipamentos.vlr_compra"
+        :error-messages="vlr_compra.errorMessage.value"
+        label="Valor de compra"
+      ></v-text-field>
 
-    <v-text-field
-    class="ml-5 mr-5"
-      v-mask="'####'"
-      v-model.number="predios_equipamentos.ano_fabricacao"
-      :error-messages="ano_fabricacao.errorMessage.value"
-      label="Ano de Fabricação"
-    ></v-text-field>
-  </v-row>
+      <v-text-field
+        class="ml-5 mr-5 mt-5"
+        v-model.number="predios_equipamentos.data_operacao"
+        v-mask="'####'"
+        :error-messages="data_operacao.errorMessage.value"
+        label="Inicio Operação"
+      ></v-text-field>
+    </v-row>
 
-  <v-row no-gutters>
+    <v-row no-gutters>
+      <v-text-field
+        class="ml-5 mr-5"
+        v-model="predios_equipamentos.patrimonio"
+        :error-messages="patrimonio.errorMessage.value"
+        label="Numero Patrimonio"
+      ></v-text-field>
 
-    <v-text-field
-    class="ml-5 mr-5"
-      v-model.number="predios_equipamentos.potencia"
-      v-mask="'###.##'"
-      :error-messages="potencia.errorMessage.value"
-      label="Potência"
-    ></v-text-field>
+      <v-text-field
+        class="ml-5 mr-5"
+        v-mask="'#####'"
+        v-model.number="predios_equipamentos.numero_serie"
+        :error-messages="numero_serie.errorMessage.value"
+        label="Numero Serie"
+      ></v-text-field>
 
-    <v-autocomplete
-    class="ml-5 mr-5"
-      density="compact"
-      v-model="predios_equipamentos.user_gestor"
-      :items="users"
-      label="Selecione um Gestor"
-      item-title="nome"
-      item-value="id"
-      :error-messages="user_gestor.errorMessage.value"
-    ></v-autocomplete>
-  </v-row>
+      <v-text-field
+        class="ml-5 mr-5"
+        v-mask="'####'"
+        v-model.number="predios_equipamentos.ano_fabricacao"
+        :error-messages="ano_fabricacao.errorMessage.value"
+        label="Ano de Fabricação"
+      ></v-text-field>
+    </v-row>
 
-  <v-btn class="ml-5 me-4 mt-4" @click="handleReset"> Limpar </v-btn>
-  <v-btn class="me-4 mt-4" color="red" @click="returnToTableTools"> Voltar </v-btn>
-  <v-btn class="me-4 mt-4" color="green" @click="submit"> Salvar </v-btn>
+    <v-row no-gutters>
+      <v-text-field
+        class="ml-5 mr-5"
+        v-model.number="predios_equipamentos.potencia"
+        v-mask="'###.##'"
+        :error-messages="potencia.errorMessage.value"
+        label="Potência"
+      ></v-text-field>
+
+      <v-autocomplete
+        class="ml-5 mr-5"
+        density="compact"
+        v-model="predios_equipamentos.user_gestor"
+        :items="users"
+        label="Selecione um Gestor"
+        item-title="nome"
+        item-value="id"
+        :error-messages="user_gestor.errorMessage.value"
+      ></v-autocomplete>
+    </v-row>
+
+    <v-btn class="ml-5 me-4 mt-4" color="red" @click="returnToTableTools">
+      Voltar
+    </v-btn>
+    <v-btn class="me-4 mt-4" color="green" @click="submit"> Salvar </v-btn>
+  </v-container>
 </template>
 <script>
 import axios from "axios";
@@ -215,19 +217,6 @@ export default {
       } catch (error) {
         console.error("Erro na criação do registro:", error);
       }
-    },
-    async handleReset() {
-      this.predios_equipamentos.descricao = null;
-      this.predios_equipamentos.codigo = null;
-      this.predios_equipamentos.ano_fabricacao = null;
-      this.predios_equipamentos.patrimonio = null;
-      this.predios_equipamentos.potencia = null;
-      this.predios_equipamentos.vlr_compra = null;
-      this.predios_equipamentos.numero_serie = null;
-      this.predios_equipamentos.data_operacao = null;
-      this.predios_equipamentos.modelo_id = null;
-      this.predios_equipamentos.predio_ambiente_id = null;
-      this.users.user_gestor = null;
     },
   },
   mounted() {

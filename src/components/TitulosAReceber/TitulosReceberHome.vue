@@ -39,7 +39,7 @@ import AppBar from "@/layouts/default/AppBar.vue";
     </v-col>
     <v-btn
       class="me-4 ml-4"
-      style="height: 55px"
+      style="height: 40px"
       color="green"
       @click="gerarTitulos()"
     >
@@ -62,7 +62,7 @@ import AppBar from "@/layouts/default/AppBar.vue";
       <template v-if="index < headers.length - 1">
         <v-text-field
           v-model="header.search"
-          :label="'Search ' + header.title"
+          :label="header.title"
           prepend-inner-icon="mdi-magnify"
           outlined
           hide-details
@@ -262,7 +262,6 @@ export default {
         const responseData = response.data[0].func_json_titulos_lote;
         this.receitas = responseData;
         this.receita_filtrada = this.receitas;
-        console.log(this.receitas);
       } catch (error) {
         console.error("Erro ao carregar receitas:", error);
       }

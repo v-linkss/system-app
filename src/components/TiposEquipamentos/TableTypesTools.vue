@@ -4,12 +4,16 @@ import AppBar from "@/layouts/default/AppBar.vue";
 
 <template>
   <AppBar />
-  <div class="btn-pointer mt-5 mb-2" @click="redirectToRegister()">
-    <img
-      style="width: 40px; height: 40px"
-      src="../../assets/novo.png"
-      alt="novo"
-    />
+  <div class="btn-pointer mt-8 mb-10" @click="redirectToRegister()">
+    <v-row>
+      <img
+        class="ml-8 mr-2"
+        style="width: 40px; height: 40px"
+        src="../../assets/novo.png"
+        alt="novo"
+      />
+      <h1 style="color:#777777">Tipos Equipamentos</h1>
+    </v-row>
   </div>
   <!-- eslint-disable vue/valid-v-slot -->
   <v-row>
@@ -119,24 +123,6 @@ export default {
       ],
     };
   },
-  computed: {
-    // filteredPrediosEquipamentos() {
-    //   const query = this.searchQuery.toLowerCase().trim();
-    //   const filteredItems = this.tipos_equipamentos.filter((item) => {
-    //     const descricao = item.descricao.toLowerCase();
-    //     const prediosAreasDescricao = item.predios_areas
-    //       ? item.predios_areas.descricao.toLowerCase()
-    //       : "";
-    //     return (
-    //       descricao.includes(query) || prediosAreasDescricao.includes(query)
-    //     );
-    //   });
-    //   // Ordena os itens pelo nome da descrição
-    //   return filteredItems.sort((a, b) =>
-    //     a.descricao.localeCompare(b.descricao)
-    //   );
-    // },
-  },
   methods: {
     redirectToView(id) {
       this.$router.push({
@@ -161,7 +147,7 @@ export default {
       try {
         item.excluido = !item.excluido;
         await axios.put(
-          `${process.env.MANAGEMENT_API_URL}/deleteEquipamentos/excluir/${item.id}`,
+          `${process.env.MANAGEMENT_API_URL}/updateEquipamentos/${item.id}`,
           {
             excluido: item.excluido,
           }
@@ -190,7 +176,6 @@ export default {
           });
         }
       );
-      console.log(this.filteredPrediosAmbientes); // Pa
     },
     filterOnEnter() {
       console.log("Enter pressionado");
@@ -211,7 +196,6 @@ export default {
       .then((response) => {
         this.tipos_equipamentos = response.data[0].func_json_tiposequipamentos;
         this.filteredPrediosEquipamentos = this.tipos_equipamentos;
-        console.log("jkjjkjk", this.tipos_equipamentos);
       })
       .catch((error) => {
         console.error("Erro na chamada de API:", error);
@@ -243,11 +227,4 @@ export default {
   cursor: pointer;
 }
 
-.red-icon {
-  color: red;
-}
-
-.gray-icon {
-  color: gray;
-}
 </style>

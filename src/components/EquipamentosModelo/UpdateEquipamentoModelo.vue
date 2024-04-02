@@ -1,61 +1,64 @@
 <template>
   <AppBar />
-  <h1 class="mt-5 mb-5" style="color: #777777">Equipamentos Modelo</h1>
+  <v-container>
 
-  <v-row no-gutters>
-    <v-autocomplete
-      density="compact"
-      class="ml-5 mr-5"
-      v-model="modelos.equipamento_tipo_id"
-      :items="tipos"
-      item-title="descricao"
-      item-value="id"
-      :error-messages="equipamento_tipo_id.errorMessage.value"
-      label="Selecione um Tipo"
-    ></v-autocomplete>
+    <h1 class="ml-5 mt-5 mb-5" style="color: #777777">Equipamentos Modelo</h1>
 
-    <v-text-field
-      class="ml-5 mr-5"
-      v-model="modelos.fabricante"
-      :error-messages="fabricante.errorMessage.value"
-      label="Fabricante"
-    ></v-text-field>
-  </v-row>
+    <v-row no-gutters>
+      <v-autocomplete
+        density="compact"
+        class="ml-5 mr-5"
+        v-model="modelos.equipamento_tipo_id"
+        :items="tipos"
+        item-title="descricao"
+        item-value="id"
+        :error-messages="equipamento_tipo_id.errorMessage.value"
+        label="Selecione um Tipo"
+      ></v-autocomplete>
 
-  <v-text-field
-    class="ml-5 mr-5"
-    v-model="modelos.descricao"
-    :error-messages="descricao.errorMessage.value"
-    label="Descrição"
-  ></v-text-field>
-
-  <v-row no-gutters>
-    <v-text-field
-      class="ml-5 mr-5"
-      v-mask="'##'"
-      v-model.number="modelos.vida_util"
-      :error-messages="vida_util.errorMessage.value"
-      label="Vida Util(Meses)"
-    ></v-text-field>
+      <v-text-field
+        class="ml-5 mr-5"
+        v-model="modelos.fabricante"
+        :error-messages="fabricante.errorMessage.value"
+        label="Fabricante"
+      ></v-text-field>
+    </v-row>
 
     <v-text-field
       class="ml-5 mr-5"
-      v-model="modelos.codigo"
-      :error-messages="codigo.errorMessage.value"
-      label="Codigo"
+      v-model="modelos.descricao"
+      :error-messages="descricao.errorMessage.value"
+      label="Descrição"
     ></v-text-field>
-  </v-row>
 
-  <v-checkbox
-    class="ml-5 mr-5"
-    v-model="modelos.entra_pmoc"
-    :error-messages="entra_pmoc.errorMessage.value"
-    label="Incluir no PMOC"
-  ></v-checkbox>
+    <v-row no-gutters>
+      <v-text-field
+        class="ml-5 mr-5"
+        v-mask="'##'"
+        v-model.number="modelos.vida_util"
+        :error-messages="vida_util.errorMessage.value"
+        label="Vida Util(Meses)"
+      ></v-text-field>
 
-  <v-btn class="ml-5 me-4" @click="handleReset"> Limpar </v-btn>
-  <v-btn class="me-4" color="red" @click="returnToMainPage"> Voltar </v-btn>
-  <v-btn class="me-4" color="green" @click="submit"> Atualizar </v-btn>
+      <v-text-field
+        class="ml-5 mr-5"
+        v-model="modelos.codigo"
+        :error-messages="codigo.errorMessage.value"
+        label="Codigo"
+      ></v-text-field>
+    </v-row>
+
+    <v-checkbox
+      class="ml-5 mr-5"
+      v-model="modelos.entra_pmoc"
+      :error-messages="entra_pmoc.errorMessage.value"
+      label="Incluir no PMOC"
+    ></v-checkbox>
+
+    <v-btn class="ml-5 me-4" @click="handleReset"> Limpar </v-btn>
+    <v-btn class="me-4" color="red" @click="returnToMainPage"> Voltar </v-btn>
+    <v-btn class="me-4" color="green" @click="submit"> Atualizar </v-btn>
+  </v-container>
 </template>
 <script>
 import axios from "axios";

@@ -20,8 +20,8 @@ const routes = [
         component: () => import("@/views/Acesso/ClientSelect.vue"),
       },
       {
-        path: "panel",
-        name: "panel",
+        path: "panel/index",
+        name: "panel/index",
         component: () => import("@/views/Acesso/Panel.vue"),
       },
       {

@@ -53,7 +53,7 @@ export default {
         this.$store.commit("setPredio", selectedPredio);
         this.$store.dispatch("listarMenu");
         this.$store.dispatch("listarEquipamento");
-        this.$router.push("/panel");
+        this.$router.push("/panel/index");
       }
     },
     carregarComboDoLocalStorage() {

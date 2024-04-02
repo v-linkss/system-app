@@ -145,7 +145,7 @@ export default {
               this.$store.commit("setPredio", user.predios[0]);
               this.$store.dispatch("listarEquipamento");
               this.$store.dispatch("listarMenu");
-              this.$router.push("/panel");
+              this.$router.push("/panel/index");
             }
           } else {
             console.error("Erro de autenticação com usuário");

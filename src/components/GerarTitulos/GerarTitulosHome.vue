@@ -106,7 +106,6 @@ export default {
   data() {
     return {
       filteredReceita: [], // preocurar o correspondente e alterar
-
       selected: [],
       selectedItem: null,
       lotesChecked: [],

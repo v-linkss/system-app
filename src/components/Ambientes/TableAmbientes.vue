@@ -4,76 +4,83 @@ import AppBar from "@/layouts/default/AppBar.vue";
 </script>
 
 <template>
-  <AppBar />
-  <div class="btn-pointer mt-5 mb-2" @click="redirectToRegister()">
-    <img
-      style="width: 40px; height: 40px"
-      src="../../assets/novo.png"
-      alt="novo"
-    />
-  </div>
-  <v-row>
-    <v-col v-for="(header, index) in headers" :key="header.key" cols="auto">
-      <!-- Verifica se não é a última coluna -->
-      <template v-if="index < headers.length - 1">
-        <v-text-field
-          v-model="header.search"
-          :label="'Search ' + header.title"
-          prepend-inner-icon="mdi-magnify"
-          outlined
-          hide-details
-          single-line
-          @keydown.enter="filterOnEnter"
-          @blur="filterOnBlur"
-          ref="searchFields"
-        ></v-text-field>
+  <v-progress-circular class="loading-spinner" indeterminate size="64" v-if="loading"></v-progress-circular>
+  <div v-else>
+    <AppBar />
+    <div class="btn-pointer mt-8 mb-10" @click="redirectToRegister()">
+      <v-row>
+        <img
+          class="ml-8 mr-2"
+          style="width: 40px; height: 40px"
+          src="../../assets/novo.png"
+          alt="novo"
+        />
+        <h1 style="color:#777777">Ambientes</h1>
+      </v-row>
+    </div>
+    <v-row>
+      <v-col v-for="(header, index) in headers" :key="header.key" cols="auto">
+        <!-- Verifica se não é a última coluna -->
+        <template v-if="index < headers.length - 1">
+          <v-text-field
+            v-model="header.search"
+            :label="'Search ' + header.title"
+            prepend-inner-icon="mdi-magnify"
+            outlined
+            hide-details
+            single-line
+            @keydown.enter="filterOnEnter"
+            @blur="filterOnBlur"
+            ref="searchFields"
+          ></v-text-field>
+        </template>
+      </v-col>
+    </v-row>
+    <v-data-table
+      :headers="headers"
+      :search="searchQuery"
+      :items="filteredPrediosAmbientes"
+      :rows-per-page-items="itemsPerPage"
+      :footer-props="footerProps"
+      density="default"
+    >
+      <!-- eslint-disable vue/valid-v-slot -->
+      <template v-slot:item.actions="{ item }">
+        <div class="custom-td">
+          <div class="btn-pointer" @click="redirectToView(item.id)">
+            <img
+              style="width: 40px; height: 40px"
+              src="../../assets/visualizar.png"
+              alt="Visualizar"
+            />
+          </div>
+          <div class="btn-pointer" @click="redirectToUpdate(item.id)">
+            <img
+              style="width: 40px; height: 40px"
+              src="../../assets/editar.png"
+              alt="Visualizar"
+            />
+          </div>
+          <div class="btn-pointer" id="exclusão" @click="toggleExclusion(item)">
+            <img
+              v-if="item.excluido"
+              src="../../assets/excluido.png"
+              alt="Excluir"
+              class="trash-icon"
+              style="width: 40px; height: 40px"
+            />
+            <img
+              v-else
+              src="../../assets/ativo.png"
+              alt="Excluir"
+              class="trash-icon"
+              style="width: 40px; height: 40px"
+            />
+          </div>
+        </div>
       </template>
-    </v-col>
-  </v-row>
-  <v-data-table
-    :headers="headers"
-    :search="searchQuery"
-    :items="filteredPrediosAmbientes"
-    :rows-per-page-items="itemsPerPage"
-    :footer-props="footerProps"
-    density="default"
-  >
-    <!-- eslint-disable vue/valid-v-slot -->
-    <template v-slot:item.actions="{ item }">
-      <div class="custom-td">
-        <div class="btn-pointer" @click="redirectToView(item.id)">
-          <img
-            style="width: 40px; height: 40px"
-            src="../../assets/visualizar.png"
-            alt="Visualizar"
-          />
-        </div>
-        <div class="btn-pointer" @click="redirectToUpdate(item.id)">
-          <img
-            style="width: 40px; height: 40px"
-            src="../../assets/editar.png"
-            alt="Visualizar"
-          />
-        </div>
-        <div class="btn-pointer" id="exclusão" @click="toggleExclusion(item)">
-          <img
-            v-if="item.excluido"
-            src="../../assets/excluido.png"
-            alt="Excluir"
-            class="trash-icon"
-            style="width: 40px; height: 40px"
-          />
-          <img
-            v-else
-            src="../../assets/ativo.png"
-            alt="Excluir"
-            class="trash-icon"
-            style="width: 40px; height: 40px"
-          />
-        </div>
-      </div>
-    </template>
-  </v-data-table>
+    </v-data-table>
+  </div>
 </template>
 <script>
 import { VDataTable } from "vuetify/lib/components/index.mjs";
@@ -85,7 +92,7 @@ export default {
   data() {
     return {
       filteredPrediosAmbientes: [],
-
+      loading:true,
       predios_ambientes: [],
       searchQuery: "",
       itemsPerPage: [20],
@@ -114,24 +121,7 @@ export default {
       ],
     };
   },
-  computed: {
-    // filteredPrediosAmbientes() {
-    //   const query = this.searchQuery.toLowerCase().trim();
-    //   const filteredItems = this.predios_ambientes.filter((item) => {
-    //     const descricao = item.descricao.toLowerCase();
-    //     const prediosAreasDescricao = item.predios_areas
-    //       ? item.predios_areas.descricao.toLowerCase()
-    //       : "";
-    //     return (
-    //       descricao.includes(query) || prediosAreasDescricao.includes(query)
-    //     );
-    //   });
-    //   // Ordena os itens pelo nome da descrição
-    //   return filteredItems.sort((a, b) =>
-    //     a.descricao.localeCompare(b.descricao)
-    //   );
-    // },
-  },
+
   methods: {
     filterTable() {
       console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n", this.headers.search);
@@ -202,15 +192,17 @@ export default {
       predio_token: storedToken.predio_token,
     };
     axios
-      .post(`${process.env.MANAGEMENT_API_URL}/listaAmbientes`, data)
+    .post(`${process.env.MANAGEMENT_API_URL}/listaAmbientes`, data)
       .then((response) => {
         this.predios_ambientes = response.data[0].func_json_ambientes;
         this.filteredPrediosAmbientes = this.predios_ambientes;
       })
       .catch((error) => {
         console.error("Erro na chamada de API:", error);
+      })
+      .finally(() => {
+        this.loading = false; // Corrigindo a atribuição do loading
       });
-    // Recarrega o valor do campo de pesquisa do localStorage
     const searchQuery = localStorage.getItem("searchQuery");
     console.log("Valor carregado do localStorage:", searchQuery); // Imprime no console
     this.searchQuery = searchQuery || "";
