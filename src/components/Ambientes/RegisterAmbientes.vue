@@ -49,11 +49,36 @@
       ></v-text-field>
     </v-row>
 
-
     <v-btn class="ml-5 me-4 mt-8" color="red" @click="returnToMainPage">
       Voltar
     </v-btn>
-    <v-btn class="me-4 mt-8" color="green" @click="submit"> Salvar </v-btn>
+
+    <v-dialog max-width="500">
+      <template v-slot:activator="{ props: activatorProps }">
+        <v-btn
+          class="me-4 mt-8"
+          v-bind="activatorProps"
+          color="green"
+          @click="submit"
+        >
+          Salvar
+        </v-btn>
+      </template>
+
+      <template  v-slot:default="{ isActive }">
+        <v-card v-if="showError">
+          <v-card-text>
+            Faltou preencher os campos obrigatorios
+          </v-card-text>
+
+          <v-card-actions>
+            <v-spacer></v-spacer>
+
+            <v-btn style="background-color: #1b5175; color: white" @click="isActive.value = false">OK</v-btn>
+          </v-card-actions>
+        </v-card>
+      </template>
+    </v-dialog>
   </v-container>
 </template>
 <script>
@@ -68,6 +93,7 @@ export default {
         tabvalores_tipo_ambiente_id: undefined,
         predio_area_id: undefined,
       },
+      showError: false,
       tipos: [],
       areas: [], // Inicialize o items como um array vazio
     };
@@ -124,15 +150,14 @@ export default {
           data
         );
         this.$router.push("/predios-ambientes/index"); // Redirecione para a página principal ou faça qualquer outra ação desejada
-        if (response.status === 200) {
-          console.log("Resgistro criado com sucesso");
-        }
+
+        return response;
       } catch (error) {
         console.error("Erro na criação do registro:", error);
 
+        this.showError = true;
       }
     },
-
   },
   mounted() {
     this.loadAreas();

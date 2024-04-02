@@ -107,9 +107,25 @@
     <v-btn class="me-4 mt-4" color="red" @click="returnToTableTools">
       Voltar
     </v-btn>
-    <v-btn class="me-4 mt-4" color="green" @click="updatePrediosEquipamento">
-      Alterar
-    </v-btn>
+    <v-dialog max-width="500">
+      <template v-slot:activator="{ props: activatorProps }">
+        <v-btn class="me-4 mt-8" v-bind="activatorProps" color="green" @click="updatePrediosEquipamento"> Atualizar </v-btn>
+      </template>
+
+      <template  v-slot:default="{ isActive }">
+        <v-card v-if="showError">
+          <v-card-text>
+            Ocorreu erro ao atualizar o campo.
+          </v-card-text>
+
+          <v-card-actions>
+            <v-spacer></v-spacer>
+
+            <v-btn style="background-color: #1b5175; color: white" @click="isActive.value = false">OK</v-btn>
+          </v-card-actions>
+        </v-card>
+      </template>
+    </v-dialog>
   </v-container>
 </template>
 <script>
@@ -133,6 +149,7 @@ export default {
       ambientes: [],
       modelos: [],
       users: [],
+      showError:false
     };
   },
 
@@ -214,10 +231,8 @@ export default {
         return response
       } catch (error) {
         console.error("Erro na criação do registro:", error);
-        console.log(
-          typeof this.predios.predio_area_id,
-          typeof this.predios.tabvalores_tipo_ambiente_id
-        );
+
+        this.showError = true
       }
     },
     async loadPredioEquipamentosDetails() {

@@ -52,7 +52,26 @@
     <v-btn class="ml-5 me-4 mt-8" color="red" @click="returnToMainPage">
       Voltar
     </v-btn>
-    <v-btn class="me-4 mt-8" color="green" @click="update"> Atualizar </v-btn>
+
+    <v-dialog max-width="500">
+      <template v-slot:activator="{ props: activatorProps }">
+        <v-btn class="me-4 mt-8" v-bind="activatorProps" color="green" @click="update"> Atualizar </v-btn>
+      </template>
+
+      <template  v-slot:default="{ isActive }">
+        <v-card v-if="showError">
+          <v-card-text>
+            Ocorreu erro ao atualizar o campo.
+          </v-card-text>
+
+          <v-card-actions>
+            <v-spacer></v-spacer>
+
+            <v-btn style="background-color: #1b5175; color: white" @click="isActive.value = false">OK</v-btn>
+          </v-card-actions>
+        </v-card>
+      </template>
+    </v-dialog>
   </v-container>
 </template>
 <script>
@@ -67,6 +86,7 @@ export default {
         tabvalores_tipo_ambiente_id: undefined,
         predio_area_id: undefined,
       },
+      showError:false,
       tipos: [],
       areas: [], // Inicialize o items como um array vazio
     };
@@ -135,12 +155,13 @@ export default {
           data
         );
         this.$router.push("/predios-ambientes/index"); // Redirecione para a página principal ou faça qualquer outra ação desejada
-        if (response.status === 201) {
-          console.log("Resgistro criado com sucesso");
+
           this.$router.push("/predios-ambientes/index");
-        }
+        return response
       } catch (error) {
         console.error("Erro na criação do registro:", error);
+
+        this.showError = true;
       }
     },
   },

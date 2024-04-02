@@ -78,7 +78,32 @@
     <v-btn class="ml-5 me-4 mt-4" color="red" @click="returnToTableLotes">
       Voltar
     </v-btn>
-    <v-btn class="me-4 mt-4" color="green" @click="submit"> Salvar </v-btn>
+    <v-dialog max-width="500">
+      <template v-slot:activator="{ props: activatorProps }">
+        <v-btn
+          class="me-4 mt-8"
+          v-bind="activatorProps"
+          color="green"
+          @click="submit"
+        >
+          Salvar
+        </v-btn>
+      </template>
+
+      <template  v-slot:default="{ isActive }">
+        <v-card v-if="showError">
+          <v-card-text>
+            Faltou preencher os campos obrigatorios
+          </v-card-text>
+
+          <v-card-actions>
+            <v-spacer></v-spacer>
+
+            <v-btn style="background-color: #1b5175; color: white" @click="isActive.value = false">OK</v-btn>
+          </v-card-actions>
+        </v-card>
+      </template>
+    </v-dialog>
   </v-container>
 </template>
 <script>
@@ -98,6 +123,7 @@ export default {
       lotes: [],
       contas: [],
       equipamentos: [],
+      showError:false,
       cobranca: [
         { id: true, descricao: "COBRAR" },
         { id: false, descricao: "DEVOLVER" },
@@ -154,7 +180,6 @@ export default {
         );
         const responseData = response.data[0].func_json_lotes_predio;
         this.lotes = responseData;
-        console.log(this.lotes);
       } catch (error) {
         console.error("Erro ao carregar áreas:", error);
       }
@@ -183,6 +208,8 @@ export default {
         return response;
       } catch (error) {
         console.error("Erro na criação do registro:", error);
+
+        this.showError = true
       }
     },
     async handleReset() {

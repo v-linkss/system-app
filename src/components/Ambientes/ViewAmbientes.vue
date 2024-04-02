@@ -37,12 +37,6 @@
 
         <v-col>
           <v-sheet class="pa-2 ma-2">
-            Predio_id: {{ dados.predio_id }}
-          </v-sheet>
-        </v-col>
-
-        <v-col>
-          <v-sheet class="pa-2 ma-2">
             Numero Ocupantes: {{ dados.numero_ocupantes }}
           </v-sheet>
         </v-col>

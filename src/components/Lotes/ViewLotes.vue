@@ -67,6 +67,7 @@ export default {
           `${process.env.MANAGEMENT_API_URL}/ReceitaLotes/${this.dados.id}`
         );
         this.dados = response.data;
+
       } catch (error) {
         console.error("Erro na chamada de API:", error);
       } finally {

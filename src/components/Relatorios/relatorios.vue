@@ -1,6 +1,11 @@
 <!-- eslint-disable vue/multi-word-component-names -->
 <template>
-  <v-progress-circular class="loading-spinner" indeterminate size="64" v-if="loading"></v-progress-circular>
+  <v-progress-circular
+    class="loading-spinner"
+    indeterminate
+    size="64"
+    v-if="loading"
+  ></v-progress-circular>
   <div v-else>
     <AppBar />
     <v-container>
@@ -21,7 +26,7 @@
         v-if="loading"
       ></v-progress-circular>
       <div v-else>
-      <v-container v-if="parametrosArray.length > 0">
+        <v-container v-if="parametrosArray.length > 0">
           <h1>Seleções:</h1>
           <v-col
             v-for="(parametro, index) in parametrosArray"
@@ -174,8 +179,19 @@ export default {
       const relatorio = this.relatoriosLocalStorage.find(
         (item) => item.codigo === this.selectedRelatorio
       );
+      const predioToken = JSON.parse(
+        localStorage.getItem("predio")
+      ).predio_token;
+      const usuarioToken = JSON.parse(localStorage.getItem("user")).token;
       const parametros = JSON.parse(JSON.stringify(relatorio.parametros));
+
       parametros.forEach((parametro) => {
+        if (relatorio.parametros_url.predio_token === "p_predio_token") {
+          relatorio.parametros_url.predio_token = predioToken;
+        }
+        if (relatorio.parametros_url.usuario_token === "p_usuario_token") {
+          relatorio.parametros_url.usuario_token = usuarioToken;
+        }
         relatorio.parametros_url[parametro.parametro] = parametro.valor;
       });
       console.log(relatorio.parametros_url);
