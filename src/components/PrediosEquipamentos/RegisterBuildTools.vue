@@ -30,6 +30,16 @@
         :error-messages="predio_ambiente_id.errorMessage.value"
         label="Selecione um Ambiente"
       ></v-autocomplete>
+
+      <v-autocomplete
+        class="ml-5 mr-5"
+        v-model="predios_equipamentos.user_gestor"
+        :items="users"
+        label="Selecione um Gestor"
+        item-title="nome"
+        item-value="id"
+        :error-messages="user_gestor.errorMessage.value"
+      ></v-autocomplete>
     </v-row>
 
     <v-row no-gutters>
@@ -91,16 +101,7 @@
         label="Potência"
       ></v-text-field>
 
-      <v-autocomplete
-        class="ml-5 mr-5"
-        density="compact"
-        v-model="predios_equipamentos.user_gestor"
-        :items="users"
-        label="Selecione um Gestor"
-        item-title="nome"
-        item-value="id"
-        :error-messages="user_gestor.errorMessage.value"
-      ></v-autocomplete>
+
     </v-row>
 
     <v-btn class="ml-5 me-4 mt-4" color="red" @click="returnToTableTools">

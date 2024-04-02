@@ -1,7 +1,6 @@
 <template>
   <AppBar />
   <v-container>
-
     <h1 class="mt-5 mb-5" style="color: #777777">Predios Equipamentos</h1>
 
     <v-text-field
@@ -30,6 +29,16 @@
         item-value="id"
         :error-messages="predio_ambiente_id.errorMessage.value"
         label="Selecione um Ambiente"
+      ></v-autocomplete>
+
+      <v-autocomplete
+        class="ml-5 mr-5"
+        v-model="predios_equipamentos.user_gestor"
+        :items="users"
+        label="Selecione um Gestor"
+        item-title="nome"
+        item-value="id"
+        :error-messages="user_gestor.errorMessage.value"
       ></v-autocomplete>
     </v-row>
 
@@ -92,20 +101,12 @@
         label="Potência"
       ></v-text-field>
 
-      <v-autocomplete
-        class="ml-5 mr-5"
-        density="compact"
-        v-model="predios_equipamentos.user_gestor"
-        :items="users"
-        label="Selecione um Gestor"
-        item-title="nome"
-        item-value="id"
-        :error-messages="user_gestor.errorMessage.value"
-      ></v-autocomplete>
+
     </v-row>
 
-
-    <v-btn class="me-4 mt-4" color="red" @click="returnToTableTools"> Voltar </v-btn>
+    <v-btn class="me-4 mt-4" color="red" @click="returnToTableTools">
+      Voltar
+    </v-btn>
     <v-btn class="me-4 mt-4" color="green" @click="updatePrediosEquipamento">
       Alterar
     </v-btn>
@@ -208,11 +209,9 @@ export default {
           `${process.env.MANAGEMENT_API_URL}/PrediosEquipamentosAtualizar/${this.predios_equipamentos.id}`,
           data
         );
-        console.log(response);
-        if (response.status === 201) {
-          console.log("Resgistro criado com sucesso");
+
           this.$router.push("/predios-equipamentos/index");
-        }
+        return response
       } catch (error) {
         console.error("Erro na criação do registro:", error);
         console.log(
@@ -224,7 +223,7 @@ export default {
     async loadPredioEquipamentosDetails() {
       try {
         const response = await axios.get(
-          `${process.env.MANAGEMENT_API_URL}/PrediosEquipamentos/${this.predios_equipamentos.id}`
+          `${process.env.MANAGEMENT_API_URL}/getPrediosEquipamentos/${this.predios_equipamentos.id}`
         );
         // Preencha os campos com os detalhes carregados
         this.predios_equipamentos.descricao = response.data.descricao;
@@ -279,9 +278,3 @@ const modelo_id = useField("modelo_id");
 const predio_ambiente_id = useField("predio_ambiente_id");
 const user_gestor = useField("user_gestor");
 </script>
-<style scoped>
-.arrow {
-  cursor: pointer;
-  margin-bottom: 20px;
-}
-</style>

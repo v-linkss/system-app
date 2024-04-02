@@ -101,7 +101,7 @@ export default {
       headers: [
         {
           title: "Codigo",
-          value: "Codigo",
+          value: "codigo",
           search: "",
         },
         {

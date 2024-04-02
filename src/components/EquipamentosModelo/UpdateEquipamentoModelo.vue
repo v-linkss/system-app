@@ -1,35 +1,35 @@
 <template>
   <AppBar />
   <v-container>
-
     <h1 class="ml-5 mt-5 mb-5" style="color: #777777">Equipamentos Modelo</h1>
 
     <v-row no-gutters>
-      <v-autocomplete
-        density="compact"
-        class="ml-5 mr-5"
-        v-model="modelos.equipamento_tipo_id"
-        :items="tipos"
-        item-title="descricao"
-        item-value="id"
-        :error-messages="equipamento_tipo_id.errorMessage.value"
-        label="Selecione um Tipo"
-      ></v-autocomplete>
-
       <v-text-field
         class="ml-5 mr-5"
         v-model="modelos.fabricante"
         :error-messages="fabricante.errorMessage.value"
         label="Fabricante"
+        dense
+      ></v-text-field>
+
+      <v-text-field
+        class="ml-5 mr-5"
+        v-model="modelos.codigo"
+        :error-messages="codigo.errorMessage.value"
+        label="Codigo"
       ></v-text-field>
     </v-row>
 
-    <v-text-field
-      class="ml-5 mr-5"
-      v-model="modelos.descricao"
-      :error-messages="descricao.errorMessage.value"
-      label="Descrição"
-    ></v-text-field>
+    <v-autocomplete
+      class="ml-5 mr-5 mb-5"
+      v-model="modelos.equipamento_tipo_id"
+      :items="tipos"
+      item-title="descricao"
+      item-value="id"
+      :error-messages="equipamento_tipo_id.errorMessage.value"
+      label="Selecione um Tipo"
+      dense
+    ></v-autocomplete>
 
     <v-row no-gutters>
       <v-text-field
@@ -42,9 +42,9 @@
 
       <v-text-field
         class="ml-5 mr-5"
-        v-model="modelos.codigo"
-        :error-messages="codigo.errorMessage.value"
-        label="Codigo"
+        v-model="modelos.descricao"
+        :error-messages="descricao.errorMessage.value"
+        label="Descrição"
       ></v-text-field>
     </v-row>
 
@@ -55,7 +55,6 @@
       label="Incluir no PMOC"
     ></v-checkbox>
 
-    <v-btn class="ml-5 me-4" @click="handleReset"> Limpar </v-btn>
     <v-btn class="me-4" color="red" @click="returnToMainPage"> Voltar </v-btn>
     <v-btn class="me-4" color="green" @click="submit"> Atualizar </v-btn>
   </v-container>
@@ -138,14 +137,6 @@ export default {
       } catch (error) {
         console.error("Erro na criação do registro:", error);
       }
-    },
-    async handleReset() {
-      this.modelos.descricao = null;
-      this.modelos.equipamento_tipo_id = null;
-      this.modelos.codigo = null;
-      this.modelos.vida_util = null;
-      this.modelos.fabricante = null;
-      this.modelos.entra_pmoc = null;
     },
   },
   created() {
