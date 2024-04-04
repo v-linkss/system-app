@@ -107,16 +107,18 @@ export default {
       }
     },
     async update() {
+      const storedIdUser = JSON.parse(localStorage.getItem("user"))
       const data = {
         descricao: this.prediosTipos.descricao,
         sistema_id: this.prediosTipos.sistema_id,
         icone: this.prediosTipos.icone,
         tabvalores_segmento_id: this.prediosTipos.tabvalores_segmento_id,
+        user_alteracao:storedIdUser.id
       };
 
       try {
         const response = await axios.put(
-          `${process.env.MANAGEMENT_API_URL}/PrediosAmbiente/${this.predios.id}`,
+          `${process.env.MANAGEMENT_API_URL}/updateEquipamentos/${this.prediosTipos.id}`,
           data
         );
 

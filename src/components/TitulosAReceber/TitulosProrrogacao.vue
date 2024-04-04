@@ -10,7 +10,7 @@ import AppBar from "@/layouts/default/AppBar.vue";
     <h1 class="ml-10 mt-5" style="color: #777777">Prorrogar Titulo</h1>
     <v-container class="data-container mt-7 mb-8">
       <v-col>
-        <v-sheet class="pa-2 ma-2"> Lote: </v-sheet>
+        <v-sheet class="pa-2 ma-2"> Lote: {{dados.pi_lotes.numero  }} - {{dados.pi_lotes.nome  }} </v-sheet>
       </v-col>
       <v-col>
         <v-sheet class="pa-2 ma-2"> Título: {{ dados.documento }} </v-sheet>
@@ -25,7 +25,7 @@ import AppBar from "@/layouts/default/AppBar.vue";
       </v-col>
 
       <v-col>
-        <v-sheet class="pa-2 ma-2"> Valor:R$ {{ dados.valor }} </v-sheet>
+        <v-sheet class="pa-2 ma-2"> Valor: R$ {{ dados.valor }} </v-sheet>
       </v-col>
 
       <v-col>
@@ -100,7 +100,6 @@ export default {
           `${process.env.MANAGEMENT_API_URL}/getPrediosTitulosById/${this.dados.documento}`
         );
         this.dados = response.data;
-        console.log(this.dados);
       } catch (error) {
         console.error("Erro na chamada de API:", error);
       } finally {

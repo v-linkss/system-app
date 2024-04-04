@@ -10,7 +10,7 @@ import AppBar from "@/layouts/default/AppBar.vue";
     <AppBar />
     <v-container class="data-container mt-7 mb-8">
         <v-col>
-          <v-sheet class="pa-2 ma-2"> Lote: </v-sheet>
+          <v-sheet class="pa-2 ma-2"> Lote: {{dados.pi_lotes.numero  }} - {{dados.pi_lotes.nome  }}</v-sheet>
         </v-col>
         <v-col>
           <v-sheet class="pa-2 ma-2"> Título: {{ dados.documento }} </v-sheet>

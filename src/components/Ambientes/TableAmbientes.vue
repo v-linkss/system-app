@@ -63,8 +63,8 @@ import AppBar from "@/layouts/default/AppBar.vue";
           </div>
           <div class="btn-pointer" id="exclusão" @click="toggleExclusion(item)">
             <img
-              v-if="item.excluido"
-              src="../../assets/excluido.png"
+              v-if="item.altera"
+              src="../../assets/altera.png"
               alt="Excluir"
               class="trash-icon"
               style="width: 40px; height: 40px"
@@ -166,17 +166,17 @@ export default {
     },
     async toggleExclusion(item) {
       try {
-        item.excluido = !item.excluido;
+        item.altera = !item.altera;
         await axios.put(
           `${process.env.MANAGEMENT_API_URL}/PrediosAmbiente/excluir/${item.id}`,
           {
-            excluido: item.excluido,
+            altera: item.altera,
           }
         );
-        console.log(item.excluido);
+        console.log(item.altera);
       } catch (error) {
         console.error("Erro ao atualizar exclusão:", error);
-        item.excluido = !item.excluido;
+        item.altera = !item.altera;
       }
     },
     saveSearchQuery() {

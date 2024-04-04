@@ -1,7 +1,6 @@
 <template>
   <AppBar />
   <v-container>
-
     <h1 class="ml-5 mt-5 mb-5" style="color: #777777">Receita dos Lotes</h1>
 
     <v-text-field
@@ -13,21 +12,17 @@
       label="Data"
     ></v-text-field>
 
-    <v-autocomplete
-      style="width: 700px"
-      class="ml-5 mr-5"
-      v-model="pi_lotes_receitas.lote_id"
-      :items="lotes"
-      label="Selecione um lote"
-      item-title="nome"
-      item-value="id"
-      :error-messages="lote_id.errorMessage.value"
-    ></v-autocomplete>
+    <v-text-field
+      class="ml-5 mr-5 "
+      v-mask="'#####.##'"
+      v-model.number="pi_lotes_receitas.valor"
+      :error-messages="valor.errorMessage.value"
+      label="Valor"
+    ></v-text-field>
+
     <v-row no-gutters>
       <v-autocomplete
-        style="width: 10px"
-        class="ml-5 mr-5 mt-5"
-        density="compact"
+        class=" ml-5 mr-5 mb-5"
         v-model="pi_lotes_receitas.conta_id"
         :items="contas"
         label="Selecione uma Conta"
@@ -35,18 +30,19 @@
         item-value="id"
         :error-messages="conta_id.errorMessage.value"
       ></v-autocomplete>
-
-      <v-text-field
-        class="ml-5 mr-5 mt-5"
-        v-mask="'#####.##'"
-        v-model.number="pi_lotes_receitas.valor"
-        :error-messages="valor.errorMessage.value"
-        label="Valor"
-      ></v-text-field>
+      <v-autocomplete
+        class="ml-5 mr-5 mb-5"
+        v-model="pi_lotes_receitas.lote_id"
+        :items="lotes"
+        label="Selecione um lote"
+        item-title="nome"
+        item-value="id"
+        :error-messages="lote_id.errorMessage.value"
+      ></v-autocomplete>
     </v-row>
     <v-row no-gutters>
       <v-autocomplete
-        style="width: 10px"
+
         class="ml-5 mr-5 mt-1"
         v-model="pi_lotes_receitas.predio_equipamento_id"
         :items="equipamentos"
@@ -81,7 +77,7 @@
     <v-dialog max-width="500">
       <template v-slot:activator="{ props: activatorProps }">
         <v-btn
-          class="me-4 mt-8"
+          class="me-4 mt-4"
           v-bind="activatorProps"
           color="green"
           @click="submit"
@@ -90,16 +86,18 @@
         </v-btn>
       </template>
 
-      <template  v-slot:default="{ isActive }">
+      <template v-slot:default="{ isActive }">
         <v-card v-if="showError">
-          <v-card-text>
-            Faltou preencher os campos obrigatorios
-          </v-card-text>
+          <v-card-text> Faltou preencher os campos obrigatorios </v-card-text>
 
           <v-card-actions>
             <v-spacer></v-spacer>
 
-            <v-btn style="background-color: #1b5175; color: white" @click="isActive.value = false">OK</v-btn>
+            <v-btn
+              style="background-color: #1b5175; color: white"
+              @click="isActive.value = false"
+              >OK</v-btn
+            >
           </v-card-actions>
         </v-card>
       </template>
@@ -123,7 +121,7 @@ export default {
       lotes: [],
       contas: [],
       equipamentos: [],
-      showError:false,
+      showError: false,
       cobranca: [
         { id: true, descricao: "COBRAR" },
         { id: false, descricao: "DEVOLVER" },
@@ -209,7 +207,7 @@ export default {
       } catch (error) {
         console.error("Erro na criação do registro:", error);
 
-        this.showError = true
+        this.showError = true;
       }
     },
     async handleReset() {

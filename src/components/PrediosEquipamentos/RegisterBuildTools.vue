@@ -110,7 +110,7 @@
     <v-dialog max-width="500">
       <template v-slot:activator="{ props: activatorProps }">
         <v-btn
-          class="me-4 mt-8"
+          class="me-4 mt-4"
           v-bind="activatorProps"
           color="green"
           @click="submit"

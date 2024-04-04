@@ -116,13 +116,14 @@ export default {
       }
     },
     async submit() {
-
+      const storedIdUser = JSON.parse(localStorage.getItem("user"))
       const data = {
         descricao: this.prediosTipos.descricao,
         icone: this.prediosTipos.icone,
         sistema_id: this.prediosTipos.sistema_id,
-        tabvalores_tipo_ambiente_id:
+        tabvalores_segmento_id:
           this.prediosTipos.tabvalores_segmento_id,
+        user_created:storedIdUser.id
       };
 
       try {
