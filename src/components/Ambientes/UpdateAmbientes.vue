@@ -1,58 +1,78 @@
 <template>
   <AppBar />
-  <h1 class="mt-5 mb-5" style="color: #777777">Ambientes</h1>
-
-  <v-text-field
-    class="ml-5 mr-5"
-    v-model="predios.descricao"
-    :error-messages="descricao.errorMessage.value"
-    label="Descrição"
-  ></v-text-field>
-
-  <v-row no-gutters>
-    <v-autocomplete
-      class="ml-5"
-      v-model="predios.tabvalores_tipo_ambiente_id"
-      :items="tipos"
-      item-title="descricao"
-      item-value="id"
-      :error-messages="tabvalores_tipo_ambiente_id.errorMessage.value"
-      label="Selecione um Tipo"
-    ></v-autocomplete>
-
-    <v-autocomplete
-      class="ml-5 mr-5"
-      v-model="predios.predio_area_id"
-      :items="areas"
-      label="Selecione uma Área"
-      item-title="descricao"
-      item-value="id"
-      :error-messages="predio_area_id.errorMessage.value"
-    ></v-autocomplete>
-  </v-row>
-  <v-row class="mt-5" no-gutters>
-    <v-text-field
-      class="ml-5"
-      v-model.number="predios.numero_ocupantes"
-      v-mask="'###'"
-      :error-messages="numero_ocupantes.errorMessage.value"
-      label="Numero Ocupantes"
-    ></v-text-field>
+  <v-container>
+    <h1 class="ml-5 mt-5 mb-5" style="color: #777777">Ambientes</h1>
 
     <v-text-field
       class="ml-5 mr-5"
-      v-mask="'###.##'"
-      v-model.number="predios.area"
-      :error-messages="area.errorMessage.value"
-      label="Área(m2)"
+      v-model="predios.descricao"
+      :error-messages="descricao.errorMessage.value"
+      label="Descrição"
     ></v-text-field>
-  </v-row>
 
-  <v-btn class="ml-5 me-4 mt-8" @click="handleReset"> Limpar </v-btn>
-  <v-btn class="me-4 mt-8" color="red" @click="returnToMainPage">
-    Voltar
-  </v-btn>
-  <v-btn class="me-4 mt-8" color="green" @click="update"> Atualizar </v-btn>
+    <v-row no-gutters>
+      <v-autocomplete
+        class="ml-5"
+        v-model="predios.tabvalores_tipo_ambiente_id"
+        :items="tipos"
+        item-title="descricao"
+        item-value="id"
+        :error-messages="tabvalores_tipo_ambiente_id.errorMessage.value"
+        label="Selecione um Tipo"
+      ></v-autocomplete>
+
+      <v-autocomplete
+        class="ml-5 mr-5"
+        v-model="predios.predio_area_id"
+        :items="areas"
+        label="Selecione uma Área"
+        item-title="descricao"
+        item-value="id"
+        :error-messages="predio_area_id.errorMessage.value"
+      ></v-autocomplete>
+    </v-row>
+    <v-row class="mt-5" no-gutters>
+      <v-text-field
+        class="ml-5"
+        v-model.number="predios.numero_ocupantes"
+        v-mask="'###'"
+        :error-messages="numero_ocupantes.errorMessage.value"
+        label="Numero Ocupantes"
+      ></v-text-field>
+
+      <v-text-field
+        class="ml-5 mr-5"
+        v-mask="'###.##'"
+        v-model.number="predios.area"
+        :error-messages="area.errorMessage.value"
+        label="Área(m2)"
+      ></v-text-field>
+    </v-row>
+
+    <v-btn class="ml-5 me-4 mt-8" color="red" @click="returnToMainPage">
+      Voltar
+    </v-btn>
+
+    <v-dialog max-width="500">
+      <template v-slot:activator="{ props: activatorProps }">
+        <v-btn class="me-4 mt-8" v-bind="activatorProps" color="green" @click="update"> Atualizar </v-btn>
+      </template>
+
+      <template  v-slot:default="{ isActive }">
+        <v-card v-if="showError">
+          <v-card-text>
+            Ocorreu erro ao atualizar o campo.
+          </v-card-text>
+
+          <v-card-actions>
+            <v-spacer></v-spacer>
+
+            <v-btn style="background-color: #1b5175; color: white" @click="isActive.value = false">OK</v-btn>
+          </v-card-actions>
+        </v-card>
+      </template>
+    </v-dialog>
+  </v-container>
 </template>
 <script>
 import axios from "axios";
@@ -66,6 +86,7 @@ export default {
         tabvalores_tipo_ambiente_id: undefined,
         predio_area_id: undefined,
       },
+      showError:false,
       tipos: [],
       areas: [], // Inicialize o items como um array vazio
     };
@@ -134,20 +155,14 @@ export default {
           data
         );
         this.$router.push("/predios-ambientes/index"); // Redirecione para a página principal ou faça qualquer outra ação desejada
-        if (response.status === 201) {
-          console.log("Resgistro criado com sucesso");
+
           this.$router.push("/predios-ambientes/index");
-        }
+        return response
       } catch (error) {
         console.error("Erro na criação do registro:", error);
+
+        this.showError = true;
       }
-    },
-    async handleReset() {
-      this.predios.descricao = null;
-      this.predios.numero_ocupantes = null;
-      this.predios.area = null;
-      this.predios.tabvalores_tipo_ambiente_id = null;
-      this.predios.predio_area_id = null;
     },
   },
 

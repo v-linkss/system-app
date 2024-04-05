@@ -3,108 +3,123 @@
 import AppBar from "@/layouts/default/AppBar.vue";
 </script>
 <template>
-  <AppBar />
-  <div class="btn-pointer mt-5 mb-2" @click="redirectToRegister()">
-    <img
-      style="width: 40px; height: 40px"
-      src="../../assets/novo.png"
-      alt="novo"
-    />
-  </div>
-  <v-container>
-    <v-data-table
-      :headers="headers"
-      :search="searchQuery"
-      :items="displayedItems"
-      :rows-per-page-items="itemsPerPage"
-      :footer-props="footerProps"
-      density="default"
-    >
-      <template v-slot:item="{ item, index }">
-        <tr>
-          <template v-for="(header, headerIndex) in headers" :key="headerIndex">
-            <td>
-              <template
-                v-if="index === 0 && headerIndex !== headers.length - 1"
-              >
-                <v-text-field
-                  v-model="header.search"
-                  outlined
-                  hide-details
-                  @keydown.enter="filterOnEnter"
-                  @blur="filterOnBlur"
-                  ref="searchFields"
-                  style="
-                    width: 100%;
-                    background-color: #ffffff;
-                    border: 1px solid #cccccc;
-                    border-radius: 5px;
-                  "
-                  :class="{ focused: isFocused }"
-                ></v-text-field>
-              </template>
-              <template v-else-if="headerIndex !== headers.length - 1">
-                {{ item[header.value] }}
-              </template>
-              <template v-else>
-                <div
-                  v-if="index !== 0 && headerIndex === headers.length - 1"
-                  class="custom-td"
+  <v-progress-circular
+    class="loading-spinner"
+    indeterminate
+    size="64"
+    v-if="loading"
+  ></v-progress-circular>
+  <div v-else>
+    <AppBar />
+    <div class="btn-pointer mt-8 mb-10" @click="redirectToRegister()">
+      <v-row>
+        <img
+          class="ml-8 mr-2"
+          style="width: 40px; height: 40px"
+          src="../../assets/novo.png"
+          alt="novo"
+        />
+        <h1 style="color: #777777">Ambientes</h1>
+      </v-row>
+    </div>
+    <v-container>
+      <v-data-table
+        :headers="headers"
+        :search="searchQuery"
+        :items="displayedItems"
+        :rows-per-page-items="itemsPerPage"
+        :footer-props="footerProps"
+        density="default"
+      >
+        <template v-slot:item="{ item, index }">
+          <tr>
+            <template
+              v-for="(header, headerIndex) in headers"
+              :key="headerIndex"
+            >
+              <td>
+                <template
+                  v-if="index === 0 && headerIndex !== headers.length - 1"
                 >
+                  <v-text-field
+                    v-model="header.search"
+                    outlined
+                    hide-details
+                    @keydown.enter="filterOnEnter"
+                    @blur="filterOnBlur"
+                    ref="searchFields"
+                    style="
+                      width: 100%;
+                      background-color: #ffffff;
+                      border: 1px solid #cccccc;
+                      border-radius: 5px;
+                    "
+                    :class="{ focused: isFocused }"
+                  ></v-text-field>
+                </template>
+                <template v-else-if="headerIndex !== headers.length - 1">
+                  {{ item[header.value] }}
+                </template>
+                <template v-else>
                   <div
-                    class="btn-pointer"
-                    @click="redirectToView(item.id)"
-                    v-b-tooltip.hover
-                    title="Visualizar"
+                    v-if="index !== 0 && headerIndex === headers.length - 1"
+                    class="custom-td"
                   >
-                    <img
-                      style="width: 40px; height: 40px"
-                      src="../../assets/visualizar.png"
-                      alt="Visualizar"
-                    />
+                    <div
+                      class="btn-pointer"
+                      @click="redirectToView(item.id)"
+                      v-b-tooltip.hover
+                      title="Visualizar"
+                    >
+                      <img
+                        style="width: 40px; height: 40px"
+                        src="../../assets/visualizar.png"
+                        alt="Visualizar"
+                      />
+                    </div>
+                    <div
+                      class="btn-pointer"
+                      @click="redirectToUpdate(item.id)"
+                      v-b-tooltip.hover
+                      title="Editar"
+                    >
+                      <img
+                        style="width: 40px; height: 40px"
+                        src="../../assets/editar.png"
+                        alt="Visualizar"
+                      />
+                    </div>
+                    <div
+                      class="btn-pointer"
+                      id="exclusão"
+                      @click="toggleExclusion(item)"
+                      v-b-tooltip.hover
+                      title="Excluir"
+                    >
+                      <img
+                        v-if="item.excluido"
+                        src="../../assets/excluido.png"
+                        alt="Excluir"
+                        class="trash-icon"
+                        style="width: 40px; height: 40px"
+                      />
+                      <img
+                        v-else
+                        src="../../assets/ativo.png"
+                        alt="Excluir"
+                        class="trash-icon"
+                        style="width: 40px; height: 40px"
+                      />
+                    </div>
                   </div>
-                  <div
-                    class="btn-pointer"
-                    @click="redirectToUpdate(item.id)"
-                    v-b-tooltip.hover
-                    title="Editar"
-                  >
-                    <img
-                      style="width: 40px; height: 40px"
-                      src="../../assets/editar.png"
-                      alt="Visualizar"
-                    />
-                  </div>
-                  <div
-                    class="btn-pointer"
-                    id="exclusão"
-                    @click="toggleExclusion(item)"
-                    v-b-tooltip.hover
-                    title="Excluir"
-                  >
-                    <img
-                      v-if="item.excluido"
-                      src="../../assets/excluido.png"
-                      alt="Excluir"
-                      class="trash-icon"
-                      style="width: 40px; height: 40px"
-                    />
-                    <img
-                      v-else
-                      src="../../assets/ativo.png"
-                      alt="Excluir"
-                      class="trash-icon"
-                      style="width: 40px; height: 40px"
-                    />
-                  </div>
-                </div>
-              </template>
-            </td>
-          </template>
-        </tr>
-      </template>
-    </v-data-table>
-  </v-container>
+                </template>
+              </td>
+            </template>
+          </tr>
+        </template>
+      </v-data-table>
+    </v-container>
+  </div>
 </template>
 <script>
 // const calculateColumnWidths = () => {
@@ -123,7 +138,7 @@ export default {
   data() {
     return {
       filteredPrediosAmbientes: [],
-
+      loading: true,
       predios_ambientes: [],
       searchQuery: "",
       itemsPerPage: [20],
@@ -167,12 +182,6 @@ export default {
     },
   },
   methods: {
-    //  calculateColumnWidths()  {
-    //     const tableWidth = document.querySelector('.v-data-table').clientWidth;
-    //     const numColumns = headers.value.length - 1; // Descontando a última coluna de ações
-    //     const columnWidth = `${tableWidth / numColumns}px`;
-    //     columnWidths.value = Array(numColumns).fill(columnWidth);
-    //   };
     filterTable() {
       this.filteredPrediosAmbientes = this.predios_ambientes.filter((item) => {
         return this.headers.every((header) => {
@@ -214,17 +223,17 @@ export default {
     },
     async toggleExclusion(item) {
       try {
-        item.excluido = !item.excluido;
+        item.altera = !item.altera;
         await axios.put(
           `${process.env.MANAGEMENT_API_URL}/PrediosAmbiente/excluir/${item.id}`,
           {
-            excluido: item.excluido,
+            altera: item.altera,
           }
         );
-        console.log(item.excluido);
+        console.log(item.altera);
       } catch (error) {
         console.error("Erro ao atualizar exclusão:", error);
-        item.excluido = !item.excluido;
+        item.altera = !item.altera;
       }
     },
     saveSearchQuery() {
@@ -247,8 +256,10 @@ export default {
       })
       .catch((error) => {
         console.error("Erro na chamada de API:", error);
+      })
+      .finally(() => {
+        this.loading = false; // Corrigindo a atribuição do loading
       });
-    // Recarrega o valor do campo de pesquisa do localStorage
     const searchQuery = localStorage.getItem("searchQuery");
     console.log("Valor carregado do localStorage:", searchQuery); // Imprime no console
     this.searchQuery = searchQuery || "";

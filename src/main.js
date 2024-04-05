@@ -6,6 +6,7 @@ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { faUser,fas, faClock } from '@fortawesome/free-solid-svg-icons';
 import { VDataTable } from 'vuetify/lib/components/index.mjs'
+import './styles/global.css'
 import VueTheMask from 'vue-the-mask'
 
 // Components

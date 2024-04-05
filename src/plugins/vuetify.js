@@ -26,7 +26,12 @@ export default createVuetify({
   defaults:{
     VAutocomplete: {
       noDataText: 'Não há dados correspondentes',
-      hideDetails: true
+      hideDetails: true,
+      density:"compact"
     },
+    VTextField: {
+      density:"compact"
+
+    }
   }
 })

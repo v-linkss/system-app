@@ -85,7 +85,7 @@ export default {
     async loadPrediosEquipamentos() {
       try {
         const response = await axios.get(
-          `${process.env.MANAGEMENT_API_URL}/PrediosEquipamentos/${this.dados.id}`
+          `${process.env.MANAGEMENT_API_URL}/getPrediosEquipamentos/${this.dados.id}`
         );
         this.dados = response.data;
       } catch (error) {

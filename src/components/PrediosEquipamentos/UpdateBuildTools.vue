@@ -1,112 +1,132 @@
 <template>
   <AppBar />
-  <h1 class="mt-5 mb-5" style="color: #777777">Predios Equipamentos</h1>
-
-  <v-text-field
-    class="ml-5 mr-5"
-    v-model="predios_equipamentos.descricao"
-    :error-messages="descricao.errorMessage.value"
-    label="Descrição"
-  ></v-text-field>
-
-  <v-row no-gutters>
-    <v-autocomplete
-      class="ml-5 mr-5"
-      v-model="predios_equipamentos.modelo_id"
-      :items="modelos"
-      item-title="descricao"
-      item-value="id"
-      :error-messages="modelo_id.errorMessage.value"
-      label="Selecione um Modelo"
-    ></v-autocomplete>
-
-    <v-autocomplete
-      class="ml-5 mr-5"
-      v-model="predios_equipamentos.predio_ambiente_id"
-      :items="ambientes"
-      item-title="descricao"
-      item-value="id"
-      :error-messages="predio_ambiente_id.errorMessage.value"
-      label="Selecione um Ambiente"
-    ></v-autocomplete>
-  </v-row>
-
-  <v-row no-gutters>
-    <v-text-field
-      class="ml-5 mr-5 mt-5"
-      v-model="predios_equipamentos.codigo"
-      :error-messages="codigo.errorMessage.value"
-      label="Codigo"
-    ></v-text-field>
-
-    <v-text-field
-      class="ml-5 mr-5 mt-5"
-      v-mask="'#####.##'"
-      v-model.number="predios_equipamentos.vlr_compra"
-      :error-messages="vlr_compra.errorMessage.value"
-      label="Valor de compra"
-    ></v-text-field>
-
-    <v-text-field
-      class="ml-5 mr-5 mt-5"
-      v-model.number="predios_equipamentos.data_operacao"
-      v-mask="'####'"
-      :error-messages="data_operacao.errorMessage.value"
-      label="Inicio Operação"
-    ></v-text-field>
-  </v-row>
-
-  <v-row no-gutters>
-    <v-text-field
-      class="ml-5 mr-5"
-      v-model="predios_equipamentos.patrimonio"
-      :error-messages="patrimonio.errorMessage.value"
-      label="Numero Patrimonio"
-    ></v-text-field>
+  <v-container>
+    <h1 class="mt-5 mb-5" style="color: #777777">Predios Equipamentos</h1>
 
     <v-text-field
       class="ml-5 mr-5"
-      v-mask="'#####'"
-      v-model.number="predios_equipamentos.numero_serie"
-      :error-messages="numero_serie.errorMessage.value"
-      label="Numero Serie"
+      v-model="predios_equipamentos.descricao"
+      :error-messages="descricao.errorMessage.value"
+      label="Descrição"
     ></v-text-field>
 
-    <v-text-field
-      class="ml-5 mr-5"
-      v-mask="'####'"
-      v-model.number="predios_equipamentos.ano_fabricacao"
-      :error-messages="ano_fabricacao.errorMessage.value"
-      label="Ano de Fabricação"
-    ></v-text-field>
-  </v-row>
+    <v-row no-gutters>
+      <v-autocomplete
+        class="ml-5 mr-5"
+        v-model="predios_equipamentos.modelo_id"
+        :items="modelos"
+        item-title="descricao"
+        item-value="id"
+        :error-messages="modelo_id.errorMessage.value"
+        label="Selecione um Modelo"
+      ></v-autocomplete>
 
-  <v-row no-gutters>
-    <v-text-field
-      class="ml-5 mr-5"
-      v-model.number="predios_equipamentos.potencia"
-      v-mask="'###.##'"
-      :error-messages="potencia.errorMessage.value"
-      label="Potência"
-    ></v-text-field>
+      <v-autocomplete
+        class="ml-5 mr-5"
+        v-model="predios_equipamentos.predio_ambiente_id"
+        :items="ambientes"
+        item-title="descricao"
+        item-value="id"
+        :error-messages="predio_ambiente_id.errorMessage.value"
+        label="Selecione um Ambiente"
+      ></v-autocomplete>
 
-    <v-autocomplete
-      class="ml-5 mr-5"
-      density="compact"
-      v-model="predios_equipamentos.user_gestor"
-      :items="users"
-      label="Selecione um Gestor"
-      item-title="nome"
-      item-value="id"
-      :error-messages="user_gestor.errorMessage.value"
-    ></v-autocomplete>
-  </v-row>
+      <v-autocomplete
+        class="ml-5 mr-5"
+        v-model="predios_equipamentos.user_gestor"
+        :items="users"
+        label="Selecione um Gestor"
+        item-title="nome"
+        item-value="id"
+        :error-messages="user_gestor.errorMessage.value"
+      ></v-autocomplete>
+    </v-row>
 
-  <v-btn  class="ml-5 me-4 mt-4" @click="handleReset"> Limpar </v-btn>
-  <v-btn class="me-4 mt-4" color="red" @click="returnToTableTools"> Voltar </v-btn>
-  <v-btn class="me-4 mt-4" color="green" @click="updatePrediosEquipamento">
-    Alterar
-  </v-btn>
+    <v-row no-gutters>
+      <v-text-field
+        class="ml-5 mr-5 mt-5"
+        v-model="predios_equipamentos.codigo"
+        :error-messages="codigo.errorMessage.value"
+        label="Codigo"
+      ></v-text-field>
+
+      <v-text-field
+        class="ml-5 mr-5 mt-5"
+        v-mask="'#####.##'"
+        v-model.number="predios_equipamentos.vlr_compra"
+        :error-messages="vlr_compra.errorMessage.value"
+        label="Valor de compra"
+      ></v-text-field>
+
+      <v-text-field
+        class="ml-5 mr-5 mt-5"
+        v-model.number="predios_equipamentos.data_operacao"
+        v-mask="'####'"
+        :error-messages="data_operacao.errorMessage.value"
+        label="Inicio Operação"
+      ></v-text-field>
+    </v-row>
+
+    <v-row no-gutters>
+      <v-text-field
+        class="ml-5 mr-5"
+        v-model="predios_equipamentos.patrimonio"
+        :error-messages="patrimonio.errorMessage.value"
+        label="Numero Patrimonio"
+      ></v-text-field>
+
+      <v-text-field
+        class="ml-5 mr-5"
+        v-mask="'#####'"
+        v-model.number="predios_equipamentos.numero_serie"
+        :error-messages="numero_serie.errorMessage.value"
+        label="Numero Serie"
+      ></v-text-field>
+
+      <v-text-field
+        class="ml-5 mr-5"
+        v-mask="'####'"
+        v-model.number="predios_equipamentos.ano_fabricacao"
+        :error-messages="ano_fabricacao.errorMessage.value"
+        label="Ano de Fabricação"
+      ></v-text-field>
+    </v-row>
+
+    <v-row no-gutters>
+      <v-text-field
+        class="ml-5 mr-5"
+        v-model.number="predios_equipamentos.potencia"
+        v-mask="'###.##'"
+        :error-messages="potencia.errorMessage.value"
+        label="Potência"
+      ></v-text-field>
+
+
+    </v-row>
+
+    <v-btn class="me-4 mt-4" color="red" @click="returnToTableTools">
+      Voltar
+    </v-btn>
+    <v-dialog max-width="500">
+      <template v-slot:activator="{ props: activatorProps }">
+        <v-btn class="me-4 mt-4" v-bind="activatorProps" color="green" @click="updatePrediosEquipamento"> Atualizar </v-btn>
+      </template>
+
+      <template  v-slot:default="{ isActive }">
+        <v-card v-if="showError">
+          <v-card-text>
+            Ocorreu erro ao atualizar o campo.
+          </v-card-text>
+
+          <v-card-actions>
+            <v-spacer></v-spacer>
+
+            <v-btn style="background-color: #1b5175; color: white" @click="isActive.value = false">OK</v-btn>
+          </v-card-actions>
+        </v-card>
+      </template>
+    </v-dialog>
+  </v-container>
 </template>
 <script>
 import axios from "axios";
@@ -129,6 +149,7 @@ export default {
       ambientes: [],
       modelos: [],
       users: [],
+      showError:false
     };
   },
 
@@ -205,23 +226,19 @@ export default {
           `${process.env.MANAGEMENT_API_URL}/PrediosEquipamentosAtualizar/${this.predios_equipamentos.id}`,
           data
         );
-        console.log(response);
-        if (response.status === 201) {
-          console.log("Resgistro criado com sucesso");
+
           this.$router.push("/predios-equipamentos/index");
-        }
+        return response
       } catch (error) {
         console.error("Erro na criação do registro:", error);
-        console.log(
-          typeof this.predios.predio_area_id,
-          typeof this.predios.tabvalores_tipo_ambiente_id
-        );
+
+        this.showError = true
       }
     },
     async loadPredioEquipamentosDetails() {
       try {
         const response = await axios.get(
-          `${process.env.MANAGEMENT_API_URL}/PrediosEquipamentos/${this.predios_equipamentos.id}`
+          `${process.env.MANAGEMENT_API_URL}/getPrediosEquipamentos/${this.predios_equipamentos.id}`
         );
         // Preencha os campos com os detalhes carregados
         this.predios_equipamentos.descricao = response.data.descricao;
@@ -242,19 +259,6 @@ export default {
           error
         );
       }
-    },
-    async handleReset() {
-      this.predios_equipamentos.descricao = null;
-      this.predios_equipamentos.codigo = null;
-      this.predios_equipamentos.ano_fabricacao = null;
-      this.predios_equipamentos.patrimonio = null;
-      this.predios_equipamentos.potencia = null;
-      this.predios_equipamentos.vlr_compra = null;
-      this.predios_equipamentos.numero_serie = null;
-      this.predios_equipamentos.data_operacao = null;
-      this.predios_equipamentos.modelo_id = null;
-      this.predios_equipamentos.predio_ambiente_id = null;
-      this.predios_equipamentos.user_gestor = null;
     },
   },
 
@@ -289,9 +293,3 @@ const modelo_id = useField("modelo_id");
 const predio_ambiente_id = useField("predio_ambiente_id");
 const user_gestor = useField("user_gestor");
 </script>
-<style scoped>
-.arrow {
-  cursor: pointer;
-  margin-bottom: 20px;
-}
-</style>

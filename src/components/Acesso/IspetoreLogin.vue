@@ -73,7 +73,7 @@
         <v-card v-if="showError" text="Erro no sistema">
           <template v-slot:actions>
             <v-spacer></v-spacer>
-              adad
+
             <v-btn
               @click="closeAlert"
               style="background-color: #1b5175; color: white"
@@ -145,7 +145,7 @@ export default {
               this.$store.commit("setPredio", user.predios[0]);
               this.$store.dispatch("listarEquipamento");
               this.$store.dispatch("listarMenu");
-              this.$router.push("/panel");
+              this.$router.push("/panel/index");
             }
           } else {
             console.error("Erro de autenticação com usuário");

@@ -1,46 +1,75 @@
 <template>
   <AppBar />
-  <h1 class="mt-5 mb-5" style="color: #777777">Tipos Equipamentos</h1>
+  <v-container>
+    <h1 class="ml-5 mt-5 mb-5" style="color: #777777">Tipos Equipamentos</h1>
 
-  <v-text-field
-    class="ml-5 mr-5"
-    v-model="prediosTipos.descricao"
-    :error-messages="descricao.errorMessage.value"
-    label="Descrição"
-  ></v-text-field>
-
-  <v-row no-gutters>
-    <v-autocomplete
-      class="ml-5"
-      v-model="prediosTipos.sistema_id"
-      :items="sistemas"
-      item-title="descricao"
-      item-value="id"
-      :error-messages="sistema_id.errorMessage.value"
-      label="Selecione um Sistema"
-    ></v-autocomplete>
-
-    <v-autocomplete
+    <v-text-field
       class="ml-5 mr-5"
-      v-model="prediosTipos.tabvalores_segmento_id"
-      :items="segmentos"
-      label="Selecione um segmento"
-      item-title="descricao"
-      item-value="id"
-      :error-messages="tabvalores_segmento_id.errorMessage.value"
-    ></v-autocomplete>
-  </v-row>
-  <v-text-field
-    class="ml-5 mr-5 mt-5"
-    v-model.number="prediosTipos.icone"
-    v-mask="'###'"
-    :error-messages="icone.errorMessage.value"
-    label="Icone"
-  ></v-text-field>
+      v-model="prediosTipos.descricao"
+      :error-messages="descricao.errorMessage.value"
+      label="Descrição"
+    ></v-text-field>
 
-  <v-btn class="ml-5 me-4 mt-8" click="handleReset"> Limpar </v-btn>
-  <v-btn class="me-4 mt-8" color="red" @click="returnToMainPage"> Voltar</v-btn>
-  <v-btn class="me-4 mt-8" color="green" @click="submit"> Salvar </v-btn>
+    <v-row no-gutters>
+      <v-autocomplete
+        class="ml-5"
+        v-model="prediosTipos.sistema_id"
+        :items="sistemas"
+        item-title="descricao"
+        item-value="id"
+        :error-messages="sistema_id.errorMessage.value"
+        label="Selecione um Sistema"
+      ></v-autocomplete>
+
+      <v-autocomplete
+        class="ml-5 mr-5"
+        v-model="prediosTipos.tabvalores_segmento_id"
+        :items="segmentos"
+        label="Selecione um segmento"
+        item-title="descricao"
+        item-value="id"
+        :error-messages="tabvalores_segmento_id.errorMessage.value"
+      ></v-autocomplete>
+    </v-row>
+    <v-text-field
+      class="ml-5 mr-5 mt-5"
+      v-model="prediosTipos.icone"
+      :error-messages="icone.errorMessage.value"
+      label="Icone"
+    ></v-text-field>
+
+    <v-btn class="ml-5 me-4 mt-8" color="red" @click="returnToMainPage">
+      Voltar</v-btn
+    >
+    <v-dialog max-width="500">
+      <template v-slot:activator="{ props: activatorProps }">
+        <v-btn
+          class="me-4 mt-8"
+          v-bind="activatorProps"
+          color="green"
+          @click="submit"
+        >
+          Salvar
+        </v-btn>
+      </template>
+
+      <template v-slot:default="{ isActive }">
+        <v-card v-if="showError">
+          <v-card-text> Faltou preencher os campos obrigatorios </v-card-text>
+
+          <v-card-actions>
+            <v-spacer></v-spacer>
+
+            <v-btn
+              style="background-color: #1b5175; color: white"
+              @click="isActive.value = false"
+              >OK</v-btn
+            >
+          </v-card-actions>
+        </v-card>
+      </template>
+    </v-dialog>
+  </v-container>
 </template>
 <script>
 import axios from "axios";
@@ -53,6 +82,7 @@ export default {
         tabvalores_segmento_id: undefined,
         icone: undefined,
       },
+      showError: false,
       segmentos: [],
       sistemas: [],
     };
@@ -86,32 +116,29 @@ export default {
       }
     },
     async submit() {
+      const storedIdUser = JSON.parse(localStorage.getItem("user"))
       const data = {
         descricao: this.prediosTipos.descricao,
         icone: this.prediosTipos.icone,
         sistema_id: this.prediosTipos.sistema_id,
-        tabvalores_tipo_ambiente_id:
-          this.prediosTipos.tabvalores_tipo_ambiente_id,
+        tabvalores_segmento_id:
+          this.prediosTipos.tabvalores_segmento_id,
+        user_created:storedIdUser.id
       };
 
       try {
         const response = await axios.post(
-          `${process.env.MANAGEMENT_API_URL}/PrediosAmbiente`,
+          `${process.env.MANAGEMENT_API_URL}/createEquipamentos`,
           data
         );
-        this.$router.push("/home"); // Redirecione para a página principal ou faça qualquer outra ação desejada
-        if (response.status === 200) {
-          console.log("Resgistro criado com sucesso");
-        }
+        this.$router.push("/equipamentos-tipos/index");
+
+        return response;
       } catch (error) {
         console.error("Erro na criação do registro:", error);
+
+        this.showError = true
       }
-    },
-    async handleReset() {
-      this.prediosTipos.descricao = null;
-      this.prediosTipos.tabvalores_segmento_id = null;
-      this.prediosTipos.sistema_id = null;
-      this.prediosTipos.icone = null;
     },
   },
   mounted() {

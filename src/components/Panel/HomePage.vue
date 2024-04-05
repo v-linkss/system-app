@@ -3,7 +3,7 @@ import AppBar from "@/layouts/default/AppBar.vue";
 </script>
 
 <template>
-   <v-progress-circular indeterminate size="64" v-if="loading"></v-progress-circular>
+  <v-progress-circular class="loading-spinner" indeterminate size="64" v-if="loading"></v-progress-circular>
   <div v-else>
     <AppBar />
     <v-container fluid fill-height>
@@ -70,6 +70,13 @@ export default {
   margin-top: 100px;
   display: flex;
   align-items: center;
+}
+
+.loading-spinner {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
 
 .title-card {

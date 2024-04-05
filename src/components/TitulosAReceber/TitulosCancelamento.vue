@@ -7,70 +7,73 @@ import AppBar from "@/layouts/default/AppBar.vue";
   </LoadingComponent>
   <div v-else>
     <AppBar />
-    <h1 class="ml-10 mt-5 " style="color: #777777">Cancelar Titulo</h1>
-    <v-container class="data-container mt-7 mb-8">
-      <v-col>
-        <v-sheet class="pa-2 ma-2"> Lote: </v-sheet>
-      </v-col>
-      <v-col>
-        <v-sheet class="pa-2 ma-2"> Título: {{ dados.documento }} </v-sheet>
-      </v-col>
+    <v-container>
 
-      <v-responsive width="100%"></v-responsive>
+      <h1 class="ml-1 mt-5 " style="color: #777777">Cancelar Titulo</h1>
+      <v-container class="data-container mt-7 mb-8">
+        <v-col>
+          <v-sheet class="pa-2 ma-2"> Lote: {{dados.pi_lotes.numero  }} - {{dados.pi_lotes.nome  }}</v-sheet>
+        </v-col>
+        <v-col>
+          <v-sheet class="pa-2 ma-2"> Título: {{ dados.documento }} </v-sheet>
+        </v-col>
 
-      <v-col>
-        <v-sheet class="pa-2 ma-2">
-          Nosso Número: {{ dados.nosso_numero }}
-        </v-sheet>
-      </v-col>
+        <v-responsive width="100%"></v-responsive>
 
-      <v-col>
-        <v-sheet class="pa-2 ma-2"> Valor:R$ {{ dados.valor }} </v-sheet>
-      </v-col>
+        <v-col>
+          <v-sheet class="pa-2 ma-2">
+            Nosso Número: {{ dados.nosso_numero }}
+          </v-sheet>
+        </v-col>
 
-      <v-col>
-        <v-sheet class="pa-2 ma-2"
-          >Vencimento: {{ dados.dt_vencimento }}</v-sheet
-        >
-      </v-col>
+        <v-col>
+          <v-sheet class="pa-2 ma-2"> Valor:R$ {{ dados.valor }} </v-sheet>
+        </v-col>
 
-      <v-responsive width="100%"></v-responsive>
+        <v-col>
+          <v-sheet class="pa-2 ma-2"
+            >Vencimento: {{ dados.dt_vencimento }}</v-sheet
+          >
+        </v-col>
 
-      <v-col>
-        <v-sheet class="pa-2 ma-2">
-          Link do Boleto: {{ dados.link_boleto }}
-        </v-sheet>
-      </v-col>
-    </v-container>
+        <v-responsive width="100%"></v-responsive>
 
-    <v-btn
-      class="me-4"
-      style="margin-left: 170px"
-      color="red"
-      @click="returnToMainPage"
-    >
-      Voltar
-    </v-btn>
-    <v-dialog v-model="dialog" max-width="400" persistent>
-      <template v-slot:activator="{ props: activatorProps }">
-        <v-btn class="me-4" v-bind="activatorProps" color="green">
-          Salvar
-        </v-btn>
-      </template>
+        <v-col>
+          <v-sheet class="pa-2 ma-2">
+            Link do Boleto: {{ dados.link_boleto }}
+          </v-sheet>
+        </v-col>
+      </v-container>
 
-      <v-card
-        text="Deseja salvar esta data de cancelamento?"
-        title="Confirmação"
+      <v-btn
+        class="me-4"
+
+        color="red"
+        @click="returnToMainPage"
       >
-        <template v-slot:actions>
-          <v-spacer></v-spacer>
-
-          <v-btn @click="dialog = false"> Voltar </v-btn>
-
-          <v-btn @click="updateProrrogacao"> Confirmar </v-btn>
+        Voltar
+      </v-btn>
+      <v-dialog v-model="dialog" max-width="400" persistent>
+        <template v-slot:activator="{ props: activatorProps }">
+          <v-btn class="me-4" v-bind="activatorProps" color="green">
+            Salvar
+          </v-btn>
         </template>
-      </v-card>
-    </v-dialog>
+
+        <v-card
+          text="Deseja salvar esta data de cancelamento?"
+          title="Confirmação"
+        >
+          <template v-slot:actions>
+            <v-spacer></v-spacer>
+
+            <v-btn @click="dialog = false"> Voltar </v-btn>
+
+            <v-btn @click="updateProrrogacao"> Confirmar </v-btn>
+          </template>
+        </v-card>
+      </v-dialog>
+    </v-container>
   </div>
 </template>
 

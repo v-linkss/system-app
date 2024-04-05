@@ -10,28 +10,34 @@ import AppBar from "@/layouts/default/AppBar.vue";
   <div v-else>
     <v-container class="data-container mt-16">
       <v-col>
-        <v-sheet > ID: {{ dados.id }} </v-sheet>
+        <v-sheet class="pa-2 ma-2"> ID: {{ dados.id }} </v-sheet>
       </v-col>
       <v-col>
-        <v-sheet > Descrição: {{ dados.descricao }} </v-sheet>
+        <v-sheet class="pa-2 ma-2"> Descrição: {{ dados.descricao }} </v-sheet>
       </v-col>
 
       <v-responsive width="100%"></v-responsive>
 
-      <!-- <v-col>
-          <v-sheet class="pa-2 ma-2">
-            Tipo: {{ dados.tabelas_valores.descricao }}
-          </v-sheet>
-        </v-col>
+      <v-col>
+        <v-sheet class="pa-2 ma-2">
+          Segmento: {{ dados.tabelas_valores.descricao }}
+        </v-sheet>
+      </v-col>
 
-        <v-col>
-          <v-sheet class="pa-2 ma-2"
-            >Area:
-            {{
-              dados.predio_area_id ? dados.predios_areas.descricao : "N/A"
-            }}</v-sheet
-          >
-        </v-col> -->
+      <v-col>
+        <v-sheet class="pa-2 ma-2"
+          >Sistema:
+          {{dados.itens.descricao ? dados.itens.descricao : "N/A" }}</v-sheet
+        >
+      </v-col>
+
+      <v-col>
+        <v-sheet class="pa-2 ma-2"
+          >Icone:
+          {{ dados.icone_ok }}</v-sheet
+        >
+      </v-col>
+      <v-responsive width="100%"></v-responsive>
     </v-container>
   </div>
 </template>
@@ -55,6 +61,7 @@ export default {
           `${process.env.MANAGEMENT_API_URL}/getEquipamentosById/${this.dados.id}`
         );
         this.dados = response.data;
+        console.log(this.dados);
       } catch (error) {
         console.error("Erro na chamada de API:", error);
       } finally {

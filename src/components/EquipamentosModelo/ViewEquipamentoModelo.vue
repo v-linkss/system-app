@@ -9,7 +9,7 @@
     <v-container class="data-container mt-16">
       <v-row no-gutters>
         <v-col>
-          <v-sheet class="pa-2 ma-2"> ID: {{ dados.id }} </v-sheet>
+          <v-sheet class="pa-2 ma-2"> Codigo: {{ dados.codigo }} </v-sheet>
         </v-col>
         <v-col>
           <v-sheet class="pa-2 ma-2">
@@ -57,6 +57,7 @@ export default {
             try {
                 const response = await axios.get(`${process.env.MANAGEMENT_API_URL}/getModeloEquipamentosById/${this.dados.id}`);
                 this.dados = response.data;
+                console.log(this.dados)
             }
             catch (error) {
                 console.error("Erro na chamada de API:", error);
