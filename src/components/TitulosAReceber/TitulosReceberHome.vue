@@ -56,118 +56,94 @@ import AppBar from "@/layouts/default/AppBar.vue";
       item-value="token"
     ></v-autocomplete>
   </v-col>
-  <v-row>
-    <v-col v-for="(header, index) in headers" :key="header.key" cols="auto">
-      <!-- Verifica se não é a última coluna -->
-      <template v-if="index < headers.length - 1">
-        <v-text-field
-          v-model="header.search"
-          :label="'Search ' + header.title"
-          prepend-inner-icon="mdi-magnify"
-          outlined
-          hide-details
-          single-line
-          @keydown.enter="filterOnEnter"
-          @blur="filterOnBlur"
-          ref="searchFields"
-        ></v-text-field>
-      </template>
-    </v-col>
-  </v-row>
   <v-data-table
     :headers="headers"
-    :search="search"
-    :items="receita_filtrada"
+    :search="searchQuery"
+    :items="displayedItems"
     :rows-per-page-items="itemsPerPage"
     :footer-props="footerProps"
     density="default"
   >
-    <!-- eslint-disable-next-line vue/valid-v-slot -->
-    <template v-slot:item.actions="{ item }">
-      <div class="custom-td">
-        <div
-          class="btn-pointer"
-          @click="item.btn_prorroga ? btnProrroga(item.documento) : null"
-          :class="{
-            disabled: !item.btn_prorroga,
-          }"
-        >
-          <img
-            v-if="item.btn_prorroga"
-            src="../../assets/titulo_prorroga.png"
-            alt="Prorrogar"
-            class="calendar-icon"
-          />
-          <img
-            v-else
-            src="../../assets/titulo_prorroga_red.png"
-            alt="Prorrogar"
-            class="calendar-icon"
-          />
-        </div>
-        <div
-          class="btn-pointer"
-          @click="item.btn_cancela ? btnCancela(item.documento) : null"
-          :class="{
-            disabled: !item.btn_cancela,
-          }"
-        >
-          <img
-            v-if="!item.btn_cancela"
-            src="../../assets/excluido.png"
-            alt="Excluir"
-            class="trash-icon"
-            style="width: 30px; height: 30px"
-          />
-          <img
-            v-else
-            src="../../assets/excluir.png"
-            alt="Excluir"
-            class="trash-icon"
-            style="width: 30px; height: 30px"
-          />
-        </div>
-        <div
-          class="btn-pointer"
-          @click="item.btn_liquida ? btnLiquida(item.documento) : null"
-          :class="{
-            disabled: !item.btn_liquida,
-          }"
-        >
-          <img
-            v-if="!item.btn_liquida"
-            src="../../assets/titulo_liquida_red.png"
-            alt="Prorrogar"
-            class="calendar-icon"
-          />
-          <img
-            v-else
-            src="../../assets/titulo_liquida.png"
-            alt="Prorrogar"
-            class="calendar-icon"
-          />
-        </div>
-        <div
-          class="btn-pointer"
-          :class="{
-            disabled: !item.btn_boleto,
-          }"
-          @click="item.btn_boleto ? btnRecibo(item.documento) : null"
-        >
-          <img
-            v-if="!item.btn_boleto"
-            src="../../assets/imprimir_red.png"
-            alt="Prorrogar"
-            class="calendar-icon"
-          />
-          <img
-            v-else
-            src="../../assets/imprimir.png"
-            alt="Prorrogar"
-            class="calendar-icon"
-          />
-        </div>
-      </div>
+    <template v-slot:item="{ item, index }">
+      <tr>
+        <template v-for="(header, headerIndex) in headers" :key="headerIndex">
+          <td>
+            <template v-if="index === 0 && headerIndex !== headers.length - 1">
+              <v-text-field
+                v-model="header.search"
+                outlined
+                hide-details
+                @keydown.enter="filterOnEnter"
+                @blur="filterOnBlur"
+                ref="searchFields"
+                style="
+                  width: 100%;
+                  background-color: #ffffff;
+                  border: 1px solid #cccccc;
+                  border-radius: 5px;
+                "
+                :class="{ focused: isFocused }"
+              ></v-text-field>
+            </template>
+            <template v-else-if="headerIndex !== headers.length - 1">
+              {{ item[header.value] }}
+            </template>
+            <template v-else>
+              <div
+                v-if="index !== 0 && headerIndex === headers.length - 1"
+                class="custom-td"
+              >
+                <div
+                  class="btn-pointer"
+                  @click="redirectToView(item.id)"
+                  v-b-tooltip.hover
+                  title="Visualizar"
+                >
+                  <img
+                    style="width: 40px; height: 40px"
+                    src="../../assets/visualizar.png"
+                    alt="Visualizar"
+                  />
+                </div>
+                <div
+                  class="btn-pointer"
+                  @click="redirectToUpdate(item.id)"
+                  v-b-tooltip.hover
+                  title="Editar"
+                >
+                  <img
+                    style="width: 40px; height: 40px"
+                    src="../../assets/editar.png"
+                    alt="Visualizar"
+                  />
+                </div>
+                <div
+                  class="btn-pointer"
+                  id="exclusão"
+                  @click="toggleExclusion(item)"
+                  v-b-tooltip.hover
+                  title="Excluir"
+                >
+                  <img
+                    v-if="item.excluido"
+                    src="../../assets/excluido.png"
+                    alt="Excluir"
+                    class="trash-icon"
+                    style="width: 40px; height: 40px"
+                  />
+                  <img
+                    v-else
+                    src="../../assets/ativo.png"
+                    alt="Excluir"
+                    class="trash-icon"
+                    style="width: 40px; height: 40px"
+                  />
+                </div>
+              </div>
+            </template>
+          </td>
+        </template>
+      </tr>
     </template>
   </v-data-table>
 </template>
@@ -237,6 +213,18 @@ export default {
         {
           value: "actions",
           search: "",
+        },
+      ],
+      emptyInputs: [
+        {
+          documento: "",
+          lote: "",
+          dt_emissao: "",
+          dt_vencimento: "",
+          valor: "",
+          situacao: "",
+          dt_pagamento: "",
+          actions: "",
         },
       ],
     };
@@ -362,6 +350,16 @@ export default {
   },
   mounted() {
     this.loadLotes();
+  },
+  computed: {
+    displayedItems() {
+      console.log(
+        "QQQQQQQQQQQQQQQQQ=this.emptyInputs=QQQQQQQQQQQQQQQQ",
+        this.emptyInputs
+      );
+
+      return [...this.emptyInputs, ...this.receita_filtrada];
+    },
   },
 };
 </script>

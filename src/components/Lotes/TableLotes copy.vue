@@ -7,6 +7,25 @@ import AppBar from "@/layouts/default/AppBar.vue";
 
   <v-app>
     <v-container>
+      <v-row>
+        <v-col v-for="(header, index) in headers" :key="header.key" cols="auto">
+          <!-- Verifica se não é a última coluna -->
+          <template v-if="index < headers.length - 1">
+            <v-text-field
+              v-model="header.search"
+              :label="'Search ' + header.title"
+              prepend-inner-icon="mdi-magnify"
+              outlined
+              hide-details
+              single-line
+              :width="searchFieldWidth"
+              @keydown.enter="filterOnEnter"
+              @blur="filterOnBlur"
+              ref="searchFields"
+            ></v-text-field>
+          </template>
+        </v-col>
+      </v-row>
       <v-data-table
         :headers="headers"
         :search="searchQuery"
@@ -26,19 +45,9 @@ import AppBar from "@/layouts/default/AppBar.vue";
                   v-if="index === 0 && headerIndex !== headers.length - 1"
                 >
                   <v-text-field
-                    v-model="header.search"
+                    v-model="emptyInputs[0][header.value]"
                     outlined
-                    hide-details
-                    @keydown.enter="filterOnEnter"
-                    @blur="filterOnBlur"
-                    ref="searchFields"
-                    style="
-                      width: 100%;
-                      background-color: #ffffff;
-                      border: 1px solid #cccccc;
-                      border-radius: 5px;
-                    "
-                    :class="{ focused: isFocused }"
+                    dense
                   ></v-text-field>
                 </template>
                 <template v-else-if="headerIndex !== headers.length - 1">
@@ -173,7 +182,7 @@ export default {
   },
   computed: {
     displayedItems() {
-      return [...this.emptyInputs, ...this.filtrados_lotes];
+      return [...this.emptyInputs, ...this.lotes];
     },
   },
   methods: {

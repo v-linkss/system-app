@@ -62,38 +62,42 @@ import AppBar from "@/layouts/default/AppBar.vue";
     label="Observação"
   ></v-text-field>
 
-  <v-row>
-    <v-col v-for="(header, index) in headers" :key="header.key" cols="auto">
-      <!-- Verifica se não é a última coluna -->
-      <template v-if="index < headers.length - 1">
-        <v-text-field
-          v-model="header.search"
-          :label="'Search ' + header.title"
-          prepend-inner-icon="mdi-magnify"
-          outlined
-          hide-details
-          single-line
-          @keydown.enter="filterOnEnter"
-          @blur="filterOnBlur"
-          ref="searchFields"
-        ></v-text-field>
-      </template>
-    </v-col>
-  </v-row>
   <v-data-table
     :headers="headers"
     :search="searchQuery"
-    :items="filteredReceita"
-    v-model="selected"
+    :items="displayedItems"
     :rows-per-page-items="itemsPerPage"
     :footer-props="footerProps"
-    show-select
     density="default"
-    item-selectable="selectable"
-    @change="sumCheckedValues"
   >
-    <!-- eslint-disable-next-line vue/valid-v-slot -->
-    <template v-slot:item.header> </template>
+    <template v-slot:item="{ item, index }">
+      <tr>
+        <template v-for="(header, headerIndex) in headers" :key="headerIndex">
+          <td>
+            <template v-if="index === 0 && headerIndex !== headers.length">
+              <v-text-field
+                v-model="header.search"
+                outlined
+                hide-details
+                @keydown.enter="filterOnEnter"
+                @blur="filterOnBlur"
+                ref="searchFields"
+                style="
+                  width: 100%;
+                  background-color: #ffffff;
+                  border: 1px solid #cccccc;
+                  border-radius: 5px;
+                "
+                :class="{ focused: isFocused }"
+              ></v-text-field>
+            </template>
+            <template v-else-if="headerIndex !== headers.length">
+              {{ item[header.value] }}
+            </template>
+          </td>
+        </template>
+      </tr>
+    </template>
   </v-data-table>
 </template>
 <script>
@@ -150,11 +154,23 @@ export default {
           search: "",
         },
       ],
+      emptyInputs: [
+        {
+          data: "",
+          conta: "",
+          valor: "",
+          cobrar: "",
+          observacao: "",
+        },
+      ],
     };
   },
   computed: {
     valorTotal() {
       return this.lotes.valor || 0;
+    },
+    displayedItems() {
+      return [...this.emptyInputs, ...this.filteredReceita];
     },
   },
   methods: {
