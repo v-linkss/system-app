@@ -1,31 +1,28 @@
+<!-- Feito -->
 <script setup>
 import AppBar from "@/layouts/default/AppBar.vue";
 </script>
-
 <template>
-  <AppBar />
-
-  <v-app>
-    <v-container>
+  <v-progress-circular
+    class="loading-spinner"
+    indeterminate
+    size="64"
+    v-if="loading"
+  ></v-progress-circular>
+  <div v-else>
+    <AppBar />
+    <div class="btn-pointer mt-8 mb-10" @click="redirectToRegister()">
       <v-row>
-        <v-col v-for="(header, index) in headers" :key="header.key" cols="auto">
-          <!-- Verifica se não é a última coluna -->
-          <template v-if="index < headers.length - 1">
-            <v-text-field
-              v-model="header.search"
-              :label="'Search ' + header.title"
-              prepend-inner-icon="mdi-magnify"
-              outlined
-              hide-details
-              single-line
-              :width="searchFieldWidth"
-              @keydown.enter="filterOnEnter"
-              @blur="filterOnBlur"
-              ref="searchFields"
-            ></v-text-field>
-          </template>
-        </v-col>
+        <img
+          class="ml-8 mr-2"
+          style="width: 40px; height: 40px"
+          src="../../assets/novo.png"
+          alt="novo"
+        />
+        <h1 style="color: #777777">Lancamentos</h1>
       </v-row>
+    </div>
+
       <v-data-table
         :headers="headers"
         :search="searchQuery"
@@ -45,12 +42,23 @@ import AppBar from "@/layouts/default/AppBar.vue";
                   v-if="index === 0 && headerIndex !== headers.length - 1"
                 >
                   <v-text-field
-                    v-model="emptyInputs[0][header.value]"
+                    v-model="header.search"
                     outlined
-                    dense
+                    hide-details
+                    @keydown.enter="filterOnEnter"
+                    @blur="filterOnBlur"
+                    ref="searchFields"
+                    style="
+                      width: 100%;
+                      background-color: #ffffff;
+                      border: 1px solid #cccccc;
+                      border-radius: 5px;
+                    "
                   ></v-text-field>
                 </template>
                 <template v-else-if="headerIndex !== headers.length - 1">
+                  <td v-if="header.title === 'Conta'">{{  item.pi_contas.descricao  }}</td>
+                  <td v-if="header.title === 'Equipamento'">{{ item.predios_equipamentos ? item.predios_equipamentos.descricao : '' }}</td>
                   {{ item[header.value] }}
                 </template>
                 <template v-else>
@@ -111,11 +119,11 @@ import AppBar from "@/layouts/default/AppBar.vue";
           </tr>
         </template>
       </v-data-table>
-    </v-container>
-  </v-app>
-</template>
 
+  </div>
+</template>
 <script>
+
 import { VDataTable } from "vuetify/lib/components/index.mjs";
 import axios from "axios";
 export default {
@@ -124,19 +132,21 @@ export default {
   },
   data() {
     return {
-      filtrados_lotes: [],
-      lotes: [
-        {
-          data: "",
-          lote: "",
-          conta: "",
-          valor: "",
-          cobrar: "",
-        },
-      ],
+      filteredLancamentos: [],
+      loading: true,
+      lancamentos: [],
       searchQuery: "",
       itemsPerPage: [20],
       footerProps: [20],
+      emptyInputs: [
+        {
+          id: "",
+          descricao: "",
+          area: "",
+          actions: "",
+        },
+      ],
+
       headers: [
         {
           title: "Data",
@@ -144,91 +154,34 @@ export default {
           search: "",
         },
         {
-          title: "Lote",
-          value: "lote",
-          search: "",
-        },
-        {
           title: "Conta",
-          value: "conta",
           search: "",
         },
         {
-          title: "Valor",
-          value: "valor",
+          title: "Equipamento",
           search: "",
         },
         {
-          title: "Cobrar/Devolver",
-          value: "cobrar",
+          title: "Descrição",
+          value: "descricao",
           search: "",
         },
         {
           title: "Ações",
           value: "actions",
-          search: "",
-        },
-      ],
-      emptyInputs: [
-        {
-          data: "",
-          lote: "",
-          conta: "",
-          valor: "",
-          cobrar: "",
+          search: "", // No search for actions column
         },
       ],
     };
   },
   computed: {
     displayedItems() {
-      return [...this.emptyInputs, ...this.lotes];
+      return [...this.emptyInputs, ...this.filteredLancamentos];
     },
   },
   methods: {
-    redirectToView(id) {
-      this.$router.push({
-        name: "pi-lotes-receitas/index/vizualizar",
-        query: {
-          id,
-        },
-      });
-    },
-    redirectToRegister() {
-      this.$router.push({ name: "pi-lotes-receitas/index/cadastro" });
-    },
-    redirectToUpdate(id) {
-      this.$router.push({
-        name: "pi-lotes-receitas/index/atualizar",
-        query: {
-          id,
-        },
-      });
-    },
-    async toggleExclusion(item) {
-      try {
-        item.excluido = !item.excluido;
-        console.log("############################\nFUNCÂOEXCLUSAO");
-        await axios.put(
-          `${process.env.MANAGEMENT_API_URL}/updateReceitaLotes/${item.id}`,
-          {
-            excluido: item.excluido,
-          }
-        );
-        console.log(item.excluido);
-      } catch (error) {
-        console.error("Erro ao atualizar exclusão:", error);
-        item.excluido = !item.excluido;
-      }
-    },
-    saveSearchQuery() {
-      // Salva o valor do campo de pesquisa no localStorage
-      localStorage.setItem("searchQuery", this.searchQuery);
-      const searchQuery = localStorage.getItem("searchQuery");
-      console.log("saveSearchQuery:", searchQuery); // Imprime no console
-    },
     filterTable() {
-      this.filtrados_lotes = this.lotes.filter((item) => {
+      this.filteredLancamentos = this.lancamentos.filter((item) => {
         return this.headers.every((header) => {
           if (header.search.trim() === "") return true;
           const value = String(item[header.value]).toLowerCase();
@@ -239,18 +192,49 @@ export default {
       });
     },
     filterOnEnter() {
-      console.log("Enter pressionado");
       this.filterTable();
     },
     filterOnBlur() {
-      console.log("Campo perdeu o foco");
       this.filterTable();
     },
-    updateSearchFieldWidth() {
-      const headerTitle = this.$refs.headerTitle;
-      if (headerTitle) {
-        this.searchFieldWidth = headerTitle.clientWidth + "px";
+    redirectToView(id) {
+      this.$router.push({
+        name: "predios-ambientes/index/vizualizar",
+        query: {
+          id,
+        },
+      });
+    },
+    redirectToRegister() {
+      this.$router.push("/predios-ambientes/index/cadastro");
+    },
+    redirectToUpdate(id) {
+      this.$router.push({
+        name: "predios-ambientes/index/alterar",
+        query: {
+          id,
+        },
+      });
+    },
+    async toggleExclusion(item) {
+      try {
+        item.altera = !item.altera;
+        await axios.put(
+          `${process.env.MANAGEMENT_API_URL}/PrediosAmbiente/excluir/${item.id}`,
+          {
+            altera: item.altera,
+          }
+        );
+      } catch (error) {
+        console.error("Erro ao atualizar exclusão:", error);
+        item.altera = !item.altera;
       }
+    },
+    saveSearchQuery() {
+      // Salva o valor do campo de pesquisa no localStorage
+      localStorage.setItem("searchQuery", this.searchQuery);
+      const searchQuery = localStorage.getItem("searchQuery");
+      console.log("saveSearchQuery:", searchQuery); // Imprime no console
     },
   },
   mounted() {
@@ -259,21 +243,20 @@ export default {
       predio_id: storedToken.predio_id,
     };
     axios
-      .post(`${process.env.MANAGEMENT_API_URL}/listaLotesReceita`, data)
+      .post(`${process.env.MANAGEMENT_API_URL}/tabLancamentos`, data)
       .then((response) => {
-        this.lotes = response.data;
-        this.filtrados_lotes = this.lotes;
-        console.log(this.lotes, "\n", response.data);
+        this.lancamentos = response.data.lancamentos
+        this.filteredLancamentos = this.lancamentos;
       })
       .catch((error) => {
         console.error("Erro na chamada de API:", error);
+      })
+      .finally(() => {
+        this.loading = false; // Corrigindo a atribuição do loading
       });
-    // Recarrega o valor do campo de pesquisa do localStorage
     const searchQuery = localStorage.getItem("searchQuery");
+    console.log("Valor carregado do localStorage:", searchQuery); // Imprime no console
     this.searchQuery = searchQuery || "";
-  },
-  updated() {
-    this.updateSearchFieldWidth();
   },
 };
 </script>
@@ -294,10 +277,14 @@ export default {
   gap: 15px;
 }
 
+.allignButtons {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
 .btn-pointer {
   cursor: pointer;
 }
-
 .red-icon {
   color: red;
 }

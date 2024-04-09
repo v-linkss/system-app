@@ -11,19 +11,19 @@ import AppBar from "@/layouts/default/AppBar.vue";
   ></v-progress-circular>
   <div v-else>
     <AppBar />
-    <div class="btn-pointer mt-8 mb-10" @click="redirectToRegister()">
-      <v-row>
+    <v-row>
+      <div class="btn-pointer mt-8 mb-10" @click="redirectToRegister()">
         <img
           class="ml-8 mr-2"
           style="width: 40px; height: 40px"
           src="../../assets/novo.png"
           alt="novo"
         />
-        <h1 style="color: #777777">Lotes</h1>
-      </v-row>
-    </div>
+      </div>
+      <h1 class="mt-8 mb-10" style="color: #777777">Lotes</h1>
+    </v-row>
     <v-app>
-      <v-container>
+
         <v-data-table
           :headers="headers"
           :search="searchQuery"
@@ -119,7 +119,7 @@ import AppBar from "@/layouts/default/AppBar.vue";
             </tr>
           </template>
         </v-data-table>
-      </v-container>
+
     </v-app>
   </div>
 </template>
@@ -262,7 +262,7 @@ export default {
       .then((response) => {
         this.lotes = response.data;
         this.filtrados_lotes = this.lotes;
-        console.log(this.lotes, "\n", response.data);
+        console.log(response);
       })
       .catch((error) => {
         console.error("Erro na chamada de API:", error);

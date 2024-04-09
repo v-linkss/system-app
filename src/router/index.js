@@ -189,6 +189,31 @@ const routes = [
         component: () =>
           import("@/views/TitulosAReceber/TitulosAReceberHome.vue"),
       },
+      //Lancamentos
+      {
+        path: "pi-lancamentos/index",
+        name: "pi-lancamentos/index",
+        component: () =>
+          import("@/views/Lancamentos/TableLancamentos.vue"),
+      },
+      {
+        path: "pi-lancamentos/index/cadastro",
+        name: "pi-lancamentos/index/cadastro",
+        component: () =>
+          import("@/views/Lancamentos/RegisterLancamentos.vue"),
+      },
+      {
+        path: "pi-lancamentos/index/atualizar",
+        name: "pi-lancamentos/index/atualizar",
+        component: () =>
+          import("@/views/Lancamentos/UpdateLancamentos.vue"),
+      },
+      {
+        path: "pi-lancamentos/index/vizualizar",
+        name: "pi-lancamentos/index/vizualizar",
+        component: () =>
+          import("@/views/Lancamentos/ViewLancamentos.vue"),
+      },
     ],
   },
 ];

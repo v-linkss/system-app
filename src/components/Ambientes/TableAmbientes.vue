@@ -11,124 +11,109 @@ import AppBar from "@/layouts/default/AppBar.vue";
   ></v-progress-circular>
   <div v-else>
     <AppBar />
-    <div class="btn-pointer mt-8 mb-10" @click="redirectToRegister()">
-      <v-row>
+    <v-row>
+      <div class="btn-pointer mt-8 mb-10" @click="redirectToRegister()">
         <img
           class="ml-8 mr-2"
           style="width: 40px; height: 40px"
           src="../../assets/novo.png"
           alt="novo"
         />
-        <h1 style="color: #777777">Ambientes</h1>
-      </v-row>
-    </div>
-    <v-container>
-      <v-data-table
-        :headers="headers"
-        :search="searchQuery"
-        :items="displayedItems"
-        :rows-per-page-items="itemsPerPage"
-        :footer-props="footerProps"
-        density="default"
-      >
-        <template v-slot:item="{ item, index }">
-          <tr>
-            <template
-              v-for="(header, headerIndex) in headers"
-              :key="headerIndex"
-            >
-              <td>
-                <template
-                  v-if="index === 0 && headerIndex !== headers.length - 1"
+      </div>
+      <h1 class="mt-8 mb-10" style="color: #777777">Ambientes</h1>
+    </v-row>
+
+    <v-data-table
+      :headers="headers"
+      :search="searchQuery"
+      :items="displayedItems"
+      :rows-per-page-items="itemsPerPage"
+      :footer-props="footerProps"
+      density="default"
+    >
+      <template v-slot:item="{ item, index }">
+        <tr>
+          <template v-for="(header, headerIndex) in headers" :key="headerIndex">
+            <td>
+              <template
+                v-if="index === 0 && headerIndex !== headers.length - 1"
+              >
+                <v-text-field
+                  v-model="header.search"
+                  outlined
+                  hide-details
+                  @keydown.enter="filterOnEnter"
+                  @blur="filterOnBlur"
+                  ref="searchFields"
+                  style="
+                    width: 100%;
+                    background-color: #ffffff;
+                    border: 1px solid #cccccc;
+                    border-radius: 5px;
+                  "
+                ></v-text-field>
+              </template>
+              <template v-else-if="headerIndex !== headers.length - 1">
+                {{ item[header.value] }}
+              </template>
+              <template v-else>
+                <div
+                  v-if="index !== 0 && headerIndex === headers.length - 1"
+                  class="custom-td"
                 >
-                  <v-text-field
-                    v-model="header.search"
-                    outlined
-                    hide-details
-                    @keydown.enter="filterOnEnter"
-                    @blur="filterOnBlur"
-                    ref="searchFields"
-                    style="
-                      width: 100%;
-                      background-color: #ffffff;
-                      border: 1px solid #cccccc;
-                      border-radius: 5px;
-                    "
-                    :class="{ focused: isFocused }"
-                  ></v-text-field>
-                </template>
-                <template v-else-if="headerIndex !== headers.length - 1">
-                  {{ item[header.value] }}
-                </template>
-                <template v-else>
                   <div
-                    v-if="index !== 0 && headerIndex === headers.length - 1"
-                    class="custom-td"
+                    class="btn-pointer"
+                    @click="redirectToView(item.id)"
+                    title="Visualizar"
                   >
-                    <div
-                      class="btn-pointer"
-                      @click="redirectToView(item.id)"
-                      v-b-tooltip.hover
-                      title="Visualizar"
-                    >
-                      <img
-                        style="width: 40px; height: 40px"
-                        src="../../assets/visualizar.png"
-                        alt="Visualizar"
-                      />
-                    </div>
-                    <div
-                      class="btn-pointer"
-                      @click="redirectToUpdate(item.id)"
-                      v-b-tooltip.hover
-                      title="Editar"
-                    >
-                      <img
-                        style="width: 40px; height: 40px"
-                        src="../../assets/editar.png"
-                        alt="Visualizar"
-                      />
-                    </div>
-                    <div
-                      class="btn-pointer"
-                      id="exclusão"
-                      @click="toggleExclusion(item)"
-                      v-b-tooltip.hover
-                      title="Excluir"
-                    >
-                      <img
-                        v-if="item.excluido"
-                        src="../../assets/excluido.png"
-                        alt="Excluir"
-                        class="trash-icon"
-                        style="width: 40px; height: 40px"
-                      />
-                      <img
-                        v-else
-                        src="../../assets/ativo.png"
-                        alt="Excluir"
-                        class="trash-icon"
-                        style="width: 40px; height: 40px"
-                      />
-                    </div>
+                    <img
+                      style="width: 40px; height: 40px"
+                      src="../../assets/visualizar.png"
+                      alt="Visualizar"
+                    />
                   </div>
-                </template>
-              </td>
-            </template>
-          </tr>
-        </template>
-      </v-data-table>
-    </v-container>
+                  <div
+                    class="btn-pointer"
+                    @click="redirectToUpdate(item.id)"
+                    title="Editar"
+                  >
+                    <img
+                      style="width: 40px; height: 40px"
+                      src="../../assets/editar.png"
+                      alt="Visualizar"
+                    />
+                  </div>
+                  <div
+                    class="btn-pointer"
+                    id="exclusão"
+                    @click="toggleExclusion(item)"
+                    title="Excluir"
+                  >
+                    <img
+                      v-if="item.excluido"
+                      src="../../assets/excluido.png"
+                      alt="Excluir"
+                      class="trash-icon"
+                      style="width: 40px; height: 40px"
+                    />
+                    <img
+                      v-else
+                      src="../../assets/ativo.png"
+                      alt="Excluir"
+                      class="trash-icon"
+                      style="width: 40px; height: 40px"
+                    />
+                  </div>
+                </div>
+              </template>
+            </td>
+          </template>
+        </tr>
+      </template>
+    </v-data-table>
   </div>
 </template>
 <script>
-// const calculateColumnWidths = () => {
-//   const tableWidth = document.querySelector('.v-data-table').clientWidth;
-//   const numColumns = headers.value.length - 1; // Descontando a última coluna de ações
-//   const columnWidth = `${tableWidth / numColumns}px`;
-//   columnWidths.value = Array(numColumns).fill(columnWidth);
-// };
-
 import { VDataTable } from "vuetify/lib/components/index.mjs";
 import axios from "axios";
 export default {
