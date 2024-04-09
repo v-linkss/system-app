@@ -1,61 +1,92 @@
 <template>
   <AppBar />
   <v-container>
-    <h1 class="ml-5 mt-5 mb-5" style="color: #777777">Equipamentos Modelo</h1>
+    <h1 class="ml-5 mt-5 mb-5" style="color: #777777">Lancamentos</h1>
 
     <v-row no-gutters>
       <v-text-field
         class="ml-5 mr-5"
-        v-model="modelos.fabricante"
+        v-model="lancamentos.data"
         :error-messages="fabricante.errorMessage.value"
-        label="Fabricante"
-        dense
+        label="Data"
+        type="date"
       ></v-text-field>
 
       <v-text-field
         class="ml-5 mr-5"
-        v-model="modelos.codigo"
+        v-model="lancamentos.cpf"
         :error-messages="codigo.errorMessage.value"
-        label="Codigo"
+        label="CPF/CNPJ"
+      ></v-text-field>
+
+      <v-text-field
+        class="ml-5 mr-5"
+        v-model="lancamentos.cpf"
+        :error-messages="codigo.errorMessage.value"
+        label="Pagador"
       ></v-text-field>
     </v-row>
 
-    <v-autocomplete
-      class="ml-5 mr-5 mb-5"
-      v-model="modelos.equipamento_tipo_id"
-      :items="tipos"
-      item-title="descricao"
-      item-value="id"
-      :error-messages="equipamento_tipo_id.errorMessage.value"
-      label="Selecione um Tipo"
-      dense
-    ></v-autocomplete>
+    <v-text-field
+      class="ml-5 mr-5"
+      v-mask="'##'"
+      v-model.number="lancamentos.valor"
+      :error-messages="vida_util.errorMessage.value"
+      label="Valor"
+    ></v-text-field>
 
+    <v-text-field
+      class="ml-5 mr-5"
+      v-model="lancamentos.descricao"
+      :error-messages="descricao.errorMessage.value"
+      label="Descrição"
+    ></v-text-field>
     <v-row no-gutters>
-      <v-text-field
-        class="ml-5 mr-5"
-        v-mask="'##'"
-        v-model.number="modelos.vida_util"
-        :error-messages="vida_util.errorMessage.value"
-        label="Vida Util(Meses)"
-      ></v-text-field>
-
-      <v-text-field
-        class="ml-5 mr-5"
-        v-model="modelos.descricao"
-        :error-messages="descricao.errorMessage.value"
-        label="Descrição"
-      ></v-text-field>
+      <v-autocomplete
+        class="ml-5 mr-5 mb-5"
+        v-model="lancamentos.equipamento_id"
+        :items="tipos"
+        item-title="descricao"
+        item-value="id"
+        :error-messages="equipamento_id.errorMessage.value"
+        label="Selecione um Tipo"
+        dense
+      ></v-autocomplete>
+      <v-autocomplete
+        class="ml-5 mr-5 mb-5"
+        v-model="lancamentos.conta_id"
+        :items="tipos"
+        item-title="descricao"
+        item-value="id"
+        :error-messages="equipamento_id.errorMessage.value"
+        label="Selecione uma Conta"
+        dense
+      ></v-autocomplete>
+      <v-autocomplete
+        class="ml-5 mr-5 mb-5"
+        v-model="lancamentos.conta_id"
+        :items="tipos"
+        item-title="descricao"
+        item-value="id"
+        :error-messages="equipamento_id.errorMessage.value"
+        label="Selecione um Ambiente"
+        dense
+      ></v-autocomplete>
     </v-row>
-
     <v-checkbox
       class="ml-5 mr-5"
-      v-model="modelos.entra_pmoc"
+      v-model="lancamentos.entra_pmoc"
       :error-messages="entra_pmoc.errorMessage.value"
       label="Incluir no PMOC"
     ></v-checkbox>
 
-    <v-btn class="me-4" color="red" @click="returnToMainPage"> Voltar </v-btn>
+    <v-checkbox
+      class="ml-5 mr-5"
+      v-model="lancamentos.recurcos_proprios"
+      :error-messages="entra_pmoc.errorMessage.value"
+      label="Recursos proprios"
+    ></v-checkbox>
+    <v-btn class="me-4 mt-8" color="red" @click="returnToMainPage"> Voltar </v-btn>
     <v-dialog max-width="500">
       <template v-slot:activator="{ props: activatorProps }">
         <v-btn class="me-4 mt-8" v-bind="activatorProps" color="green" @click="submit"> Atualizar </v-btn>
@@ -82,13 +113,16 @@ import axios from "axios";
 export default {
   data() {
     return {
-      modelos: {
+      lancamentos: {
         descricao: undefined,
-        codigo: undefined,
+        conta_id: undefined,
         entra_pmoc: undefined,
-        fabricante: undefined,
-        equipamento_tipo_id: undefined,
-        vida_util: undefined,
+        ambiente_id: undefined,
+        equipamento_id: undefined,
+        data: undefined,
+        valor: undefined,
+        recurcos_proprios: undefined,
+        cpf:undefined
       },
       showError:false,
       tipos: [],
@@ -97,7 +131,7 @@ export default {
 
   methods: {
     returnToMainPage() {
-      this.$router.push("/equipamentos-modelos/index");
+      this.$router.push("/pi-lancamentos/index");
     },
     async loadTipos() {
       const storedToken = JSON.parse(localStorage.getItem("predio"));
@@ -118,15 +152,15 @@ export default {
     async loadPredioModelosDetails() {
       try {
         const response = await axios.get(
-          `${process.env.MANAGEMENT_API_URL}/getModeloEquipamentosById/${this.modelos.id}`
+          `${process.env.MANAGEMENT_API_URL}/getModeloEquipamentosById/${this.lancamentos.id}`
         );
         // Preencha os campos com os detalhes carregados
-        this.modelos.descricao = response.data.descricao;
-        this.modelos.codigo = response.data.codigo;
-        this.modelos.equipamento_tipo_id = response.data.equipamento_tipo_id;
-        this.modelos.entra_pmoc = response.data.entra_pmoc;
-        this.modelos.fabricante = response.data.fabricante;
-        this.modelos.vida_util = response.data.vida_util;
+        this.lancamentos.descricao = response.data.descricao;
+        this.lancamentos.codigo = response.data.codigo;
+        this.lancamentos.equipamento_tipo_id = response.data.equipamento_tipo_id;
+        this.lancamentos.entra_pmoc = response.data.entra_pmoc;
+        this.lancamentos.fabricante = response.data.fabricante;
+        this.lancamentos.vida_util = response.data.vida_util;
       } catch (error) {
         console.error(
           "Erro ao carregar detalhes do prédio_equipamentos:",
@@ -135,23 +169,23 @@ export default {
       }
     },
     async submit() {
-      const entra_pmoc = Boolean(this.modelos.entra_pmoc);
+      const entra_pmoc = Boolean(this.lancamentos.entra_pmoc);
       const data = {
-        descricao: this.modelos.descricao,
-        vida_util: this.modelos.vida_util,
-        codigo: this.modelos.codigo,
-        fabricante: this.modelos.fabricante,
-        equipamento_tipo_id: this.modelos.equipamento_tipo_id,
+        descricao: this.lancamentos.descricao,
+        vida_util: this.lancamentos.vida_util,
+        codigo: this.lancamentos.codigo,
+        fabricante: this.lancamentos.fabricante,
+        equipamento_tipo_id: this.lancamentos.equipamento_tipo_id,
         entra_pmoc: entra_pmoc,
       };
 
       try {
         const response = await axios.put(
-          `${process.env.MANAGEMENT_API_URL}/updateModeloEquipamentos/${this.modelos.id}`,
+          `${process.env.MANAGEMENT_API_URL}/updateModeloEquipamentos/${this.lancamentos.id}`,
           data
         ); // Redirecione para a página principal ou faça qualquer outra ação desejada
 
-          this.$router.push("/equipamentos-modelos/index");
+          this.$router.push("/equipamentos-lancamentos/index");
         return response
       } catch (error) {
         console.error("Erro na criação do registro:", error);
@@ -162,7 +196,7 @@ export default {
   },
   created() {
     if (this.$route.query.id) {
-      this.modelos.id = this.$route.query.id;
+      this.lancamentos.id = this.$route.query.id;
     } else {
       console.log("Erro em carregar dados");
     }
@@ -177,7 +211,7 @@ export default {
 import { useField } from "vee-validate";
 import AppBar from "@/layouts/default/AppBar.vue";
 const descricao = useField("descricao");
-const equipamento_tipo_id = useField("equipamento_tipo_id");
+const equipamento_id = useField("equipamento_id");
 const vida_util = useField("vida_util");
 const codigo = useField("codigo");
 const fabricante = useField("fabricante");

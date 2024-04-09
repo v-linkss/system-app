@@ -199,18 +199,18 @@ export default {
     },
     redirectToView(id) {
       this.$router.push({
-        name: "predios-ambientes/index/vizualizar",
+        name: "/pi-lancamentos/index/vizualizar",
         query: {
           id,
         },
       });
     },
     redirectToRegister() {
-      this.$router.push("/predios-ambientes/index/cadastro");
+      this.$router.push("/pi-lancamentos/index/cadastro");
     },
     redirectToUpdate(id) {
       this.$router.push({
-        name: "predios-ambientes/index/alterar",
+        name: "pi-lancamentos/index/atualizar",
         query: {
           id,
         },
