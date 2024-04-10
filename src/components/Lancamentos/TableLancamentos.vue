@@ -247,6 +247,7 @@ export default {
       .then((response) => {
         this.lancamentos = response.data.lancamentos
         this.filteredLancamentos = this.lancamentos;
+        console.log(this.lancamentos)
       })
       .catch((error) => {
         console.error("Erro na chamada de API:", error);

@@ -11,20 +11,6 @@
         label="Data"
         type="date"
       ></v-text-field>
-
-      <v-text-field
-        class="ml-5 mr-5"
-        v-model="lancamentos.cpf"
-        :error-messages="codigo.errorMessage.value"
-        label="CPF/CNPJ"
-      ></v-text-field>
-
-      <v-text-field
-        class="ml-5 mr-5"
-        v-model="lancamentos.cpf"
-        :error-messages="codigo.errorMessage.value"
-        label="Pagador"
-      ></v-text-field>
     </v-row>
 
     <v-text-field
@@ -49,13 +35,13 @@
         item-title="descricao"
         item-value="id"
         :error-messages="equipamento_id.errorMessage.value"
-        label="Selecione um Tipo"
+        label="Selecione um Equipamento"
         dense
       ></v-autocomplete>
       <v-autocomplete
         class="ml-5 mr-5 mb-5"
         v-model="lancamentos.conta_id"
-        :items="tipos"
+        :items="contas"
         item-title="descricao"
         item-value="id"
         :error-messages="equipamento_id.errorMessage.value"
@@ -73,18 +59,35 @@
         dense
       ></v-autocomplete>
     </v-row>
+    <v-row no-gutters>
+      <v-checkbox
+        class="ml-5 mr-5"
+        v-model="lancamentos.imprimir_boleto"
+        :error-messages="entra_pmoc.errorMessage.value"
+        label="Imprimir Boleto"
+      ></v-checkbox>
+      <v-text-field
+        class="ml-5 mr-5"
+        v-model="lancamentos.pagador_cpfcnpj"
+        :disabled="!lancamentos.imprimir_boleto"
+        :error-messages="codigo.errorMessage.value"
+        label="CPF/CNPJ"
+      ></v-text-field>
+
+      <v-text-field
+        class="ml-5 mr-5"
+        v-model="lancamentos.pagador_nome"
+        :disabled="!lancamentos.imprimir_boleto"
+        :error-messages="codigo.errorMessage.value"
+        label="Pagador"
+      ></v-text-field>
+    </v-row>
+
     <v-checkbox
       class="ml-5 mr-5"
       v-model="lancamentos.entra_pmoc"
       :error-messages="entra_pmoc.errorMessage.value"
-      label="Incluir no PMOC"
-    ></v-checkbox>
-
-    <v-checkbox
-      class="ml-5 mr-5"
-      v-model="lancamentos.recurcos_proprios"
-      :error-messages="entra_pmoc.errorMessage.value"
-      label="Recursos proprios"
+      label="Recursos Proprios"
     ></v-checkbox>
     <v-btn class="me-4 mt-8" color="red" @click="returnToMainPage"> Voltar </v-btn>
     <v-dialog max-width="500">
@@ -122,10 +125,11 @@ export default {
         data: undefined,
         valor: undefined,
         recurcos_proprios: undefined,
-        cpf:undefined
+        pagador_cpfcnpj: undefined,
+        imprimir_boleto:undefined
       },
       showError:false,
-      tipos: [],
+      contas: [],
     };
   },
 
@@ -133,18 +137,19 @@ export default {
     returnToMainPage() {
       this.$router.push("/pi-lancamentos/index");
     },
-    async loadTipos() {
-      const storedToken = JSON.parse(localStorage.getItem("predio"));
+    async carregarContasCombolist(){
+      const storedId = JSON.parse(localStorage.getItem("predio"));
       const data = {
-        token_predio: storedToken.predio_token,
+        predio_id: storedId.predio_id,
       };
       try {
         const response = await axios.post(
-          `${process.env.MANAGEMENT_API_URL}/listaTiposEquipamentos`,
+          `${process.env.MANAGEMENT_API_URL}/combolistContas`,
           data
         );
-        const responseData = response.data[0].func_json_tiposequipamentos;
-        this.tipos = responseData;
+        const responseData = response.data.contas;
+        this.contas = responseData
+        console.log(responseData)
       } catch (error) {
         console.error("Erro ao carregar tipos:", error);
       }
@@ -202,8 +207,8 @@ export default {
     }
   },
   mounted() {
-    this.loadPredioModelosDetails();
-    this.loadTipos();
+
+    this.carregarContasCombolist();
   },
 };
 </script>
