@@ -199,7 +199,7 @@ export default {
     },
     redirectToView(id) {
       this.$router.push({
-        name: "/pi-lancamentos/index/vizualizar",
+        name: "pi-lancamentos/index/vizualizar",
         query: {
           id,
         },
@@ -217,19 +217,21 @@ export default {
       });
     },
     async toggleExclusion(item) {
-      try {
-        item.altera = !item.altera;
-        await axios.put(
-          `${process.env.MANAGEMENT_API_URL}/PrediosAmbiente/excluir/${item.id}`,
-          {
-            altera: item.altera,
-          }
-        );
-      } catch (error) {
-        console.error("Erro ao atualizar exclusão:", error);
-        item.altera = !item.altera;
+  try {
+    item.excluido = !item.excluido;
+    const response = await axios.put(
+      `${process.env.MANAGEMENT_API_URL}/updateLancamentos/${item.id}`,
+      {
+        excluido: item.excluido,
       }
-    },
+    );
+    console.log("Resposta da requisição:", response.data);
+    console.log(item.excluido);
+  } catch (error) {
+    console.error("Erro ao atualizar exclusão:", error);
+    item.excluido = !item.excluido;
+  }
+},
     saveSearchQuery() {
       // Salva o valor do campo de pesquisa no localStorage
       localStorage.setItem("searchQuery", this.searchQuery);
@@ -247,7 +249,6 @@ export default {
       .then((response) => {
         this.lancamentos = response.data.lancamentos
         this.filteredLancamentos = this.lancamentos;
-        console.log(this.lancamentos)
       })
       .catch((error) => {
         console.error("Erro na chamada de API:", error);

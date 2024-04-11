@@ -19,28 +19,28 @@ import AppBar from "@/layouts/default/AppBar.vue";
         <v-responsive width="100%"></v-responsive>
         <v-col>
           <v-sheet class="pa-2 ma-2">
-            Cobrar: {{ dados.cobrar ? "Cobrar" : "Devolver" }}
+            Ambiente: {{ dados.predios_ambientes.descricao }}
           </v-sheet>
         </v-col>
         <v-col>
           <v-sheet class="pa-2 ma-2">
-            Observação: {{ dados.observacao }}
+            Equipamento: {{ dados.predios_equipamentos.descricao }}
           </v-sheet>
         </v-col>
 
         <v-responsive width="100%"></v-responsive>
 
         <v-col>
-          <v-sheet class="pa-2 ma-2"> Conta: {{ dados.conta_id }} </v-sheet>
+          <v-sheet class="pa-2 ma-2"> Conta: {{ dados.pi_contas.descricao }} </v-sheet>
         </v-col>
 
         <v-col>
-          <v-sheet class="pa-2 ma-2"> Lote: {{ dados.lote_id }} </v-sheet>
+          <v-sheet class="pa-2 ma-2"> Pagador: {{ dados.pagador_nome }} </v-sheet>
         </v-col>
 
         <v-col>
           <v-sheet class="pa-2 ma-2">
-            Equipamento: {{ dados.predio_equipamento_id }}
+            CPF/CNPJ: {{ dados.pagador_cpfcnpj }}
           </v-sheet>
         </v-col>
       </v-row>
@@ -59,14 +59,14 @@ export default {
   },
   methods: {
     returnToMainPage() {
-      this.$router.push("/pi-lotes-receitas/index/");
+      this.$router.push("/pi-lancamentos/index");
     },
-    async loadLotes() {
+    async loadLancamentos() {
       try {
         const response = await axios.get(
-          `${process.env.MANAGEMENT_API_URL}/ReceitaLotes/${this.dados.id}`
+          `${process.env.MANAGEMENT_API_URL}/getLancamentosById/${this.dados.id}`
         );
-        this.dados = response.data;
+        this.dados = response.data.lancamentos;
 
       } catch (error) {
         console.error("Erro na chamada de API:", error);
@@ -78,14 +78,14 @@ export default {
   created() {
     if (this.$route.query.id) {
       this.dados.id = this.$route.query.id;
-      this.loadLotes();
+      this.loadLancamentos();
     } else {
       console.log("Erro em carregar dados");
     }
   },
   mounted() {
     (async () => {
-      await this.loadLotes();
+      await this.loadLancamentos();
     })();
   },
 };

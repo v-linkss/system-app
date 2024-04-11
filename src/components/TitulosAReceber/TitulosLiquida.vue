@@ -96,7 +96,6 @@ export default {
           `${process.env.MANAGEMENT_API_URL}/gerarTitulos`,
           data
         );
-        console.log(response);
         const tokenTitulo = response.data[0].func_ger_titulos[0].titulo_token;
         if (this.imprimir === true) {
           try {

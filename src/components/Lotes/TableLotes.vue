@@ -216,7 +216,6 @@ export default {
             excluido: item.excluido,
           }
         );
-        console.log(item.excluido);
       } catch (error) {
         console.error("Erro ao atualizar exclusão:", error);
         item.excluido = !item.excluido;

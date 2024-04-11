@@ -15,7 +15,7 @@
 
     <v-text-field
       class="ml-5 mr-5"
-      v-mask="'##'"
+      v-mask="'#####'"
       v-model.number="lancamentos.valor"
       :error-messages="vida_util.errorMessage.value"
       label="Valor"
@@ -30,8 +30,8 @@
     <v-row no-gutters>
       <v-autocomplete
         class="ml-5 mr-5 mb-5"
-        v-model="lancamentos.equipamento_id"
-        :items="tipos"
+        v-model="lancamentos.predio_equipamento_id"
+        :items="equipamentos"
         item-title="descricao"
         item-value="id"
         :error-messages="equipamento_id.errorMessage.value"
@@ -50,8 +50,8 @@
       ></v-autocomplete>
       <v-autocomplete
         class="ml-5 mr-5 mb-5"
-        v-model="lancamentos.conta_id"
-        :items="tipos"
+        v-model="lancamentos.predio_ambiente_id"
+        :items="ambientes"
         item-title="descricao"
         item-value="id"
         :error-messages="equipamento_id.errorMessage.value"
@@ -73,7 +73,6 @@
         :error-messages="codigo.errorMessage.value"
         label="CPF/CNPJ"
       ></v-text-field>
-
       <v-text-field
         class="ml-5 mr-5"
         v-model="lancamentos.pagador_nome"
@@ -85,8 +84,8 @@
 
     <v-checkbox
       class="ml-5 mr-5"
-      v-model="lancamentos.entra_pmoc"
-      :error-messages="entra_pmoc.errorMessage.value"
+      v-model="lancamentos.recursos_proprios"
+      :error-messages="codigo.errorMessage.value"
       label="Recursos Proprios"
     ></v-checkbox>
 
@@ -131,17 +130,19 @@ export default {
       lancamentos: {
         descricao: undefined,
         conta_id: undefined,
-        entra_pmoc: undefined,
-        ambiente_id: undefined,
-        equipamento_id: undefined,
+        predio_ambiente_id: undefined,
+        predio_equipamento_id: undefined,
         data: undefined,
         valor: undefined,
-        recurcos_proprios: undefined,
+        recursos_proprios: undefined,
         pagador_cpfcnpj: undefined,
-        imprimir_boleto:undefined
+        pagador_nome: undefined,
+        imprimir_boleto: undefined,
       },
       showError: false,
-      contas:[],
+      contas: [],
+      ambientes: [],
+      equipamentos: [],
     };
   },
 
@@ -149,23 +150,40 @@ export default {
     returnToMainPage() {
       this.$router.push("/pi-lancamentos/index");
     },
-    // async loadTipos() {
-    //   const storedToken = JSON.parse(localStorage.getItem("predio"));
-    //   const data = {
-    //     token_predio: storedToken.predio_token,
-    //   };
-    //   try {
-    //     const response = await axios.post(
-    //       `${process.env.MANAGEMENT_API_URL}/listaTiposEquipamentos`,
-    //       data
-    //     );
-    //     const responseData = response.data[0].func_jsonsequipamentos;
-    //     this.tipos = responseData;
-    //   } catch (error) {
-    //     console.error("Erro ao carregar tipos:", error);
-    //   }
-    // },
-    async carregarContasCombolist(){
+    async carregarEquipamentosCombolist() {
+      console.log(this.lancamentos.imprimir_boleto)
+      const storedToken = JSON.parse(localStorage.getItem("predio"));
+      const data = {
+        predio_token: storedToken.predio_token,
+      };
+      try {
+        const response = await axios.post(
+          `${process.env.MANAGEMENT_API_URL}/combolistEquipamentosLance`,
+          data
+        );
+        const responseData = response.data[0].func_json_equipamentos_combolist;
+        this.equipamentos = responseData;
+      } catch (error) {
+        console.error("Erro ao carregar tipos:", error);
+      }
+    },
+    async carregarAmbientesCombolist() {
+      const storedId = JSON.parse(localStorage.getItem("predio"));
+      const data = {
+        predio_id: storedId.predio_id,
+      };
+      try {
+        const response = await axios.post(
+          `${process.env.MANAGEMENT_API_URL}/combolistAmbientes`,
+          data
+        );
+        const responseData = response.data.ambientes;
+        this.ambientes = responseData;
+      } catch (error) {
+        console.error("Erro ao carregar tipos:", error);
+      }
+    },
+    async carregarContasCombolist() {
       const storedId = JSON.parse(localStorage.getItem("predio"));
       const data = {
         predio_id: storedId.predio_id,
@@ -176,8 +194,7 @@ export default {
           data
         );
         const responseData = response.data.contas;
-        this.contas = responseData
-        console.log(responseData)
+        this.contas = responseData;
       } catch (error) {
         console.error("Erro ao carregar tipos:", error);
       }
@@ -185,26 +202,42 @@ export default {
     async submit() {
       const storedIdPredio = JSON.parse(localStorage.getItem("predio"));
       const storedIdUser = JSON.parse(localStorage.getItem("user"));
-      const entra_pmoc = Boolean(this.lancamentos.entra_pmoc);
+      const recursos_proprios = Boolean(this.lancamentos.recursos_proprios);
       const data = {
         descricao: this.lancamentos.descricao,
-        vida_util: this.lancamentos.vida_util,
-        codigo: this.lancamentos.codigo,
-        fabricante: this.lancamentos.fabricante,
-        equipamento_id: this.lancamentos.equipamento_id,
-        entra_pmoc: entra_pmoc,
+        valor: this.lancamentos.valor,
+        predio_ambiente_id: this.lancamentos.predio_ambiente_id,
+        conta_id: this.lancamentos.conta_id,
+        predio_equipamento_id: this.lancamentos.predio_equipamento_id,
+        data: this.lancamentos.data,
+        pagador_cpfcnpj: this.lancamentos.pagador_cpfcnpj,
+        pagador_nome: this.lancamentos.pagador_nome,
         predio_id: storedIdPredio.predio_id,
         user_created: storedIdUser.id,
+        recursos_proprios: recursos_proprios,
       };
-
       try {
         const response = await axios.post(
-          `${process.env.MANAGEMENT_API_URL}/createModeloEquipamentos`,
+          `${process.env.MANAGEMENT_API_URL}/createLancamentos`,
           data
         );
-        // Redirecione para a página principal ou faça qualquer outra ação desejada
+        if (this.lancamentos.imprimir_boleto === true) {
+          try {
+            const data = {
+              titulo_token: storedIdPredio.predio_token,
+            };
+            const imprimir = await axios.post(
+              `${process.env.MANAGEMENT_API_URL}/imprimirRecibo`,
+              data
+            );
 
-        this.$router.push("/equipamentos-lancamentos/index");
+            const newTab = window.open();
+            newTab.document.write(imprimir.data[0].func_imprime_recibo_titulo);
+          } catch (error) {
+            console.error("Erro ao executar a função de impressão:", error);
+          }
+        }
+        this.$router.push("/pi-lancamentos/index");
         return response;
       } catch (error) {
         console.error("Erro na criação do registro:", error);
@@ -215,6 +248,8 @@ export default {
   },
   mounted() {
     this.carregarContasCombolist();
+    this.carregarEquipamentosCombolist();
+    this.carregarAmbientesCombolist();
   },
 };
 </script>
