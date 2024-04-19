@@ -214,6 +214,13 @@ const routes = [
         component: () =>
           import("@/views/Lancamentos/ViewLancamentos.vue"),
       },
+      //Lancamentos-informacoes
+      {
+        path: "pi-lancamentos-informacoes/index",
+        name: "pi-lancamentos-informacoes/index",
+        component: () =>
+          import("@/views/LancamentosInformacao/TableLancamentosInformacao.vue"),
+      },
     ],
   },
 ];

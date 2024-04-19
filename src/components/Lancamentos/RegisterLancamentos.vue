@@ -237,7 +237,6 @@ export default {
             console.error("Erro ao executar a função de impressão:", error);
           }
         }
-        this.$router.push("/pi-lancamentos/index");
         return response;
       } catch (error) {
         console.error("Erro na criação do registro:", error);
