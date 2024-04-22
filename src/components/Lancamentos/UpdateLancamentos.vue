@@ -8,9 +8,9 @@
         class="ml-5 mr-5"
         v-model="lancamentos.data"
         :error-messages="fabricante.errorMessage.value"
-        label="Data"
+        label="Data(*)"
         type="date"
-
+        autofocus
       ></v-text-field>
     </v-row>
 
@@ -40,6 +40,7 @@
         :error-messages="equipamento_id.errorMessage.value"
         label="Selecione um Equipamento"
         dense
+        clearable
       ></v-autocomplete>
       <v-autocomplete
         class="ml-5 mr-5 mb-5"
@@ -48,9 +49,10 @@
         item-title="descricao"
         item-value="id"
         :error-messages="equipamento_id.errorMessage.value"
-        label="Selecione uma Conta"
+        label="Selecione uma Conta(*)"
         dense
         :disabled="lancamentos.pagador_nome === null"
+        clearable
       ></v-autocomplete>
       <v-autocomplete
         class="ml-5 mr-5 mb-5"
@@ -61,6 +63,7 @@
         :error-messages="equipamento_id.errorMessage.value"
         label="Selecione um Ambiente"
         dense
+        clearable
       ></v-autocomplete>
     </v-row>
     <v-row no-gutters>
@@ -91,7 +94,6 @@
       v-model="lancamentos.entra_pmoc"
       :error-messages="entra_pmoc.errorMessage.value"
       label="Recursos Proprios"
-
     ></v-checkbox>
     <v-btn class="me-4 mt-8" color="red" @click="returnToMainPage">
       Voltar
@@ -233,7 +235,14 @@ export default {
       }
     },
     async update() {
-      const storedIdUser = JSON.parse(localStorage.getItem("user"))
+      if (this.lancamentos.data === undefined) {
+        this.lancamentos.data = null;
+      }
+
+      if (this.lancamentos.conta_id === undefined) {
+        this.lancamentos.conta_id = null;
+      }
+      const storedIdUser = JSON.parse(localStorage.getItem("user"));
       const storedIdPredio = JSON.parse(localStorage.getItem("predio"));
       const recursos_proprios = Boolean(this.lancamentos.recursos_proprios);
       const data = {
@@ -246,7 +255,7 @@ export default {
         pagador_cpfcnpj: this.lancamentos.pagador_cpfcnpj,
         pagador_nome: this.lancamentos.pagador_nome,
         predio_id: storedIdPredio.predio_id,
-        user_alteracao:storedIdUser.id,
+        user_alteracao: storedIdUser.id,
         recursos_proprios: recursos_proprios,
       };
 

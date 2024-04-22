@@ -1,6 +1,5 @@
-
 <template>
-  <AppBar/>
+  <AppBar />
 
   <LoadingComponent v-if="loading">
     <font-awesome-icon :icon="['fas', 'spinner']" spin />
@@ -27,15 +26,18 @@
 
         <v-col>
           <v-sheet class="pa-2 ma-2"
-            >Fabricante:
-            {{
-              dados.fabricante
-            }}</v-sheet
+            >Fabricante: {{ dados.fabricante }}</v-sheet
           >
         </v-col>
-
       </v-row>
     </v-container>
+    <v-row>
+      <v-col class="text-center">
+        <v-btn class="arrow" color="red" @click="returnToMainPage">
+          Voltar
+        </v-btn>
+      </v-col>
+    </v-row>
   </div>
 </template>
 
@@ -43,45 +45,44 @@
 import AppBar from "@/layouts/default/AppBar.vue";
 import axios from "axios";
 export default {
-    data() {
-        return {
-            dados: {},
-            loading: true,
-        };
+  data() {
+    return {
+      dados: {},
+      loading: true,
+    };
+  },
+  methods: {
+    returnToMainPage() {
+      this.$router.push("/equipamentos-modelos/index");
     },
-    methods: {
-        returnToMainPage() {
-            this.$router.push("/equipamentos-modelos/index");
-        },
-        async loadPredios() {
-            try {
-                const response = await axios.get(`${process.env.MANAGEMENT_API_URL}/getModeloEquipamentosById/${this.dados.id}`);
-                this.dados = response.data;
-                console.log(this.dados)
-            }
-            catch (error) {
-                console.error("Erro na chamada de API:", error);
-            }
-            finally {
-                this.loading = false;
-            }
-        },
+    async loadPredios() {
+      try {
+        const response = await axios.get(
+          `${process.env.MANAGEMENT_API_URL}/getModeloEquipamentosById/${this.dados.id}`
+        );
+        this.dados = response.data;
+        console.log(this.dados);
+      } catch (error) {
+        console.error("Erro na chamada de API:", error);
+      } finally {
+        this.loading = false;
+      }
     },
-    created() {
-        if (this.$route.query.id) {
-            this.dados.id = this.$route.query.id;
-            this.loadPredios();
-        }
-        else {
-            console.log("Erro em carregar dados");
-        }
-    },
-    mounted() {
-        (async () => {
-            await this.loadPredios();
-        })();
-    },
-    components: { AppBar }
+  },
+  created() {
+    if (this.$route.query.id) {
+      this.dados.id = this.$route.query.id;
+      this.loadPredios();
+    } else {
+      console.log("Erro em carregar dados");
+    }
+  },
+  mounted() {
+    (async () => {
+      await this.loadPredios();
+    })();
+  },
+  components: { AppBar },
 };
 </script>
 <style scoped>
@@ -92,6 +93,7 @@ export default {
 }
 .arrow {
   cursor: pointer;
-  margin-bottom: 20px;
+  margin-top: 2%;
+  margin-right: 90%;
 }
 </style>

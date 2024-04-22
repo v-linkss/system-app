@@ -7,18 +7,20 @@
       class="ml-5 mr-5"
       v-model="predios.descricao"
       :error-messages="descricao.errorMessage.value"
-      label="Descrição"
+      label="Descrição(*)"
+      autofocus
     ></v-text-field>
 
     <v-row no-gutters>
       <v-autocomplete
-        class="ml-5"
+        class="ml-5 align-end"
         v-model="predios.tabvalores_tipo_ambiente_id"
         :items="tipos"
         item-title="descricao"
         item-value="id"
         :error-messages="tabvalores_tipo_ambiente_id.errorMessage.value"
         label="Selecione um Tipo"
+        clearable
       ></v-autocomplete>
 
       <v-autocomplete
@@ -65,16 +67,18 @@
         </v-btn>
       </template>
 
-      <template  v-slot:default="{ isActive }">
+      <template v-slot:default="{ isActive }">
         <v-card v-if="showError">
-          <v-card-text>
-            Faltou preencher os campos obrigatorios
-          </v-card-text>
+          <v-card-text> Faltou preencher os campos obrigatorios </v-card-text>
 
           <v-card-actions>
             <v-spacer></v-spacer>
 
-            <v-btn style="background-color: #1b5175; color: white" @click="isActive.value = false">OK</v-btn>
+            <v-btn
+              style="background-color: #1b5175; color: white"
+              @click="isActive.value = false"
+              >OK</v-btn
+            >
           </v-card-actions>
         </v-card>
       </template>
@@ -132,6 +136,21 @@ export default {
       }
     },
     async submit() {
+      if (this.predios.area === undefined) {
+        this.predios.area = null;
+        console.log(
+          "###################-this.predios.area-####################\n",
+          this.predios.area
+        );
+      }
+
+      if (this.predios.numero_ocupantes === undefined) {
+        this.predios.numero_ocupantes = null;
+        console.log(
+          "###################-this.predios.numero_ocupantes-####################\n",
+          this.predios.numero_ocupantes
+        );
+      }
       const storedIdPredio = JSON.parse(localStorage.getItem("predio"));
       const storedIdUser = JSON.parse(localStorage.getItem("user"));
       const data = {

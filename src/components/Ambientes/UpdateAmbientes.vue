@@ -7,28 +7,31 @@
       class="ml-5 mr-5"
       v-model="predios.descricao"
       :error-messages="descricao.errorMessage.value"
-      label="Descrição"
+      label="Descrição(*)"
+      autofocus
     ></v-text-field>
 
     <v-row no-gutters>
       <v-autocomplete
-        class="ml-5"
+        class="ml-5 align-end"
         v-model="predios.tabvalores_tipo_ambiente_id"
         :items="tipos"
         item-title="descricao"
         item-value="id"
         :error-messages="tabvalores_tipo_ambiente_id.errorMessage.value"
         label="Selecione um Tipo"
+        clearable
       ></v-autocomplete>
 
       <v-autocomplete
-        class="ml-5 mr-5"
+        class="ml-5 mr-5 align-end"
         v-model="predios.predio_area_id"
         :items="areas"
         label="Selecione uma Área"
         item-title="descricao"
         item-value="id"
         :error-messages="predio_area_id.errorMessage.value"
+        clearable
       ></v-autocomplete>
     </v-row>
     <v-row class="mt-5" no-gutters>
@@ -55,19 +58,28 @@
 
     <v-dialog max-width="500">
       <template v-slot:activator="{ props: activatorProps }">
-        <v-btn class="me-4 mt-8" v-bind="activatorProps" color="green" @click="update"> Atualizar </v-btn>
+        <v-btn
+          class="me-4 mt-8"
+          v-bind="activatorProps"
+          color="green"
+          @click="update"
+        >
+          Atualizar
+        </v-btn>
       </template>
 
-      <template  v-slot:default="{ isActive }">
+      <template v-slot:default="{ isActive }">
         <v-card v-if="showError">
-          <v-card-text>
-            Ocorreu erro ao atualizar o campo.
-          </v-card-text>
+          <v-card-text> Ocorreu erro ao atualizar o campo. </v-card-text>
 
           <v-card-actions>
             <v-spacer></v-spacer>
 
-            <v-btn style="background-color: #1b5175; color: white" @click="isActive.value = false">OK</v-btn>
+            <v-btn
+              style="background-color: #1b5175; color: white"
+              @click="isActive.value = false"
+              >OK</v-btn
+            >
           </v-card-actions>
         </v-card>
       </template>
@@ -86,7 +98,7 @@ export default {
         tabvalores_tipo_ambiente_id: undefined,
         predio_area_id: undefined,
       },
-      showError:false,
+      showError: false,
       tipos: [],
       areas: [], // Inicialize o items como um array vazio
     };
@@ -150,14 +162,18 @@ export default {
       };
 
       try {
+        console.log(
+          "###################-this.predios.area-####################\n",
+          this.predios.area
+        );
         const response = await axios.put(
           `${process.env.MANAGEMENT_API_URL}/PrediosAmbiente/${this.predios.id}`,
           data
         );
         this.$router.push("/predios-ambientes/index"); // Redirecione para a página principal ou faça qualquer outra ação desejada
 
-          this.$router.push("/predios-ambientes/index");
-        return response
+        this.$router.push("/predios-ambientes/index");
+        return response;
       } catch (error) {
         console.error("Erro na criação do registro:", error);
 

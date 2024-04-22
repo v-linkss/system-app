@@ -31,11 +31,15 @@ import AppBar from "@/layouts/default/AppBar.vue";
         <v-responsive width="100%"></v-responsive>
 
         <v-col>
-          <v-sheet class="pa-2 ma-2"> Conta: {{ dados.pi_contas.descricao }} </v-sheet>
+          <v-sheet class="pa-2 ma-2">
+            Conta: {{ dados.pi_contas.descricao }}
+          </v-sheet>
         </v-col>
 
         <v-col>
-          <v-sheet class="pa-2 ma-2"> Pagador: {{ dados.pagador_nome }} </v-sheet>
+          <v-sheet class="pa-2 ma-2">
+            Pagador: {{ dados.pagador_nome }}
+          </v-sheet>
         </v-col>
 
         <v-col>
@@ -45,6 +49,13 @@ import AppBar from "@/layouts/default/AppBar.vue";
         </v-col>
       </v-row>
     </v-container>
+    <v-row>
+      <v-col class="text-center">
+        <v-btn class="arrow" color="red" @click="returnToMainPage">
+          Voltar
+        </v-btn>
+      </v-col>
+    </v-row>
   </div>
 </template>
 
@@ -67,7 +78,6 @@ export default {
           `${process.env.MANAGEMENT_API_URL}/getLancamentosById/${this.dados.id}`
         );
         this.dados = response.data.lancamentos;
-
       } catch (error) {
         console.error("Erro na chamada de API:", error);
       } finally {
@@ -98,6 +108,7 @@ export default {
 }
 .arrow {
   cursor: pointer;
-  margin-bottom: 20px;
+  margin-top: 2%;
+  margin-right: 90%;
 }
 </style>

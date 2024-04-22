@@ -8,8 +8,9 @@
         class="ml-5 mr-5"
         v-model="lancamentos.data"
         :error-messages="fabricante.errorMessage.value"
-        label="Data"
+        label="Data(*)"
         type="date"
+        autofocus
       ></v-text-field>
     </v-row>
 
@@ -37,6 +38,7 @@
         :error-messages="equipamento_id.errorMessage.value"
         label="Selecione um Equipamento"
         dense
+        clearable
       ></v-autocomplete>
       <v-autocomplete
         class="ml-5 mr-5 mb-5"
@@ -45,8 +47,9 @@
         item-title="descricao"
         item-value="id"
         :error-messages="equipamento_id.errorMessage.value"
-        label="Selecione uma Conta"
+        label="Selecione uma Conta(*)"
         dense
+        clearable
       ></v-autocomplete>
       <v-autocomplete
         class="ml-5 mr-5 mb-5"
@@ -57,6 +60,7 @@
         :error-messages="equipamento_id.errorMessage.value"
         label="Selecione um Ambiente"
         dense
+        clearable
       ></v-autocomplete>
     </v-row>
     <v-row no-gutters>
@@ -106,7 +110,7 @@
 
       <template v-slot:default="{ isActive }">
         <v-card v-if="showError">
-          <v-card-text> Faltou preencher os campos obrigatorios </v-card-text>
+          <v-card-text> Ocorreu erro ao atualizar o campo. </v-card-text>
 
           <v-card-actions>
             <v-spacer></v-spacer>
@@ -151,7 +155,7 @@ export default {
       this.$router.push("/pi-lancamentos/index");
     },
     async carregarEquipamentosCombolist() {
-      console.log(this.lancamentos.imprimir_boleto)
+      console.log(this.lancamentos.imprimir_boleto);
       const storedToken = JSON.parse(localStorage.getItem("predio"));
       const data = {
         predio_token: storedToken.predio_token,
@@ -187,6 +191,7 @@ export default {
       const storedId = JSON.parse(localStorage.getItem("predio"));
       const data = {
         predio_id: storedId.predio_id,
+        natureza: "RECEITA", // 'RECEITA' OU 'DESPESA' // Para Lançamentos
       };
       try {
         const response = await axios.post(
@@ -200,6 +205,13 @@ export default {
       }
     },
     async submit() {
+      if (this.lancamentos.data === undefined) {
+        this.lancamentos.data = null;
+      }
+
+      if (this.lancamentos.conta_id === undefined) {
+        this.lancamentos.conta_id = null;
+      }
       const storedIdPredio = JSON.parse(localStorage.getItem("predio"));
       const storedIdUser = JSON.parse(localStorage.getItem("user"));
       const recursos_proprios = Boolean(this.lancamentos.recursos_proprios);

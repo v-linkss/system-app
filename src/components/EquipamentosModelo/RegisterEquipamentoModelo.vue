@@ -10,6 +10,7 @@
         :error-messages="fabricante.errorMessage.value"
         label="Fabricante"
         dense
+        autofocus
       ></v-text-field>
 
       <v-text-field
@@ -27,8 +28,9 @@
       item-title="descricao"
       item-value="id"
       :error-messages="equipamento_tipo_id.errorMessage.value"
-      label="Selecione um Tipo"
+      label="Selecione um Tipo(*)"
       dense
+      clearable
     ></v-autocomplete>
 
     <v-row no-gutters>
@@ -37,7 +39,7 @@
         v-mask="'##'"
         v-model.number="modelos.vida_util"
         :error-messages="vida_util.errorMessage.value"
-        label="Vida Util(Meses)"
+        label="Vida Util(Meses)(*)"
       ></v-text-field>
 
       <v-text-field
@@ -67,16 +69,18 @@
         </v-btn>
       </template>
 
-      <template  v-slot:default="{ isActive }">
+      <template v-slot:default="{ isActive }">
         <v-card v-if="showError">
-          <v-card-text>
-            Faltou preencher os campos obrigatorios
-          </v-card-text>
+          <v-card-text> Faltou preencher os campos obrigatorios </v-card-text>
 
           <v-card-actions>
             <v-spacer></v-spacer>
 
-            <v-btn style="background-color: #1b5175; color: white" @click="isActive.value = false">OK</v-btn>
+            <v-btn
+              style="background-color: #1b5175; color: white"
+              @click="isActive.value = false"
+              >OK</v-btn
+            >
           </v-card-actions>
         </v-card>
       </template>
@@ -96,7 +100,7 @@ export default {
         equipamento_tipo_id: undefined,
         vida_util: undefined,
       },
-      showError:false,
+      showError: false,
       tipos: [],
     };
   },
@@ -144,15 +148,14 @@ export default {
         );
         // Redirecione para a página principal ou faça qualquer outra ação desejada
 
-          this.$router.push("/equipamentos-modelos/index");
-        return response
+        this.$router.push("/equipamentos-modelos/index");
+        return response;
       } catch (error) {
         console.error("Erro na criação do registro:", error);
 
-        this.showError = true
+        this.showError = true;
       }
     },
-
   },
   mounted() {
     this.loadTipos();
