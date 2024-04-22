@@ -7,7 +7,8 @@
       class="ml-5 mr-5"
       v-model="prediosTipos.descricao"
       :error-messages="descricao.errorMessage.value"
-      label="Descrição"
+      label="Descrição(*)"
+      autofocus=""
     ></v-text-field>
 
     <v-row no-gutters>
@@ -18,7 +19,8 @@
         item-title="descricao"
         item-value="id"
         :error-messages="sistema_id.errorMessage.value"
-        label="Selecione um Sistema"
+        label="Selecione um Sistema(*)"
+        clearable=""
       ></v-autocomplete>
 
       <v-autocomplete
@@ -29,6 +31,7 @@
         item-title="descricao"
         item-value="id"
         :error-messages="tabvalores_segmento_id.errorMessage.value"
+        clearable=""
       ></v-autocomplete>
     </v-row>
     <v-text-field
@@ -116,14 +119,16 @@ export default {
       }
     },
     async submit() {
-      const storedIdUser = JSON.parse(localStorage.getItem("user"))
+      if (this.prediosTipos.tabvalores_segmento_id === undefined) {
+        this.prediosTipos.tabvalores_segmento_id = null;
+      }
+      const storedIdUser = JSON.parse(localStorage.getItem("user"));
       const data = {
         descricao: this.prediosTipos.descricao,
         icone: this.prediosTipos.icone,
         sistema_id: this.prediosTipos.sistema_id,
-        tabvalores_segmento_id:
-          this.prediosTipos.tabvalores_segmento_id,
-        user_created:storedIdUser.id
+        tabvalores_segmento_id: this.prediosTipos.tabvalores_segmento_id,
+        user_created: storedIdUser.id,
       };
 
       try {
@@ -137,7 +142,7 @@ export default {
       } catch (error) {
         console.error("Erro na criação do registro:", error);
 
-        this.showError = true
+        this.showError = true;
       }
     },
   },

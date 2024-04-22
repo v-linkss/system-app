@@ -4,9 +4,13 @@ import AppBar from "@/layouts/default/AppBar.vue";
 </script>
 
 <template>
-  <v-progress-circular class="loading-spinner" indeterminate size="64" v-if="loading"></v-progress-circular>
+  <v-progress-circular
+    class="loading-spinner"
+    indeterminate
+    size="64"
+    v-if="loading"
+  ></v-progress-circular>
   <div v-else>
-
     <AppBar />
     <div class="btn-pointer mt-8 mb-10" @click="redirectToRegister()">
       <v-row>
@@ -16,7 +20,7 @@ import AppBar from "@/layouts/default/AppBar.vue";
           src="../../assets/novo.png"
           alt="novo"
         />
-        <h1 style="color:#777777">Predio Equipamentos</h1>
+        <h1 style="color: #777777">Predio Equipamentos</h1>
       </v-row>
     </div>
 
@@ -32,7 +36,9 @@ import AppBar from "@/layouts/default/AppBar.vue";
         <tr>
           <template v-for="(header, headerIndex) in headers" :key="headerIndex">
             <td>
-              <template v-if="index === 0 && headerIndex !== headers.length - 1">
+              <template
+                v-if="index === 0 && headerIndex !== headers.length - 1"
+              >
                 <v-text-field
                   v-model="header.search"
                   outlined
@@ -87,7 +93,6 @@ import AppBar from "@/layouts/default/AppBar.vue";
                     @click="toggleExclusion(item)"
                     v-b-tooltip.hover
                     title="Excluir"
-                    
                   >
                     <img
                       v-if="item.excluido"
@@ -95,6 +100,7 @@ import AppBar from "@/layouts/default/AppBar.vue";
                       alt="Excluir"
                       class="trash-icon"
                       style="width: 40px; height: 40px"
+                      title="Reativar"
                     />
                     <img
                       v-else
@@ -102,6 +108,7 @@ import AppBar from "@/layouts/default/AppBar.vue";
                       alt="Excluir"
                       class="trash-icon"
                       style="width: 40px; height: 40px"
+                      title="Excluir"
                     />
                   </div>
                 </div>
@@ -111,7 +118,7 @@ import AppBar from "@/layouts/default/AppBar.vue";
         </tr>
       </template>
     </v-data-table>
-</div>
+  </div>
 </template>
 <script>
 import { VDataTable } from "vuetify/lib/components/index.mjs";
@@ -124,7 +131,7 @@ export default {
     return {
       filteredPrediosEquipamentos: [],
       predios_equipamentos: [],
-      loading:true,
+      loading: true,
       searchQuery: "",
       itemsPerPage: [20],
       footerProps: [20],
@@ -254,7 +261,8 @@ export default {
       })
       .catch((error) => {
         console.error("Erro na chamada de API:", error);
-      }).finally(() => {
+      })
+      .finally(() => {
         this.loading = false; // Corrigindo a atribuição do loading
       });
     // Recarrega o valor do campo de pesquisa do localStorage

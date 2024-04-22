@@ -4,7 +4,12 @@ import AppBar from "@/layouts/default/AppBar.vue";
 </script>
 
 <template>
-<v-progress-circular class="loading-spinner" indeterminate size="64" v-if="loading"></v-progress-circular>
+  <v-progress-circular
+    class="loading-spinner"
+    indeterminate
+    size="64"
+    v-if="loading"
+  ></v-progress-circular>
   <div v-else>
     <AppBar />
     <div class="btn-pointer mt-8 mb-10" @click="redirectToRegister()">
@@ -15,7 +20,7 @@ import AppBar from "@/layouts/default/AppBar.vue";
           src="../../assets/novo.png"
           alt="novo"
         />
-        <h1 style="color:#777777">Modelos Equipamentos</h1>
+        <h1 style="color: #777777">Modelos Equipamentos</h1>
       </v-row>
     </div>
 
@@ -31,7 +36,9 @@ import AppBar from "@/layouts/default/AppBar.vue";
         <tr>
           <template v-for="(header, headerIndex) in headers" :key="headerIndex">
             <td>
-              <template v-if="index === 0 && headerIndex !== headers.length - 1">
+              <template
+                v-if="index === 0 && headerIndex !== headers.length - 1"
+              >
                 <v-text-field
                   v-model="header.search"
                   outlined
@@ -93,6 +100,7 @@ import AppBar from "@/layouts/default/AppBar.vue";
                       alt="Excluir"
                       class="trash-icon"
                       style="width: 40px; height: 40px"
+                      title="Reativar"
                     />
                     <img
                       v-else
@@ -100,6 +108,7 @@ import AppBar from "@/layouts/default/AppBar.vue";
                       alt="Excluir"
                       class="trash-icon"
                       style="width: 40px; height: 40px"
+                      title="Excluir"
                     />
                   </div>
                 </div>
@@ -122,7 +131,7 @@ export default {
     return {
       filteredPrediosEquipamentos: [],
       equipamentos_modelos: [],
-      loading:true,
+      loading: true,
       searchQuery: "",
       itemsPerPage: [20],
       footerProps: [20],
@@ -251,7 +260,6 @@ export default {
       .finally(() => {
         this.loading = false; // Corrigindo a atribuição do loading
       });
-
 
     // Recarrega o valor do campo de pesquisa do localStorage
     const searchQuery = localStorage.getItem("searchQuery");

@@ -108,6 +108,7 @@ import AppBar from "@/layouts/default/AppBar.vue";
                       alt="Excluir"
                       class="trash-icon"
                       style="width: 40px; height: 40px"
+                      title="Reativar"
                     />
                     <img
                       v-else
@@ -115,6 +116,7 @@ import AppBar from "@/layouts/default/AppBar.vue";
                       alt="Excluir"
                       class="trash-icon"
                       style="width: 40px; height: 40px"
+                      title="Excluir"
                     />
                   </div>
                 </div>

@@ -7,7 +7,8 @@
       class="ml-5 mr-5"
       v-model="prediosTipos.descricao"
       :error-messages="descricao.errorMessage.value"
-      label="Descrição"
+      label="Descrição(*)"
+      autofocus=""
     ></v-text-field>
 
     <v-row no-gutters>
@@ -18,7 +19,8 @@
         item-title="descricao"
         item-value="id"
         :error-messages="sistema_id.errorMessage.value"
-        label="Selecione um Sistema"
+        label="Selecione um Sistema(*)"
+        clearable=""
       ></v-autocomplete>
 
       <v-autocomplete
@@ -29,6 +31,7 @@
         item-title="descricao"
         item-value="id"
         :error-messages="tabvalores_segmento_id.errorMessage.value"
+        clearable=""
       ></v-autocomplete>
     </v-row>
     <v-text-field
@@ -38,22 +41,33 @@
       label="Icone"
     ></v-text-field>
 
-    <v-btn class="ml-5 me-4 mt-8" color="red" @click="returnToMainPage"> Voltar</v-btn>
+    <v-btn class="ml-5 me-4 mt-8" color="red" @click="returnToMainPage">
+      Voltar</v-btn
+    >
     <v-dialog max-width="500">
       <template v-slot:activator="{ props: activatorProps }">
-        <v-btn class="me-4 mt-8" v-bind="activatorProps" color="green" @click="update"> Atualizar </v-btn>
+        <v-btn
+          class="me-4 mt-8"
+          v-bind="activatorProps"
+          color="green"
+          @click="update"
+        >
+          Atualizar
+        </v-btn>
       </template>
 
-      <template  v-slot:default="{ isActive }">
+      <template v-slot:default="{ isActive }">
         <v-card v-if="showError">
-          <v-card-text>
-            Ocorreu erro ao atualizar o campo.
-          </v-card-text>
+          <v-card-text> Ocorreu erro ao atualizar o campo. </v-card-text>
 
           <v-card-actions>
             <v-spacer></v-spacer>
 
-            <v-btn style="background-color: #1b5175; color: white" @click="isActive.value = false">OK</v-btn>
+            <v-btn
+              style="background-color: #1b5175; color: white"
+              @click="isActive.value = false"
+              >OK</v-btn
+            >
           </v-card-actions>
         </v-card>
       </template>
@@ -71,7 +85,7 @@ export default {
         tabvalores_segmento_id: undefined,
         icone: undefined,
       },
-      showError:false,
+      showError: false,
       segmentos: [],
       sistemas: [],
     };
@@ -88,7 +102,6 @@ export default {
         );
         const responseData = response.data[0].func_json_segmentos;
         this.segmentos = responseData;
-
       } catch (error) {
         console.error("Erro na chamada de API:", error);
       }
@@ -101,19 +114,21 @@ export default {
         );
         const responseData = response.data[0].func_json_sistemas;
         this.sistemas = responseData;
-
       } catch (error) {
         console.error("Erro na chamada de API:", error);
       }
     },
     async update() {
-      const storedIdUser = JSON.parse(localStorage.getItem("user"))
+      if (this.prediosTipos.tabvalores_segmento_id === undefined) {
+        this.prediosTipos.tabvalores_segmento_id = null;
+      }
+      const storedIdUser = JSON.parse(localStorage.getItem("user"));
       const data = {
         descricao: this.prediosTipos.descricao,
         sistema_id: this.prediosTipos.sistema_id,
         icone: this.prediosTipos.icone,
         tabvalores_segmento_id: this.prediosTipos.tabvalores_segmento_id,
-        user_alteracao:storedIdUser.id
+        user_alteracao: storedIdUser.id,
       };
 
       try {
@@ -122,13 +137,13 @@ export default {
           data
         );
 
-          this.$router.push("/equipamentos-tipos/index");
+        this.$router.push("/equipamentos-tipos/index");
 
-          return response
+        return response;
       } catch (error) {
         console.error("Erro na criação do registro:", error);
 
-        this.showError = true
+        this.showError = true;
       }
     },
     async loadTiposEquipamentos() {
@@ -137,9 +152,10 @@ export default {
           `${process.env.MANAGEMENT_API_URL}/getEquipamentosById/${this.prediosTipos.id}`
         );
         // Preencha os campos com os detalhes carregados
-        console.log(response.data)
+        console.log(response.data);
         this.prediosTipos.descricao = response.data.descricao;
-        this.prediosTipos.tabvalores_segmento_id = response.data.tabvalores_segmento_id;
+        this.prediosTipos.tabvalores_segmento_id =
+          response.data.tabvalores_segmento_id;
         this.prediosTipos.sistema_id = response.data.sistema_id;
         this.prediosTipos.icone = response.data.icone;
       } catch (error) {

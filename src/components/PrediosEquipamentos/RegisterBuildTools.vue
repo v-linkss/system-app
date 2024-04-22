@@ -7,7 +7,8 @@
       class="ml-5 mr-5"
       v-model="predios_equipamentos.descricao"
       :error-messages="descricao.errorMessage.value"
-      label="Descrição"
+      label="Descrição(*)"
+      autofocus
     ></v-text-field>
 
     <v-row no-gutters>
@@ -18,7 +19,8 @@
         item-title="descricao"
         item-value="id"
         :error-messages="modelo_id.errorMessage.value"
-        label="Selecione um Modelo"
+        label="Selecione um Modelo(*)"
+        clearable
       ></v-autocomplete>
 
       <v-autocomplete
@@ -28,7 +30,8 @@
         item-title="descricao"
         item-value="id"
         :error-messages="predio_ambiente_id.errorMessage.value"
-        label="Selecione um Ambiente"
+        label="Selecione um Ambiente(*)"
+        clearable
       ></v-autocomplete>
 
       <v-autocomplete
@@ -39,6 +42,7 @@
         item-title="nome"
         item-value="id"
         :error-messages="user_gestor.errorMessage.value"
+        clearable
       ></v-autocomplete>
     </v-row>
 
@@ -100,8 +104,6 @@
         :error-messages="potencia.errorMessage.value"
         label="Potência"
       ></v-text-field>
-
-
     </v-row>
 
     <v-btn class="ml-5 me-4 mt-4" color="red" @click="returnToTableTools">
@@ -119,16 +121,18 @@
         </v-btn>
       </template>
 
-      <template  v-slot:default="{ isActive }">
+      <template v-slot:default="{ isActive }">
         <v-card v-if="showError">
-          <v-card-text>
-            Faltou preencher os campos obrigatorios
-          </v-card-text>
+          <v-card-text> Faltou preencher os campos obrigatorios </v-card-text>
 
           <v-card-actions>
             <v-spacer></v-spacer>
 
-            <v-btn style="background-color: #1b5175; color: white" @click="isActive.value = false">OK</v-btn>
+            <v-btn
+              style="background-color: #1b5175; color: white"
+              @click="isActive.value = false"
+              >OK</v-btn
+            >
           </v-card-actions>
         </v-card>
       </template>
@@ -153,7 +157,7 @@ export default {
         modelo_id: undefined,
         user_gestor: undefined,
       },
-      showError:false,
+      showError: false,
       ambientes: [],
       modelos: [],
       users: [],
@@ -214,6 +218,9 @@ export default {
       }
     },
     async submit() {
+      if (this.predios_equipamentos.user_gestor === undefined) {
+        this.predios_equipamentos.user_gestor = null;
+      }
       const storedIdPredio = JSON.parse(localStorage.getItem("predio"));
       const storedIdUser = JSON.parse(localStorage.getItem("user"));
       const data = {
@@ -239,11 +246,11 @@ export default {
         );
 
         this.$router.push("/predios-equipamentos/index");
-        return response
+        return response;
       } catch (error) {
         console.error("Erro na criação do registro:", error);
 
-        this.showError = true
+        this.showError = true;
       }
     },
   },

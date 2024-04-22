@@ -66,6 +66,13 @@ import AppBar from "@/layouts/default/AppBar.vue";
         </v-col>
       </v-row>
     </v-container>
+    <v-row>
+      <v-col class="text-center">
+        <v-btn class="arrow" color="red" @click="returnToMainPage">
+          Voltar
+        </v-btn>
+      </v-col>
+    </v-row>
   </div>
 </template>
 
@@ -118,6 +125,7 @@ export default {
 }
 .arrow {
   cursor: pointer;
-  margin-bottom: 20px;
+  margin-top: 2%;
+  margin-right: 90%;
 }
 </style>

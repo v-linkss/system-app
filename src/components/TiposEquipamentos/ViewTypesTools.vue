@@ -27,18 +27,22 @@ import AppBar from "@/layouts/default/AppBar.vue";
       <v-col>
         <v-sheet class="pa-2 ma-2"
           >Sistema:
-          {{dados.itens.descricao ? dados.itens.descricao : "N/A" }}</v-sheet
+          {{ dados.itens.descricao ? dados.itens.descricao : "N/A" }}</v-sheet
         >
       </v-col>
 
       <v-col>
-        <v-sheet class="pa-2 ma-2"
-          >Icone:
-          {{ dados.icone_ok }}</v-sheet
-        >
+        <v-sheet class="pa-2 ma-2">Icone: {{ dados.icone_ok }}</v-sheet>
       </v-col>
       <v-responsive width="100%"></v-responsive>
     </v-container>
+    <v-row>
+      <v-col class="text-center">
+        <v-btn class="arrow" color="red" @click="returnToMainPage">
+          Voltar
+        </v-btn>
+      </v-col>
+    </v-row>
   </div>
 </template>
 
@@ -61,7 +65,7 @@ export default {
           `${process.env.MANAGEMENT_API_URL}/getEquipamentosById/${this.dados.id}`
         );
         this.dados = response.data;
-        console.log(this.dados);
+        console.log("##########################\n", this.dados);
       } catch (error) {
         console.error("Erro na chamada de API:", error);
       } finally {
@@ -92,6 +96,7 @@ export default {
 }
 .arrow {
   cursor: pointer;
-  margin-bottom: 20px;
+  margin-top: 2%;
+  margin-right: 90%;
 }
 </style>
