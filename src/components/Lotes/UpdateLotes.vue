@@ -11,6 +11,7 @@
       :error-messages="data.errorMessage.value"
       type="date"
       label="Data"
+      autofocus
     ></v-text-field>
 
     <v-autocomplete

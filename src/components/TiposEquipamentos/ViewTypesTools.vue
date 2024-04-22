@@ -33,8 +33,15 @@ import AppBar from "@/layouts/default/AppBar.vue";
 
       <v-col>
         <v-sheet class="pa-2 ma-2"
-          >Icone:
+          >Icone OK:
           {{ dados.icone_ok }}</v-sheet
+        >
+      </v-col>
+
+      <v-col>
+        <v-sheet class="pa-2 ma-2"
+          >icone Problema:
+          {{ dados.icone_problema }}</v-sheet
         >
       </v-col>
       <v-responsive width="100%"></v-responsive>

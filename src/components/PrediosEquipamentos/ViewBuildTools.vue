@@ -85,9 +85,10 @@ export default {
     async loadPrediosEquipamentos() {
       try {
         const response = await axios.get(
-          `${process.env.MANAGEMENT_API_URL}/getPrediosEquipamentos/${this.dados.id}`
+          `${process.env.MANAGEMENT_API_URL}/PrediosEquipamentos/${this.dados.id}`
         );
         this.dados = response.data;
+        console.log(this.dados)
       } catch (error) {
         console.error("Erro na chamada de API:", error);
       } finally {

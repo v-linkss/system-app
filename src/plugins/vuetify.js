@@ -31,7 +31,6 @@ export default createVuetify({
     },
     VTextField: {
       density:"compact"
-
     }
   }
 })

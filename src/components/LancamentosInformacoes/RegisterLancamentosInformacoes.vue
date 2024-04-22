@@ -9,6 +9,7 @@
       :error-messages="fabricante.errorMessage.value"
       label="Data"
       type="date"
+      autofocus
     ></v-text-field>
     <v-autocomplete
       class="ml-5 mr-5 mb-5"

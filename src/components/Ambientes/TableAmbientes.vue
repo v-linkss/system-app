@@ -208,17 +208,17 @@ export default {
     },
     async toggleExclusion(item) {
       try {
-        item.altera = !item.altera;
+        item.excluido = !item.excluido;
         await axios.put(
-          `${process.env.MANAGEMENT_API_URL}/PrediosAmbiente/excluir/${item.id}`,
+          `${process.env.MANAGEMENT_API_URL}/deleteAmbientes/${item.id}`,
           {
-            altera: item.altera,
+            excluido: item.excluido,
           }
         );
-        console.log(item.altera);
+        console.log(item.excluido);
       } catch (error) {
         console.error("Erro ao atualizar exclusão:", error);
-        item.altera = !item.altera;
+        item.excluido = !item.excluido;
       }
     },
     saveSearchQuery() {

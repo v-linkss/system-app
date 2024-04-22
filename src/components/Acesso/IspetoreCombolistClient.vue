@@ -63,6 +63,8 @@ export default {
         const combo = JSON.parse(comboSalvo);
 
         this.comboLocalStorage = combo
+
+        this.selectedPredio = this.comboLocalStorage[0].predio_token;
       }
     },
   },

@@ -8,17 +8,19 @@
       v-model="prediosTipos.descricao"
       :error-messages="descricao.errorMessage.value"
       label="Descrição"
+      autofocus
     ></v-text-field>
 
     <v-row no-gutters>
       <v-autocomplete
-        class="ml-5"
+        class="ml-5 mr-5"
         v-model="prediosTipos.sistema_id"
         :items="sistemas"
         item-title="descricao"
         item-value="id"
         :error-messages="sistema_id.errorMessage.value"
         label="Selecione um Sistema"
+        style="max-width: 545px;"
       ></v-autocomplete>
 
       <v-autocomplete
@@ -29,15 +31,24 @@
         item-title="descricao"
         item-value="id"
         :error-messages="tabvalores_segmento_id.errorMessage.value"
+        style="max-width: 600px;"
       ></v-autocomplete>
     </v-row>
-    <v-text-field
-      class="ml-5 mr-5 mt-5"
-      v-model="prediosTipos.icone"
-      :error-messages="icone.errorMessage.value"
-      label="Icone"
-    ></v-text-field>
+    <v-row no-gutters>
+      <v-text-field
+        class="ml-5 mr-5 mt-5"
+        v-model="prediosTipos.icone_ok"
+        :error-messages="icone.errorMessage.value"
+        label="Icone OK"
+      ></v-text-field>
 
+      <v-text-field
+        class="ml-5 mr-5 mt-5"
+        v-model="prediosTipos.icone_problema"
+        :error-messages="icone.errorMessage.value"
+        label="Icone Problema"
+      ></v-text-field>
+    </v-row>
     <v-btn class="ml-5 me-4 mt-8" color="red" @click="returnToMainPage">
       Voltar</v-btn
     >
@@ -80,7 +91,8 @@ export default {
         descricao: undefined,
         sistema_id: undefined,
         tabvalores_segmento_id: undefined,
-        icone: undefined,
+        icone_ok: undefined,
+        icone_problema: undefined,
       },
       showError: false,
       segmentos: [],
@@ -116,14 +128,14 @@ export default {
       }
     },
     async submit() {
-      const storedIdUser = JSON.parse(localStorage.getItem("user"))
+      const storedIdUser = JSON.parse(localStorage.getItem("user"));
       const data = {
         descricao: this.prediosTipos.descricao,
-        icone: this.prediosTipos.icone,
+        icone_ok: this.prediosTipos.icone_ok,
+        icone_problema: this.prediosTipos.icone_problema,
         sistema_id: this.prediosTipos.sistema_id,
-        tabvalores_segmento_id:
-          this.prediosTipos.tabvalores_segmento_id,
-        user_created:storedIdUser.id
+        tabvalores_segmento_id: this.prediosTipos.tabvalores_segmento_id,
+        user_created: storedIdUser.id,
       };
 
       try {
@@ -137,7 +149,7 @@ export default {
       } catch (error) {
         console.error("Erro na criação do registro:", error);
 
-        this.showError = true
+        this.showError = true;
       }
     },
   },

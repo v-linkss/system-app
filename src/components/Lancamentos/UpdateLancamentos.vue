@@ -10,7 +10,7 @@
         :error-messages="fabricante.errorMessage.value"
         label="Data"
         type="date"
-
+        autofocus
       ></v-text-field>
     </v-row>
 

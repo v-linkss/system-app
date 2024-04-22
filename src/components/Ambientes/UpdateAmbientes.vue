@@ -8,6 +8,7 @@
       v-model="predios.descricao"
       :error-messages="descricao.errorMessage.value"
       label="Descrição"
+      autofocus
     ></v-text-field>
 
     <v-row no-gutters>
