@@ -225,6 +225,7 @@ export default {
         if (this.lancamentos.pagador_nome === null) {
           this.lancamentos.imprimir_boleto = true;
         }
+        console.log(response.data)
       } catch (error) {
         console.error(
           "Erro ao carregar detalhes do prédio_equipamentos:",

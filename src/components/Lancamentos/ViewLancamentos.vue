@@ -45,6 +45,9 @@ import AppBar from "@/layouts/default/AppBar.vue";
         </v-col>
       </v-row>
     </v-container>
+    <center>
+      <v-btn class=" mt-8" color="red" @click="returnToMainPage"> Voltar</v-btn>
+    </center>
   </div>
 </template>
 

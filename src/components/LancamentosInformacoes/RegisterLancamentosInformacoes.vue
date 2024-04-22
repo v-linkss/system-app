@@ -1,7 +1,7 @@
 <template>
   <AppBar />
   <v-container>
-    <h1 class="ml-5 mt-5 mb-5" style="color: #777777">Lancamentos</h1>
+    <h1 class="ml-5 mt-5 mb-5" style="color: #777777">Lancamentos Informações</h1>
 
     <v-text-field
       class="ml-5 mr-5"
@@ -83,14 +83,12 @@ export default {
       },
       showError: false,
       contas: [],
-      ambientes: [],
-      equipamentos: [],
     };
   },
 
   methods: {
     returnToMainPage() {
-      this.$router.push("/pi-lancamentosInformacoes/index");
+      this.$router.push("/pi-informacoes/index");
     },
     async carregarContasCombolist() {
       const storedId = JSON.parse(localStorage.getItem("predio"));
@@ -124,6 +122,8 @@ export default {
           `${process.env.MANAGEMENT_API_URL}/createLancamentosInformacoes`,
           data
         );
+        this.$router.push("/pi-informacoes/index");
+        console.log(response)
         return response;
       } catch (error) {
         console.error("Erro na criação do registro:", error);

@@ -119,17 +119,13 @@ export default {
     },
     async update() {
       const storedIdUser = JSON.parse(localStorage.getItem("user"))
-      const descricao = this.prediosTipos.descricao ? this.prediosTipos.descricao : null;
-      const icone_ok = this.prediosTipos.icone_ok ? this.prediosTipos.icone_ok : null;
-      const icone_problema = this.prediosTipos.icone_problema ? this.prediosTipos.icone_problema : null;
-      const sistema_id = this.prediosTipos.sistema_id ? this.prediosTipos.sistema_id : null;
-      const tabvalores_segmento_id = this.prediosTipos.tabvalores_segmento_id ? this.prediosTipos.tabvalores_segmento_id : null;
+
       const data = {
-        descricao: descricao,
-        sistema_id: sistema_id,
-        icone_ok: icone_ok,
-        icone_problema: icone_problema,
-        tabvalores_segmento_id: tabvalores_segmento_id,
+        descricao: this.prediosTipos.descricao,
+        sistema_id: this.prediosTipos.sistema_id,
+        icone_ok: this.prediosTipos.icone_ok,
+        icone_problema: this.prediosTipos.icone_problema,
+        tabvalores_segmento_id: this.prediosTipos.tabvalores_segmento_id,
         user_alteracao:storedIdUser.id
       };
 
@@ -154,7 +150,6 @@ export default {
           `${process.env.MANAGEMENT_API_URL}/getEquipamentosById/${this.prediosTipos.id}`
         );
         // Preencha os campos com os detalhes carregados
-        console.log(response.data)
         this.prediosTipos.descricao = response.data.descricao;
         this.prediosTipos.tabvalores_segmento_id = response.data.tabvalores_segmento_id;
         this.prediosTipos.sistema_id = response.data.sistema_id;

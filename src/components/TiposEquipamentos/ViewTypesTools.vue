@@ -46,6 +46,9 @@ import AppBar from "@/layouts/default/AppBar.vue";
       </v-col>
       <v-responsive width="100%"></v-responsive>
     </v-container>
+    <center>
+      <v-btn class=" mt-8" color="red" @click="returnToMainPage"> Voltar</v-btn>
+    </center>
   </div>
 </template>
 
@@ -60,7 +63,7 @@ export default {
   },
   methods: {
     returnToMainPage() {
-      this.$router.push("/home");
+      this.$router.push("/equipamentos-tipos/index");
     },
     async loadPredios() {
       try {
