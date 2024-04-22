@@ -9,40 +9,42 @@
       v-model="pi_lotes_receitas.data"
       :error-messages="data.errorMessage.value"
       type="date"
-      label="Data"
+      label="Data(*)"
+      autofocus
     ></v-text-field>
 
     <v-text-field
-      class="ml-5 mr-5 "
+      class="ml-5 mr-5"
       v-mask="'#####.##'"
       v-model.number="pi_lotes_receitas.valor"
       :error-messages="valor.errorMessage.value"
-      label="Valor"
+      label="Valor(*)"
     ></v-text-field>
 
     <v-row no-gutters>
       <v-autocomplete
-        class=" ml-5 mr-5 mb-5"
+        class="ml-5 mr-5 mb-5"
         v-model="pi_lotes_receitas.conta_id"
         :items="contas"
-        label="Selecione uma Conta"
+        label="Selecione uma Conta(*)"
         item-title="descricao"
         item-value="id"
         :error-messages="conta_id.errorMessage.value"
+        clearable
       ></v-autocomplete>
       <v-autocomplete
         class="ml-5 mr-5 mb-5"
         v-model="pi_lotes_receitas.lote_id"
         :items="lotes"
-        label="Selecione um lote"
+        label="Selecione um lote(*)"
         item-title="nome"
         item-value="id"
         :error-messages="lote_id.errorMessage.value"
+        clearable
       ></v-autocomplete>
     </v-row>
     <v-row no-gutters>
       <v-autocomplete
-
         class="ml-5 mr-5 mt-1"
         v-model="pi_lotes_receitas.predio_equipamento_id"
         :items="equipamentos"
@@ -50,6 +52,7 @@
         item-value="id"
         :error-messages="predio_equipamento_id.errorMessage.value"
         label="Selecione um Equipamento"
+        clearable
       ></v-autocomplete>
 
       <v-autocomplete
@@ -59,7 +62,8 @@
         item-title="descricao"
         item-value="id"
         :error-messages="cobrar.errorMessage.value"
-        label="Cobrar"
+        label="Cobrar(*)"
+        clearable
       ></v-autocomplete>
     </v-row>
 
@@ -183,6 +187,10 @@ export default {
       }
     },
     async submit() {
+      if (this.pi_lotes_receitas.predio_equipamento_id === undefined) {
+        this.pi_lotes_receitas.predio_equipamento_id = null;
+      }
+      // await checkUndefinedValues();
       const storedIdPredio = JSON.parse(localStorage.getItem("predio"));
       const storedIdUser = JSON.parse(localStorage.getItem("user"));
       const data = {
@@ -218,6 +226,11 @@ export default {
       this.pi_lotes_receitas.valor = null;
       this.pi_lotes_receitas.observacao = null;
       this.pi_lotes_receitas.lote_id = null;
+    },
+    async checkUndefinedValues() {
+      if (pi_lotes_receitas.predio_equipamento_id === undefined) {
+        pi_lotes_receitas.predio_equipamento_id = null;
+      }
     },
   },
   mounted() {

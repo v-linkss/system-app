@@ -23,107 +23,110 @@ import AppBar from "@/layouts/default/AppBar.vue";
       </v-row>
     </div>
 
-      <v-data-table
-        :headers="headers"
-        :search="searchQuery"
-        :items="displayedItems"
-        :rows-per-page-items="itemsPerPage"
-        :footer-props="footerProps"
-        density="default"
-      >
-        <template v-slot:item="{ item, index }">
-          <tr>
-            <template
-              v-for="(header, headerIndex) in headers"
-              :key="headerIndex"
-            >
-              <td>
-                <template
-                  v-if="index === 0 && headerIndex !== headers.length - 1"
+    <v-data-table
+      :headers="headers"
+      :search="searchQuery"
+      :items="displayedItems"
+      :rows-per-page-items="itemsPerPage"
+      :footer-props="footerProps"
+      density="default"
+    >
+      <template v-slot:item="{ item, index }">
+        <tr>
+          <template v-for="(header, headerIndex) in headers" :key="headerIndex">
+            <td>
+              <template
+                v-if="index === 0 && headerIndex !== headers.length - 1"
+              >
+                <v-text-field
+                  v-model="header.search"
+                  outlined
+                  hide-details
+                  @keydown.enter="filterOnEnter"
+                  @blur="filterOnBlur"
+                  ref="searchFields"
+                  style="
+                    width: 100%;
+                    background-color: #ffffff;
+                    border: 1px solid #cccccc;
+                    border-radius: 5px;
+                  "
+                ></v-text-field>
+              </template>
+              <template v-else-if="headerIndex !== headers.length - 1">
+                <td v-if="header.title === 'Conta'">
+                  {{ item.pi_contas.descricao }}
+                </td>
+                <td v-if="header.title === 'Equipamento'">
+                  {{
+                    item.predios_equipamentos
+                      ? item.predios_equipamentos.descricao
+                      : ""
+                  }}
+                </td>
+                {{ item[header.value] }}
+              </template>
+              <template v-else>
+                <div
+                  v-if="index !== 0 && headerIndex === headers.length - 1"
+                  class="custom-td"
                 >
-                  <v-text-field
-                    v-model="header.search"
-                    outlined
-                    hide-details
-                    @keydown.enter="filterOnEnter"
-                    @blur="filterOnBlur"
-                    ref="searchFields"
-                    style="
-                      width: 100%;
-                      background-color: #ffffff;
-                      border: 1px solid #cccccc;
-                      border-radius: 5px;
-                    "
-                  ></v-text-field>
-                </template>
-                <template v-else-if="headerIndex !== headers.length - 1">
-                  <td v-if="header.title === 'Conta'">{{  item.pi_contas.descricao  }}</td>
-                  <td v-if="header.title === 'Equipamento'">{{ item.predios_equipamentos ? item.predios_equipamentos.descricao : '' }}</td>
-                  {{ item[header.value] }}
-                </template>
-                <template v-else>
                   <div
-                    v-if="index !== 0 && headerIndex === headers.length - 1"
-                    class="custom-td"
+                    class="btn-pointer"
+                    @click="redirectToView(item.id)"
+                    v-b-tooltip.hover
+                    title="Visualizar"
                   >
-                    <div
-                      class="btn-pointer"
-                      @click="redirectToView(item.id)"
-                      v-b-tooltip.hover
-                      title="Visualizar"
-                    >
-                      <img
-                        style="width: 40px; height: 40px"
-                        src="../../assets/visualizar.png"
-                        alt="Visualizar"
-                      />
-                    </div>
-                    <div
-                      class="btn-pointer"
-                      @click="redirectToUpdate(item.id)"
-                      v-b-tooltip.hover
-                      title="Editar"
-                    >
-                      <img
-                        style="width: 40px; height: 40px"
-                        src="../../assets/editar.png"
-                        alt="Visualizar"
-                      />
-                    </div>
-                    <div
-                      class="btn-pointer"
-                      id="exclusão"
-                      @click="toggleExclusion(item)"
-                      v-b-tooltip.hover
-                      title="Excluir"
-                    >
-                      <img
-                        v-if="item.excluido"
-                        src="../../assets/excluido.png"
-                        alt="Excluir"
-                        class="trash-icon"
-                        style="width: 40px; height: 40px"
-                      />
-                      <img
-                        v-else
-                        src="../../assets/ativo.png"
-                        alt="Excluir"
-                        class="trash-icon"
-                        style="width: 40px; height: 40px"
-                      />
-                    </div>
+                    <img
+                      style="width: 40px; height: 40px"
+                      src="../../assets/visualizar.png"
+                      alt="Visualizar"
+                    />
                   </div>
-                </template>
-              </td>
-            </template>
-          </tr>
-        </template>
-      </v-data-table>
-
+                  <div
+                    class="btn-pointer"
+                    @click="redirectToUpdate(item.id)"
+                    v-b-tooltip.hover
+                    title="Editar"
+                  >
+                    <img
+                      style="width: 40px; height: 40px"
+                      src="../../assets/editar.png"
+                      alt="Visualizar"
+                    />
+                  </div>
+                  <div
+                    class="btn-pointer"
+                    id="exclusão"
+                    @click="toggleExclusion(item)"
+                    v-b-tooltip.hover
+                    title="Excluir"
+                  >
+                    <img
+                      v-if="item.excluido"
+                      src="../../assets/excluido.png"
+                      alt="Excluir"
+                      class="trash-icon"
+                      style="width: 40px; height: 40px"
+                    />
+                    <img
+                      v-else
+                      src="../../assets/ativo.png"
+                      alt="Excluir"
+                      class="trash-icon"
+                      style="width: 40px; height: 40px"
+                    />
+                  </div>
+                </div>
+              </template>
+            </td>
+          </template>
+        </tr>
+      </template>
+    </v-data-table>
   </div>
 </template>
 <script>
-
 import { VDataTable } from "vuetify/lib/components/index.mjs";
 import axios from "axios";
 export default {
@@ -182,15 +185,17 @@ export default {
   },
   methods: {
     filterTable() {
-      this.filteredLancamentosInformacoes = this.lancamentosInformacoes.filter((item) => {
-        return this.headers.every((header) => {
-          if (header.search.trim() === "") return true;
-          const value = String(item[header.value]).toLowerCase();
-          const search = header.search.toLowerCase();
+      this.filteredLancamentosInformacoes = this.lancamentosInformacoes.filter(
+        (item) => {
+          return this.headers.every((header) => {
+            if (header.search.trim() === "") return true;
+            const value = String(item[header.value]).toLowerCase();
+            const search = header.search.toLowerCase();
 
-          return value.includes(search);
-        });
-      });
+            return value.includes(search);
+          });
+        }
+      );
     },
     filterOnEnter() {
       this.filterTable();
@@ -218,21 +223,21 @@ export default {
       });
     },
     async toggleExclusion(item) {
-  try {
-    item.excluido = !item.excluido;
-    const response = await axios.put(
-      `${process.env.MANAGEMENT_API_URL}/updateLancamentos/${item.id}`,
-      {
-        excluido: item.excluido,
+      try {
+        item.excluido = !item.excluido;
+        const response = await axios.put(
+          `${process.env.MANAGEMENT_API_URL}/updateLancamentos/${item.id}`,
+          {
+            excluido: item.excluido,
+          }
+        );
+        console.log("Resposta da requisição:", response.data);
+        console.log(item.excluido);
+      } catch (error) {
+        console.error("Erro ao atualizar exclusão:", error);
+        item.excluido = !item.excluido;
       }
-    );
-    console.log("Resposta da requisição:", response.data);
-    console.log(item.excluido);
-  } catch (error) {
-    console.error("Erro ao atualizar exclusão:", error);
-    item.excluido = !item.excluido;
-  }
-},
+    },
     saveSearchQuery() {
       // Salva o valor do campo de pesquisa no localStorage
       localStorage.setItem("searchQuery", this.searchQuery);
@@ -244,13 +249,14 @@ export default {
     const storedToken = JSON.parse(localStorage.getItem("predio"));
     const data = {
       predio_id: storedToken.predio_id,
+      natureza: "INFORMAÇÃO", // Para Lançamentos Informaçao
     };
     axios
-      .post(`${process.env.MANAGEMENT_API_URL}/tabLancamentosInformacoes`, data)
+      .post(`${process.env.MANAGEMENT_API_URL}/tabLancamentos`, data)
       .then((response) => {
-        this.lancamentosInformacoes = response.data.lancamentos
+        this.lancamentosInformacoes = response.data.lancamentos;
         this.filteredLancamentosInformacoes = this.lancamentosInformacoes;
-        console.log(response)
+        console.log(response);
       })
       .catch((error) => {
         console.error("Erro na chamada de API:", error);

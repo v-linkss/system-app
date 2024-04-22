@@ -1,7 +1,6 @@
 <template>
   <AppBar />
   <v-container>
-
     <h1 class="ml-5 mt-5 mb-5" style="color: #777777">Receita dos Lotes</h1>
 
     <v-text-field
@@ -10,7 +9,8 @@
       v-model="pi_lotes_receitas.data"
       :error-messages="data.errorMessage.value"
       type="date"
-      label="Data"
+      label="Data(*)"
+      autofocus
     ></v-text-field>
 
     <v-autocomplete
@@ -18,10 +18,11 @@
       class="ml-5 mr-5"
       v-model="pi_lotes_receitas.lote_id"
       :items="lotes"
-      label="Selecione um lote"
+      label="Selecione um lote(*)"
       item-title="nome"
       item-value="id"
       :error-messages="lote_id.errorMessage.value"
+      clearable
     ></v-autocomplete>
     <v-row no-gutters>
       <v-autocomplete
@@ -34,6 +35,7 @@
         item-title="descricao"
         item-value="id"
         :error-messages="conta_id.errorMessage.value"
+        clearable
       ></v-autocomplete>
 
       <v-text-field
@@ -41,7 +43,7 @@
         v-mask="'#####.##'"
         v-model.number="pi_lotes_receitas.valor"
         :error-messages="valor.errorMessage.value"
-        label="Valor"
+        label="Valor(*)"
       ></v-text-field>
     </v-row>
     <v-row no-gutters>
@@ -54,6 +56,7 @@
         item-value="id"
         :error-messages="predio_equipamento_id.errorMessage.value"
         label="Selecione um Equipamento"
+        clearable
       ></v-autocomplete>
 
       <v-autocomplete
@@ -63,7 +66,8 @@
         item-title="descricao"
         item-value="id"
         :error-messages="cobrar.errorMessage.value"
-        label="Cobrar"
+        label="Cobrar(*)"
+        clearable
       ></v-autocomplete>
     </v-row>
 
@@ -75,25 +79,33 @@
       label="Observação"
     ></v-text-field>
 
-
     <v-btn class="ml-5 me-4 mt-4" color="red" @click="returnToTableLotes">
       Voltar
     </v-btn>
     <v-dialog max-width="500">
       <template v-slot:activator="{ props: activatorProps }">
-        <v-btn class="me-4 mt-8" v-bind="activatorProps" color="green" @click="submit"> Atualizar </v-btn>
+        <v-btn
+          class="me-4 mt-8"
+          v-bind="activatorProps"
+          color="green"
+          @click="submit"
+        >
+          Atualizar
+        </v-btn>
       </template>
 
-      <template  v-slot:default="{ isActive }">
+      <template v-slot:default="{ isActive }">
         <v-card v-if="showError">
-          <v-card-text>
-            Ocorreu erro ao atualizar o campo.
-          </v-card-text>
+          <v-card-text> Ocorreu erro ao atualizar o campo. </v-card-text>
 
           <v-card-actions>
             <v-spacer></v-spacer>
 
-            <v-btn style="background-color: #1b5175; color: white" @click="isActive.value = false">OK</v-btn>
+            <v-btn
+              style="background-color: #1b5175; color: white"
+              @click="isActive.value = false"
+              >OK</v-btn
+            >
           </v-card-actions>
         </v-card>
       </template>
@@ -116,7 +128,7 @@ export default {
       },
       lotes: [],
       contas: [],
-      showError:false,
+      showError: false,
       equipamentos: [],
       cobranca: [
         { id: true, descricao: "COBRAR" },
@@ -143,7 +155,6 @@ export default {
         this.pi_lotes_receitas.valor = response.data.valor;
         this.pi_lotes_receitas.observacao = response.data.observacao;
         this.pi_lotes_receitas.lote_id = response.data.lote_id;
-
       } catch (error) {
         console.error(
           "Erro ao carregar detalhes do prédio_equipamentos:",
@@ -202,6 +213,9 @@ export default {
       }
     },
     async submit() {
+      if (this.pi_lotes_receitas.predio_equipamento_id === undefined) {
+        this.pi_lotes_receitas.predio_equipamento_id = null;
+      }
       const storedIdPredio = JSON.parse(localStorage.getItem("predio"));
       const storedIdUser = JSON.parse(localStorage.getItem("user"));
       const data = {
@@ -226,7 +240,7 @@ export default {
       } catch (error) {
         console.error("Erro na criação do registro:", error);
 
-        this.showError = true
+        this.showError = true;
       }
     },
   },
