@@ -192,7 +192,6 @@ export default {
       const storedId = JSON.parse(localStorage.getItem("predio"));
       const data = {
         predio_id: storedId.predio_id,
-        natureza: "RECEITA", // 'RECEITA' OU 'DESPESA' // Para Lançamentos
       };
       try {
         const response = await axios.post(
@@ -206,10 +205,6 @@ export default {
       }
     },
     async submit() {
-      console.log(
-        "######################ShowErro####################\n",
-        this.showError
-      );
       if (this.lancamentos.predio_equipamento_id === undefined) {
         this.lancamentos.predio_equipamento_id = null;
       }

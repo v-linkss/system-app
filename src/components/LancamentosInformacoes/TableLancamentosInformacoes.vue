@@ -251,14 +251,13 @@ export default {
     const storedToken = JSON.parse(localStorage.getItem("predio"));
     const data = {
       predio_id: storedToken.predio_id,
-      natureza: "INFORMAÇÃO", // Para Lançamentos Informaçao
     };
     axios
-      .post(`${process.env.MANAGEMENT_API_URL}/tabLancamentos`, data)
+      .post(`${process.env.MANAGEMENT_API_URL}/tabLancamentosInformacoes`, data)
       .then((response) => {
         this.lancamentosInformacoes = response.data.lancamentos;
         this.filteredLancamentosInformacoes = this.lancamentosInformacoes;
-        console.log(response);
+
       })
       .catch((error) => {
         console.error("Erro na chamada de API:", error);

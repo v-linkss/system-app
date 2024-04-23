@@ -110,7 +110,6 @@ export default {
       }
     },
     async submit() {
-      console.log("showErro", this.showError);
       if (this.lancamentosInformacoes.conta_id === undefined) {
         this.lancamentosInformacoes.conta_id = null;
       }
@@ -130,7 +129,6 @@ export default {
           data
         );
         this.$router.push("/pi-informacoes/index");
-        console.log(response);
         return response;
       } catch (error) {
         console.error("Erro na criação do registro:", error);
