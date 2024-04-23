@@ -96,30 +96,26 @@
     <v-btn class="me-4 mt-8" color="red" @click="returnToMainPage">
       Voltar
     </v-btn>
-    <v-dialog max-width="500">
+    <v-dialog v-model="showError" max-width="500">
       <template v-slot:activator="{ props: activatorProps }">
-        <v-btn
-          class="me-4 mt-8"
-          v-bind="activatorProps"
-          color="green"
-          @click="submit"
-        >
+        <v-btn v-bind="activatorProps" color="green" @click="submit">
           Salvar
         </v-btn>
       </template>
 
-      <template v-slot:default="{ isActive }">
-        <v-card v-if="showError">
-          <v-card-text> Ocorreu erro ao atualizar o campo. </v-card-text>
+      <template v-slot:default>
+        <v-card>
+          <v-card-text> Faltou preencher os campos obrigatórios </v-card-text>
 
           <v-card-actions>
             <v-spacer></v-spacer>
 
             <v-btn
               style="background-color: #1b5175; color: white"
-              @click="isActive.value = false"
-              >OK</v-btn
+              @click="showError = false"
             >
+              OK
+            </v-btn>
           </v-card-actions>
         </v-card>
       </template>
@@ -205,12 +201,19 @@ export default {
       }
     },
     async submit() {
-      if (this.lancamentos.data === undefined) {
-        this.lancamentos.data = null;
+      console.log(
+        "######################ShowErro####################\n",
+        this.showError
+      );
+      if (this.lancamentos.predio_equipamento_id === undefined) {
+        this.lancamentos.predio_equipamento_id = null;
       }
 
       if (this.lancamentos.conta_id === undefined) {
         this.lancamentos.conta_id = null;
+      }
+      if (this.lancamentos.predio_ambiente_id === undefined) {
+        this.lancamentos.predio_ambiente_id = null;
       }
       const storedIdPredio = JSON.parse(localStorage.getItem("predio"));
       const storedIdUser = JSON.parse(localStorage.getItem("user"));

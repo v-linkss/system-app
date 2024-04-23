@@ -41,13 +41,16 @@
         </v-col>
       </v-row>
     </v-container>
-    <v-row>
+    <!-- <v-row>
       <v-col class="text-center">
         <v-btn class="arrow" color="red" @click="returnToMainPage">
           Voltar
         </v-btn>
       </v-col>
-    </v-row>
+    </v-row> -->
+    <center>
+      <v-btn class="mt-8" color="red" @click="returnToMainPage"> Voltar</v-btn>
+    </center>
   </div>
 </template>
 

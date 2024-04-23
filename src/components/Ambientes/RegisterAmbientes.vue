@@ -136,20 +136,14 @@ export default {
       }
     },
     async submit() {
-      if (this.predios.area === undefined) {
-        this.predios.area = null;
-        console.log(
-          "###################-this.predios.area-####################\n",
-          this.predios.area
-        );
+      if (this.predios.predio_area_id === undefined) {
+        this.predios.predio_area_id = null;
+        console.log(this.predios.predio_area_id);
       }
 
       if (this.predios.numero_ocupantes === undefined) {
         this.predios.numero_ocupantes = null;
-        console.log(
-          "###################-this.predios.numero_ocupantes-####################\n",
-          this.predios.numero_ocupantes
-        );
+        console.log(this.predios.numero_ocupantes);
       }
       const storedIdPredio = JSON.parse(localStorage.getItem("predio"));
       const storedIdUser = JSON.parse(localStorage.getItem("user"));

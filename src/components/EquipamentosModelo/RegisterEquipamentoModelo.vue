@@ -20,33 +20,47 @@
         label="Codigo"
       ></v-text-field>
     </v-row>
-
-    <v-autocomplete
-      class="ml-5 mr-5 mb-5"
-      v-model="modelos.equipamento_tipo_id"
-      :items="tipos"
-      item-title="descricao"
-      item-value="id"
-      :error-messages="equipamento_tipo_id.errorMessage.value"
-      label="Selecione um Tipo(*)"
-      dense
-      clearable
-    ></v-autocomplete>
-
     <v-row no-gutters>
+      <v-autocomplete
+        class="ml-5 mr-5 mb-5"
+        v-model="modelos.equipamento_tipo_id"
+        :items="tipos"
+        item-title="descricao"
+        item-value="id"
+        :error-messages="equipamento_tipo_id.errorMessage.value"
+        label="Selecione um Tipo(*)"
+        style="max-width: 400px"
+        dense
+        clearable
+      ></v-autocomplete>
+
+      <v-text-field
+        class="ml-5 mr-5"
+        v-model="modelos.fabricante"
+        :error-messages="fabricante.errorMessage.value"
+        label="Fabricante"
+        dense
+      ></v-text-field>
+    </v-row>
+    <v-text-field
+      class="ml-5 mr-5"
+      v-model="modelos.descricao"
+      :error-messages="descricao.errorMessage.value"
+      label="Descrição"
+    ></v-text-field>
+    <v-row no-gutters>
+      <v-text-field
+        class="ml-5 mr-5"
+        v-model="modelos.codigo"
+        :error-messages="codigo.errorMessage.value"
+        label="Codigo"
+      ></v-text-field>
       <v-text-field
         class="ml-5 mr-5"
         v-mask="'##'"
         v-model.number="modelos.vida_util"
         :error-messages="vida_util.errorMessage.value"
         label="Vida Util(Meses)(*)"
-      ></v-text-field>
-
-      <v-text-field
-        class="ml-5 mr-5"
-        v-model="modelos.descricao"
-        :error-messages="descricao.errorMessage.value"
-        label="Descrição"
       ></v-text-field>
     </v-row>
     <v-checkbox
@@ -56,7 +70,9 @@
       label="Incluir no PMOC"
     ></v-checkbox>
 
-    <v-btn class="me-4" color="red" @click="returnToMainPage"> Voltar </v-btn>
+    <v-btn class="me-4 mt-8" color="red" @click="returnToMainPage">
+      Voltar
+    </v-btn>
     <v-dialog max-width="500">
       <template v-slot:activator="{ props: activatorProps }">
         <v-btn
@@ -127,6 +143,9 @@ export default {
     },
 
     async submit() {
+      if (this.modelos.equipamento_tipo_id === undefined) {
+        this.modelos.equipamento_tipo_id = null;
+      }
       const storedIdPredio = JSON.parse(localStorage.getItem("predio"));
       const storedIdUser = JSON.parse(localStorage.getItem("user"));
       const entra_pmoc = Boolean(this.modelos.entra_pmoc);

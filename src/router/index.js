@@ -133,7 +133,7 @@ const routes = [
       },
       //Lotes
       {
-        path: "pi-lotes-receitas/index",
+        path: "pi-lotes-receitas/index", //Verificar
         name: "pi-lotes-receitas/index",
         component: () => import("@/views/Lotes/LotesTable.vue"),
       },
@@ -216,10 +216,28 @@ const routes = [
       },
       //Lancamentos-informacoes
       {
-        path: "pi-lancamentos-informacoes/index",
-        name: "pi-lancamentos-informacoes/index",
+        path: "pi-informacoes/index",
+        name: "pi-informacoes/index",
         component: () =>
           import("@/views/LancamentosInformacao/TableLancamentosInformacao.vue"),
+      },
+      {
+        path: "pi-informacoes/index/cadastro",
+        name: "pi-informacoes/index/cadastro",
+        component: () =>
+          import("@/views/LancamentosInformacao/RegisterLancamentosInformacao.vue"),
+      },
+      {
+        path: "pi-informacoes/index/atualizar",
+        name: "pi-informacoes/index/atualizar",
+        component: () =>
+          import("@/views/LancamentosInformacao/UpdateLancamentosInformacao.vue"),
+      },
+      {
+        path: "pi-informacoes/index/vizualizar",
+        name: "pi-informacoes/index/vizualizar",
+        component: () =>
+          import("@/views/LancamentosInformacao/ViewLancamentosInformacao.vue"),
       },
     ],
   },

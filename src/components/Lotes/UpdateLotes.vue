@@ -213,8 +213,17 @@ export default {
       }
     },
     async submit() {
+      if (this.pi_lotes_receitas.conta_id === undefined) {
+        this.pi_lotes_receitas.conta_id = null;
+      }
+      if (this.pi_lotes_receitas.lote_id === undefined) {
+        this.pi_lotes_receitas.lote_id = null;
+      }
       if (this.pi_lotes_receitas.predio_equipamento_id === undefined) {
         this.pi_lotes_receitas.predio_equipamento_id = null;
+      }
+      if (this.pi_lotes_receitas.cobrar === undefined) {
+        this.pi_lotes_receitas.cobrar = null;
       }
       const storedIdPredio = JSON.parse(localStorage.getItem("predio"));
       const storedIdUser = JSON.parse(localStorage.getItem("user"));

@@ -227,6 +227,7 @@ export default {
         if (this.lancamentos.pagador_nome === null) {
           this.lancamentos.imprimir_boleto = true;
         }
+        console.log(response.data);
       } catch (error) {
         console.error(
           "Erro ao carregar detalhes do prédio_equipamentos:",
@@ -235,12 +236,15 @@ export default {
       }
     },
     async update() {
-      if (this.lancamentos.data === undefined) {
-        this.lancamentos.data = null;
+      if (this.lancamentos.predio_equipamento_id === undefined) {
+        this.lancamentos.predio_equipamento_id = null;
       }
 
       if (this.lancamentos.conta_id === undefined) {
         this.lancamentos.conta_id = null;
+      }
+      if (this.lancamentos.predio_ambiente_id === undefined) {
+        this.lancamentos.predio_ambiente_id = null;
       }
       const storedIdUser = JSON.parse(localStorage.getItem("user"));
       const storedIdPredio = JSON.parse(localStorage.getItem("predio"));

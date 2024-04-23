@@ -19,7 +19,7 @@ import AppBar from "@/layouts/default/AppBar.vue";
           src="../../assets/novo.png"
           alt="novo"
         />
-        <h1 style="color: #777777">Lancamentos</h1>
+        <h1 style="color: #777777">Lancamentos Informações</h1>
       </v-row>
     </div>
 
@@ -207,18 +207,18 @@ export default {
     },
     redirectToView(id) {
       this.$router.push({
-        name: "pi-lancamentosInformacoes/index/vizualizar",
+        name: "pi-informacoes/index/vizualizar",
         query: {
           id,
         },
       });
     },
     redirectToRegister() {
-      this.$router.push("/pi-lancamentosInformacoes/index/cadastro");
+      this.$router.push("/pi-informacoes/index/cadastro");
     },
     redirectToUpdate(id) {
       this.$router.push({
-        name: "pi-lancamentosInformacoes/index/atualizar",
+        name: "pi-informacoes/index/atualizar",
         query: {
           id,
         },

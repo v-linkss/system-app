@@ -66,13 +66,16 @@ import AppBar from "@/layouts/default/AppBar.vue";
         </v-col>
       </v-row>
     </v-container>
-    <v-row>
+    <!-- <v-row>
       <v-col class="text-center">
         <v-btn class="arrow" color="red" @click="returnToMainPage">
           Voltar
         </v-btn>
       </v-col>
-    </v-row>
+    </v-row> -->
+    <center>
+      <v-btn class="mt-8" color="red" @click="returnToMainPage"> Voltar</v-btn>
+    </center>
   </div>
 </template>
 
@@ -87,14 +90,15 @@ export default {
   },
   methods: {
     returnToMainPage() {
-      this.$router.push("/tabletools");
+      this.$router.push("/predios-equipamentos/index");
     },
     async loadPrediosEquipamentos() {
       try {
         const response = await axios.get(
-          `${process.env.MANAGEMENT_API_URL}/getPrediosEquipamentos/${this.dados.id}`
+          `${process.env.MANAGEMENT_API_URL}/PrediosEquipamentos/${this.dados.id}`
         );
         this.dados = response.data;
+        console.log(this.dados);
       } catch (error) {
         console.error("Erro na chamada de API:", error);
       } finally {

@@ -153,6 +153,19 @@ export default {
       }
     },
     async update() {
+      // if (this.predios.area === undefined) {
+      //   this.predios.area = null;
+      //   console.log(this.predios.area);
+      // }
+
+      if (this.predios.numero_ocupantes === undefined) {
+        this.predios.numero_ocupantes = null;
+        console.log(this.predios.numero_ocupantes);
+      }
+      if (this.predios.predio_area_id === undefined) {
+        this.predios.predio_area_id = null;
+        console.log(this.predios.predio_area_id);
+      }
       const data = {
         descricao: this.predios.descricao,
         numero_ocupantes: this.predios.numero_ocupantes,

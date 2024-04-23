@@ -31,6 +31,7 @@
         item-value="id"
         :error-messages="predio_ambiente_id.errorMessage.value"
         label="Selecione um Ambiente(*)"
+        style="max-width: 600px"
         clearable=""
       ></v-autocomplete>
 
@@ -105,7 +106,6 @@
         label="Potência"
       ></v-text-field>
     </v-row>
-
     <v-btn class="me-4 mt-4" color="red" @click="returnToTableTools">
       Voltar
     </v-btn>
@@ -218,6 +218,12 @@ export default {
       }
     },
     async updatePrediosEquipamento() {
+      if (this.predios_equipamentos.modelo_id === undefined) {
+        this.predios_equipamentos.modelo_id = null;
+      }
+      if (this.predios_equipamentos.predio_ambiente_id === undefined) {
+        this.predios_equipamentos.predio_ambiente_id = null;
+      }
       if (this.predios_equipamentos.user_gestor === undefined) {
         this.predios_equipamentos.user_gestor = null;
       }

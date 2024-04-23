@@ -32,17 +32,26 @@ import AppBar from "@/layouts/default/AppBar.vue";
       </v-col>
 
       <v-col>
-        <v-sheet class="pa-2 ma-2">Icone: {{ dados.icone_ok }}</v-sheet>
+        <v-sheet class="pa-2 ma-2">Icone OK: {{ dados.icone_ok }}</v-sheet>
+      </v-col>
+
+      <v-col>
+        <v-sheet class="pa-2 ma-2"
+          >icone Problema: {{ dados.icone_problema }}</v-sheet
+        >
       </v-col>
       <v-responsive width="100%"></v-responsive>
     </v-container>
-    <v-row>
+    <!-- <v-row>
       <v-col class="text-center">
         <v-btn class="arrow" color="red" @click="returnToMainPage">
           Voltar
         </v-btn>
       </v-col>
-    </v-row>
+    </v-row> -->
+    <center>
+      <v-btn class="mt-8" color="red" @click="returnToMainPage"> Voltar</v-btn>
+    </center>
   </div>
 </template>
 
@@ -57,7 +66,7 @@ export default {
   },
   methods: {
     returnToMainPage() {
-      this.$router.push("/home");
+      this.$router.push("/equipamentos-tipos/index");
     },
     async loadPredios() {
       try {

@@ -104,6 +104,17 @@
         :error-messages="potencia.errorMessage.value"
         label="Potência"
       ></v-text-field>
+
+      <v-autocomplete
+        class="ml-5 mr-5 mb-5"
+        v-model="predios_equipamentos.user_gestor"
+        :items="users"
+        label="Selecione um Gestor"
+        item-title="nome"
+        item-value="id"
+        :error-messages="user_gestor.errorMessage.value"
+        style="max-width: 500px"
+      ></v-autocomplete>
     </v-row>
 
     <v-btn class="ml-5 me-4 mt-4" color="red" @click="returnToTableTools">
@@ -218,6 +229,12 @@ export default {
       }
     },
     async submit() {
+      if (this.predios_equipamentos.modelo_id === undefined) {
+        this.predios_equipamentos.modelo_id = null;
+      }
+      if (this.predios_equipamentos.predio_ambiente_id === undefined) {
+        this.predios_equipamentos.predio_ambiente_id = null;
+      }
       if (this.predios_equipamentos.user_gestor === undefined) {
         this.predios_equipamentos.user_gestor = null;
       }
