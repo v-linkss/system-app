@@ -230,8 +230,8 @@ export default {
             excluido: item.excluido,
           }
         );
-        console.log("Resposta da requisição:", response.data);
-        console.log(item.excluido);
+
+        return response
       } catch (error) {
         console.error("Erro ao atualizar exclusão:", error);
         item.excluido = !item.excluido;
@@ -248,13 +248,13 @@ export default {
     const storedToken = JSON.parse(localStorage.getItem("predio"));
     const data = {
       predio_id: storedToken.predio_id,
-      natureza: "RECEITA", // 'RECEITA' OU 'DESPESA' // Para Lançamentos
     };
     axios
       .post(`${process.env.MANAGEMENT_API_URL}/tabLancamentos`, data)
       .then((response) => {
         this.lancamentos = response.data.lancamentos;
         this.filteredLancamentos = this.lancamentos;
+        console.log(response.data)
       })
       .catch((error) => {
         console.error("Erro na chamada de API:", error);
