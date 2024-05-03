@@ -61,8 +61,15 @@ import AppBar from "@/layouts/default/AppBar.vue";
     type="text"
     label="Observação"
   ></v-text-field>
-  <v-row class="ml-10 mr-10">
-    <v-col v-for="(header, index) in headers" :key="header.key">
+
+  <v-row class="ml-10">
+    <v-col
+      v-for="(header, index) in headers"
+      :key="header.key"
+      cols="12"
+      md="2 "
+      lg="2"
+    >
       <!-- Verifica se não é a última coluna -->
       <template v-if="index < headers.length">
         <v-text-field
@@ -75,27 +82,23 @@ import AppBar from "@/layouts/default/AppBar.vue";
           @keydown.enter="filterOnEnter"
           @blur="filterOnBlur"
           ref="searchFields"
-          :class="'custom-text-field custom-text-field-' + index"
+          width="10%"
         ></v-text-field>
       </template>
     </v-col>
   </v-row>
-
-  <div style="overflow-x: auto">
-    <v-data-table
-      :headers="headers"
-      :items="filteredReceita"
-      v-model="selected"
-      :rows-per-page-items="itemsPerPage"
-      :footer-props="footerProps"
-      show-select
-      density="default"
-      item-selectable="selectable"
-      @change="sumCheckedValues"
-      fixed
-    >
-    </v-data-table>
-  </div>
+  <v-data-table
+    :headers="headers"
+    :items="filteredReceita"
+    v-model="selected"
+    :rows-per-page-items="itemsPerPage"
+    :footer-props="footerProps"
+    show-select
+    density="default"
+    item-selectable="selectable"
+    @change="sumCheckedValues"
+  >
+  </v-data-table>
 </template>
 <script>
 import { VDataTable } from "vuetify/lib/components/index.mjs";
@@ -125,22 +128,31 @@ export default {
       itemsPerPage: [20],
       footerProps: [20],
       headers: [
-        { title: "Data", value: "data", search: "", width: "20%" }, // Defina a largura aqui
-        { title: "Conta", value: "conta", search: "", width: "20%" }, // Defina a largura aqui
-        { title: "Valor", value: "valor", search: "", width: "20%" }, // Defina a largura aqui
+        {
+          title: "Data",
+          value: "data",
+          search: "",
+        },
+        {
+          title: "Conta",
+          value: "conta",
+          search: "",
+        },
+        {
+          title: "Valor",
+          value: "valor",
+          search: "",
+        },
         {
           title: "Cobrar/Devolver",
           value: "cobrar",
           search: "",
-          width: "20%",
-        }, // Adicione o paddingLeft para mover para a direita
-
+        },
         {
           title: "Observação",
           value: "observacao",
           search: "",
-          width: "20%",
-        }, // Defina a largura aqui
+        },
       ],
     };
   },
