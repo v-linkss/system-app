@@ -67,7 +67,7 @@ import AppBar from "@/layouts/default/AppBar.vue";
       <template v-if="index < headers.length">
         <v-text-field
           v-model="header.search"
-          :label="'Search ' + header.title"
+          :label="header.title"
           prepend-inner-icon="mdi-magnify"
           outlined
           hide-details
