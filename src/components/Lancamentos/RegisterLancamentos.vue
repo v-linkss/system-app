@@ -98,7 +98,12 @@
     </v-btn>
     <v-dialog v-model="showError" max-width="500">
       <template v-slot:activator="{ props: activatorProps }">
-        <v-btn v-bind="activatorProps" class="me-4 mt-8" color="green" @click="submit">
+        <v-btn
+          v-bind="activatorProps"
+          color="green"
+          class="me-4 mt-8"
+          @click="submit"
+        >
           Salvar
         </v-btn>
       </template>
