@@ -98,7 +98,7 @@
     </v-btn>
     <v-dialog v-model="showError" max-width="500">
       <template v-slot:activator="{ props: activatorProps }">
-        <v-btn v-bind="activatorProps" color="green" @click="submit">
+        <v-btn v-bind="activatorProps" class="me-4 mt-8" color="green" @click="submit">
           Salvar
         </v-btn>
       </template>
@@ -242,11 +242,13 @@ export default {
             );
 
             const newTab = window.open();
+            this.$router.push("/pi-lancamentos/index");
             newTab.document.write(imprimir.data[0].func_imprime_recibo_titulo);
           } catch (error) {
             console.error("Erro ao executar a função de impressão:", error);
           }
         }
+        this.$router.push("/pi-lancamentos/index");
         return response;
       } catch (error) {
         console.error("Erro na criação do registro:", error);

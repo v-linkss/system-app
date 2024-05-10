@@ -13,10 +13,11 @@
         :items="comboLocalStorage"
         item-title="predio_descricao"
         item-value="predio_token"
-       @update:search="trocarCliente()"
+        @update:search="trocarCliente()"
       ></v-autocomplete>
       <h4 v-else>{{ usuarioLocalStorage.predios[0].predio_descricao }}</h4>
     </div>
+
     <v-spacer></v-spacer>
     <v-menu>
       <template v-slot:activator="{ props }">
@@ -44,7 +45,7 @@
           v-bind:key="item"
           :value="menu.url"
         >
-          <router-link class="router-link" :to="`/${menu.url}`" >
+          <router-link class="router-link" :to="`/${menu.url}`">
             <v-list-item-title>{{ item }}</v-list-item-title>
           </router-link>
         </v-list-item>
@@ -60,9 +61,9 @@
           :key="item"
           :value="menu.url"
         >
-        <router-link class="router-link" :to="`/${menu.url}`">
-          <v-list-item-title>{{ item }}</v-list-item-title>
-        </router-link>
+          <router-link class="router-link" :to="`/${menu.url}`">
+            <v-list-item-title>{{ item }}</v-list-item-title>
+          </router-link>
         </v-list-item>
       </v-list>
     </v-menu>
@@ -76,9 +77,9 @@
           :key="item"
           :value="menu.url"
         >
-        <router-link class="router-link" :to="`/${menu.url}`" >
-          <v-list-item-title>{{ item }}</v-list-item-title>
-        </router-link>
+          <router-link class="router-link" :to="`/${menu.url}`">
+            <v-list-item-title>{{ item }}</v-list-item-title>
+          </router-link>
         </v-list-item>
       </v-list>
     </v-menu>
@@ -92,9 +93,9 @@
           :key="item"
           :value="menu.url"
         >
-        <router-link class="router-link" :to="`/${menu.url}`">
-          <v-list-item-title>{{ item }}</v-list-item-title>
-        </router-link>
+          <router-link class="router-link" :to="`/${menu.url}`">
+            <v-list-item-title>{{ item }}</v-list-item-title>
+          </router-link>
         </v-list-item>
       </v-list>
     </v-menu>
@@ -112,16 +113,26 @@
           @click="itemClick(item.title)"
         >
           <v-list-item-title>{{ item.title }}</v-list-item-title>
+
+
         </v-list-item>
+        <v-switch
+            style="display: flex;padding-left: 10px;"
+            inset
+            color="info"
+            v-model="darkMode"
+            @change="toggleTheme()"
+            :label="` ${darkMode ? 'Escuro' : 'Claro'}`"
+          ></v-switch>
       </v-list>
     </v-menu>
-
   </v-app-bar>
 </template>
 
 <script>
 export default {
   data: () => ({
+    darkTheme: false,
     usuarioLocalStorage: null,
     menuLocalStorage: null,
     predioLocalStorage: null,
@@ -150,6 +161,10 @@ export default {
         this.$store.dispatch("listarMenu");
         this.$router.go(0);
       }
+    },
+    toggleTheme() {
+      this.$vuetify.theme.dark = !this.darkTheme; // Alternar entre temas claro e escuro
+      this.darkTheme = !this.darkTheme; // Alternar o estado do tema
     },
     itemClick(title) {
       if (title === "Sair") {
@@ -182,7 +197,6 @@ export default {
       if (predioSalvo) {
         const predio = JSON.parse(predioSalvo);
         this.predioLocalStorage = predio; // Armazena o usuário na variável do componente
-
       }
     },
     carregarComboDoLocalStorage() {
@@ -195,6 +209,18 @@ export default {
       }
     },
   },
+};
+</script>
+
+<script setup>
+import { ref } from "vue";
+import { useTheme } from "vuetify";
+
+const theme = useTheme();
+const darkMode = ref(false);
+
+const toggleTheme = () => {
+  theme.global.name.value = darkMode.value ? "dark" : "light";
 };
 </script>
 
