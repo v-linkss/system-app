@@ -11,6 +11,7 @@ import 'vuetify/styles'
 // Composables
 import { createVuetify } from 'vuetify'
 
+
 // https://vuetifyjs.com/en/introduction/why-vuetify/#feature-guides
 export default createVuetify({
   theme: {
@@ -27,10 +28,11 @@ export default createVuetify({
     VAutocomplete: {
       noDataText: 'Não há dados correspondentes',
       hideDetails: true,
-      density:"compact"
+      density:"compact",
+      clearable:true
     },
     VTextField: {
-      density:"compact"
+      density:"compact",
     }
   }
 })

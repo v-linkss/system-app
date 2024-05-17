@@ -10,7 +10,9 @@
       ></v-img>
       <div class="text">Log in</div>
       <v-text-field
+        autofocus
         v-model="email"
+        persistent-hint
         class="input"
         density="compact"
         placeholder="Email"
@@ -157,15 +159,13 @@ export default {
         console.error("Erro ao fazer login", error);
         if (error.response && error.response.status === 400) {
           const errorData = error.response.data[0].func_autentica_acesso_v1[0];
-          console.log(errorData)
+          console.log(errorData);
           if (
             errorData.status_mensagem ===
             "Esse email não está cadastrado no Durabil."
           ) {
             this.showEmailError = true;
-          } else if (
-            errorData.status_mensagem === "Senha inválida2."
-          ) {
+          } else if (errorData.status_mensagem === "Senha inválida2.") {
             this.showPasswordError = true;
           } else if (errorData.error === "Erro ao autenticar usuário") {
             this.showError = true;

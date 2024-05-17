@@ -1,20 +1,20 @@
 <script setup>
 import AppBar from "@/layouts/default/AppBar.vue";
 </script>
-
 <template>
   <AppBar />
-  <v-row class="mt-6" no-gutters>
-    <v-col class="ml-2">
-      <v-autocomplete
-        v-model="selectedItem"
-        :items="lotesCombo"
-        label="Selecione um lote"
-        item-title="nome"
-        item-value="token"
-      ></v-autocomplete>
-    </v-col>
-    <div>
+  <v-container >
+    <h1 class="ml-15 mt-4 mb-10" style="color: #777777">Negocicação de Títulos</h1>
+    <v-row class="mt-6" no-gutters>
+      <v-col class="ml-13">
+        <v-autocomplete
+          v-model="selectedItem"
+          :items="lotesCombo"
+          label="Selecione um lote"
+          item-title="nome"
+          item-value="token"
+        ></v-autocomplete>
+      </v-col>
       <v-col class="btn-pointer" @click="gerarReceitas(selectedItem)">
         <img
           style="width: 40px; height: 40px"
@@ -22,94 +22,92 @@ import AppBar from "@/layouts/default/AppBar.vue";
           alt="Visualizar"
         />
       </v-col>
-    </div>
-    <v-col>
-      <v-text-field
-        class="ml-6"
-        v-model="lotes.data_vencimento"
-        type="date"
-        label="Data de vencimento"
-      ></v-text-field>
-    </v-col>
-    <v-col class="ml-5">
-      <v-text-field
-        v-model="lotes.valor"
-        type="number"
-        label="Valor total"
-        readonly
-        disabled
-        class="opacity-75"
-      ></v-text-field>
-    </v-col>
-    <div>
-      <v-col
-        class="btn-pointer"
-        @click="gerarBoletos()"
-        :class="{ disabled: valorTotal <= 0 }"
-      >
-        <img
-          style="width: 40px; height: 40px"
-          src="../../assets/novo.png"
-          alt="novo"
-        />
-      </v-col>
-    </div>
-  </v-row>
-
-  <v-text-field
-    v-model="lotes.observacao"
-    type="text"
-    label="Observação"
-  ></v-text-field>
-  <v-row class="ml-10 mr-10">
-    <v-col v-for="(header, index) in headers" :key="header.key">
-      <!-- Verifica se não é a última coluna -->
-      <template v-if="index < headers.length">
+      <v-col class="ml-5">
         <v-text-field
-          v-model="header.search"
-          :label="header.title"
-          prepend-inner-icon="mdi-magnify"
-          outlined
-          hide-details
-          single-line
-          @keydown.enter="filterOnEnter"
-          @blur="filterOnBlur"
-          ref="searchFields"
-          :class="'custom-text-field custom-text-field-' + index"
+          v-model="lotes.valor"
+          type="number"
+          label="Valor Títulos"
+          readonly
+          disabled
+          class="opacity-75"
         ></v-text-field>
-      </template>
-    </v-col>
-  </v-row>
+      </v-col>
+      <v-col>
+        <v-text-field
+          class="ml-6"
+          v-model="lotes.data_vencimento"
+          type="number"
+          label="Valor Negociado"
+        ></v-text-field>
+      </v-col>
 
-  <div style="overflow-x: auto">
-    <v-data-table
-      :headers="headers"
-      :items="filteredReceita"
-      v-model="selected"
-      :rows-per-page-items="itemsPerPage"
-      :footer-props="footerProps"
-      show-select
-      density="default"
-      item-selectable="selectable"
-      @change="sumCheckedValues"
-      fixed
-    >
-    </v-data-table>
-  </div>
+      <v-col class="ml-5">
+        <v-text-field
+          v-model="parcelas"
+          type="number"
+          label="Parcelas"
+          :rules="[maxParcelas]"
+          @input="checkParcelas"
+        ></v-text-field>
+      </v-col>
+      <v-col class="btn-pointer" @click="showModal = true">
+        <img style="width: 40px; height: 40px" src="../../assets/novo.png" alt="novo" />
+      </v-col>
+    </v-row>
+    <v-row class="ml-10 mr-10">
+      <v-col v-for="(header, index) in headers" :key="header.key">
+        <!-- Verifica se não é a última coluna -->
+        <template v-if="index < headers.length">
+          <v-text-field
+            v-model="header.search"
+            :label="header.title"
+            prepend-inner-icon="mdi-magnify"
+            outlined
+            hide-details
+            single-line
+            @keydown.enter="filterOnEnter"
+            @blur="filterOnBlur"
+            ref="searchFields"
+            :class="'custom-text-field custom-text-field-' + index"
+          ></v-text-field>
+        </template>
+      </v-col>
+    </v-row>
+    <div style="overflow-x: auto">
+      <v-data-table
+        class="mt-9"
+        :headers="headers"
+        :items="filteredReceita"
+        v-model="selected"
+        :rows-per-page-items="itemsPerPage"
+        :footer-props="footerProps"
+        show-select
+        density="default"
+        item-selectable="selectable"
+        @change="sumCheckedValues"
+        fixed
+      >
+      </v-data-table>
+    </div>
+    <ModalParcelas v-model:show="showModal" />
+  </v-container>
 </template>
 <script>
 import { VDataTable } from "vuetify/lib/components/index.mjs";
 import axios from "axios";
+import ModalParcelas from "./ModalParcelas.vue";
 export default {
   components: {
+    ModalParcelas,
     VDataTable,
   },
   data() {
     return {
       filteredReceita: [], // preocurar o correspondente e alterar
-
+      showModal: false,
       selected: [],
       selectedItem: null,
+      parcelas:null,
       lotesChecked: [],
       lotes: {
         data_vencimento: null,
@@ -125,21 +123,14 @@ export default {
       itemsPerPage: [20],
       footerProps: [20],
       headers: [
-        { title: "Data", value: "data", search: "", width: "20%" },
-        { title: "Conta", value: "conta", search: "", width: "20%" },
-        { title: "Valor", value: "valor", search: "", width: "20%" },
-        {
-          title: "Cobrar/Devolver",
-          value: "cobrar",
-          search: "",
-          width: "20%",
-        }, // Adicione o paddingLeft para mover para a direita
-
+        { title: "Título", value: "titulo", search: "", width: "25%" },
+        { title: "Vencimento", value: "data", search: "", width: "25%" },
+        { title: "Valor", value: "valor", search: "", width: "25%" },
         {
           title: "Observação",
           value: "observacao",
           search: "",
-          width: "20%",
+          width: "25%",
         }, // Defina a largura aqui
       ],
     };
@@ -150,6 +141,19 @@ export default {
     },
   },
   methods: {
+    maxParcelas(value) {
+      if (value === 12) {
+        return 'O número máximo de parcelas é 12';
+      }
+      return true;
+    },
+    checkParcelas() {
+      if (this.parcelas > 12) {
+        this.parcelas = 12;
+      } else if (this.parcelas < 1) {
+        this.parcelas = 1;
+      }
+    },
     async gerarReceitas(selectedItem) {
       try {
         const selectedToken = selectedItem;
@@ -276,11 +280,9 @@ export default {
       });
     },
     filterOnEnter() {
-      console.log("Enter pressionado");
       this.filterTable();
     },
     filterOnBlur() {
-      console.log("Campo perdeu o foco");
       this.filterTable();
     },
   },
@@ -296,6 +298,7 @@ export default {
 }
 .btn-pointer {
   cursor: pointer;
+  max-width: 40px;
 }
 .btn {
   display: flex;
