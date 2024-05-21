@@ -3,8 +3,10 @@ import AppBar from "@/layouts/default/AppBar.vue";
 </script>
 <template>
   <AppBar />
-  <v-container >
-    <h1 class="ml-15 mt-4 mb-10" style="color: #777777">Negocicação de Títulos</h1>
+  <v-container>
+    <h1 class="ml-15 mt-4 mb-10" style="color: #777777">
+      Negocicação de Títulos
+    </h1>
     <v-row class="mt-6" no-gutters>
       <v-col class="ml-13">
         <v-autocomplete
@@ -13,6 +15,8 @@ import AppBar from "@/layouts/default/AppBar.vue";
           label="Selecione um lote"
           item-title="nome"
           item-value="token"
+          @change="onLoteChange"
+          @update:search="onLoteChange"
         ></v-autocomplete>
       </v-col>
       <v-col class="btn-pointer" @click="gerarReceitas(selectedItem)">
@@ -24,8 +28,7 @@ import AppBar from "@/layouts/default/AppBar.vue";
       </v-col>
       <v-col class="ml-5">
         <v-text-field
-          v-model="lotes.valor"
-          type="number"
+          v-model.number="valorTitulos"
           label="Valor Títulos"
           readonly
           disabled
@@ -35,23 +38,26 @@ import AppBar from "@/layouts/default/AppBar.vue";
       <v-col>
         <v-text-field
           class="ml-6"
-          v-model="lotes.data_vencimento"
-          type="number"
+          v-mask="'#####.##'"
+          v-model.number="valorNegociado"
           label="Valor Negociado"
         ></v-text-field>
       </v-col>
 
       <v-col class="ml-5">
         <v-text-field
-          v-model="parcelas"
-          type="number"
+          v-model.number="parcelas"
           label="Parcelas"
           :rules="[maxParcelas]"
           @input="checkParcelas"
         ></v-text-field>
       </v-col>
       <v-col class="btn-pointer" @click="showModal = true">
-        <img style="width: 40px; height: 40px" src="../../assets/novo.png" alt="novo" />
+        <img
+          style="width: 40px; height: 40px"
+          src="../../assets/novo.png"
+          alt="novo"
+        />
       </v-col>
     </v-row>
     <v-row class="ml-10 mr-10">
@@ -89,13 +95,22 @@ import AppBar from "@/layouts/default/AppBar.vue";
       >
       </v-data-table>
     </div>
-    <ModalParcelas v-model:show="showModal" />
+    <v-btn class="mt-8" color="red" @click="returnToMainPage"> Voltar</v-btn>
+    <ModalParcelas
+      v-model:show="showModal"
+      :selected-item="selectedItem"
+      :valor-titulo="valorTitulos"
+      :valor-negociado="valorNegociado"
+      :parcelas="parcelas"
+    />
+
   </v-container>
 </template>
 <script>
 import { VDataTable } from "vuetify/lib/components/index.mjs";
 import axios from "axios";
 import ModalParcelas from "./ModalParcelas.vue";
+
 export default {
   components: {
     ModalParcelas,
@@ -106,19 +121,13 @@ export default {
       filteredReceita: [], // preocurar o correspondente e alterar
       showModal: false,
       selected: [],
-      selectedItem: null,
-      parcelas:null,
-      lotesChecked: [],
-      lotes: {
-        data_vencimento: null,
-        valor: null,
-        observacao: null,
-      },
-
       receitas: [],
+      selectedItem: null,
+      selectedItemTitle: "",
+      valorNegociado: null,
+      valorTitulos: null,
+      parcelas: null,
       lotesCombo: [],
-      boleto: [],
-      testVal: [],
       searchQuery: "",
       itemsPerPage: [20],
       footerProps: [20],
@@ -137,82 +146,25 @@ export default {
   },
   computed: {
     valorTotal() {
-      return this.lotes.valor || 0;
+      return this.valorTitulos || 0;
     },
   },
   methods: {
+    returnToMainPage() {
+      this.$router.push("/panel/index");
+    },
+    onLoteChange() {
+      console.log("Selected Item Title:", this.selectedItem); // Exiba o título no console
+    },
     maxParcelas(value) {
-      if (value === 12) {
-        return 'O número máximo de parcelas é 12';
+      if (value >= 12) {
+        return "O número máximo de parcelas é 12";
       }
       return true;
     },
     checkParcelas() {
       if (this.parcelas > 12) {
         this.parcelas = 12;
-      } else if (this.parcelas < 1) {
-        this.parcelas = 1;
-      }
-    },
-    async gerarReceitas(selectedItem) {
-      try {
-        const selectedToken = selectedItem;
-        const data = {
-          lote_token: selectedToken,
-        };
-        const response = await axios.post(
-          `${process.env.MANAGEMENT_API_URL}/loteReceita`,
-          data
-        );
-        const responseData = response.data[0].func_json_receitas_lote;
-        this.receitas = responseData;
-        this.filteredReceita = this.receitas;
-        console.log(this.receitas);
-      } catch (error) {
-        console.error("Erro ao carregar receitas:", error);
-      }
-    },
-
-    async gerarBoletos() {
-      try {
-        const storedTokenPredio = JSON.parse(localStorage.getItem("predio"));
-        const storedTokenUser = JSON.parse(localStorage.getItem("user"));
-        const selectedToken = this.selectedItem;
-        const receitasSelecionadas = this.selected.map((itemId) => {
-          const receita = this.receitas.find((item) => item.id === itemId);
-          return { receita_token: receita.token };
-        });
-        const data = {
-          observacao: this.lotes.observacao,
-          valor: this.lotes.valor,
-          data_vencimento: this.lotes.data_vencimento,
-          lote_token: selectedToken,
-          predio_token: storedTokenPredio.predio_token,
-          user_token: storedTokenUser.token,
-          receitas: receitasSelecionadas,
-        };
-        console.log(data);
-        const response = await axios.post(
-          `${process.env.MANAGEMENT_API_URL}/geraBoletos`,
-          data
-        );
-        const responseData = response.data[0].func_gera_boleto_lote;
-        this.boleto = responseData;
-        if (this.boleto[0].integra_banco === true) {
-          const dataBoleto = {
-            titulo_token: this.boleto[0].titulo_token,
-          };
-          const response = await axios.post(
-            `${process.env.MANAGEMENT_API_URL}/integraBanco`,
-            dataBoleto
-          );
-          const responseDataBoleto = response.data[0].func_integra_banco;
-          window.open(responseDataBoleto[0].link_boleto, "_blank");
-        } else {
-          [];
-        }
-      } catch (error) {
-        console.error("Erro ao carregar receitas:", error);
       }
     },
 
@@ -239,21 +191,32 @@ export default {
       const searchQuery = localStorage.getItem("searchQuery");
       console.log("saveSearchQuery:", searchQuery); // Imprime no console
     },
-
+    async gerarReceitas(selectedItem) {
+      try {
+        const selectedToken = selectedItem;
+        const data = {
+          lote_token: selectedToken,
+        };
+        const response = await axios.post(
+          `${process.env.MANAGEMENT_API_URL}/loteReceita`,
+          data
+        );
+        const responseData = response.data[0].func_json_receitas_lote;
+        this.receitas = responseData;
+        this.filteredReceita = this.receitas;
+      } catch (error) {
+        console.error("Erro ao carregar receitas:", error);
+      }
+    },
     sumCheckedValues() {
-      // Filtra os itens marcados
       const selectedItems = this.receitas.filter((item) =>
         this.selected.includes(item.id)
       );
 
-      // Inicializa a soma
       let sum = 0;
 
-      // Itera sobre os itens marcados
       selectedItems.forEach((item) => {
-        // Verifica se o item deve ser cobrado
         if (item.cobrar === "COBRAR") {
-          // Adiciona o valor apenas se a condição for atendida
           sum += parseFloat(item.valor);
         } else if (item.cobrar === "DEVOLVER") {
           const checkSum = sum - parseFloat(item.valor);
@@ -266,7 +229,7 @@ export default {
           }
         }
       });
-      this.lotes.valor = sum; // Atualiza o valor do campo lotes.valor
+      this.valorTitulos = sum; // Atualiza o valor do campo lotes.valor
     },
     filterTable() {
       this.filteredReceita = this.receitas.filter((item) => {
