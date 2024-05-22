@@ -1,6 +1,7 @@
+<!-- ParcelasGeradas.vue -->
 <template>
   <v-row dense>
-    <v-col v-for="(parcela, index) in parcelas" :key="index" cols="12">
+    <v-container v-for="(parcela, index) in parcelas" :key="index">
       <v-card>
         <v-col>
           <v-card-text>
@@ -8,14 +9,14 @@
               <v-text-field
                 :model-value="index + 1"
                 :label="'Número '"
-                class="opacity-75 ml-4"
+                class="ml-4"
               ></v-text-field>
 
               <v-text-field
                 type="date"
                 v-model="dt_vencimento"
                 label="Vencimento"
-                class="opacity-75 ml-4"
+                class="ml-4"
                 style="width: 120px"
               ></v-text-field>
 
@@ -23,31 +24,34 @@
                 v-model="valor"
                 type="number"
                 label="Valor "
-                class="opacity-75 ml-4"
+                class="ml-4"
                 style="width: 150px"
               ></v-text-field>
 
               <v-text-field
                 v-model="tx_multa"
+                v-mask="'##.##'"
                 type="number"
                 label="% Multa"
-                class="opacity-75 ml-4"
+                class="ml-4"
                 style="width: 90px"
               ></v-text-field>
 
               <v-text-field
                 v-model="tx_juros"
                 type="number"
+                v-mask="'##.##'"
                 label="% Juros"
-                class="opacity-75 ml-4"
+                class="ml-4"
                 style="width: 85px"
               ></v-text-field>
 
               <v-text-field
                 type="number"
+                v-mask="'##.##'"
                 v-model="desconto_adimplencia"
                 label="Desc. Adimplência"
-                class="opacity-75 ml-4"
+                class="ml-4"
                 style="width: 180px"
               ></v-text-field>
 
@@ -56,10 +60,10 @@
                   v-model="observacao"
                   type="number"
                   label="Observação"
-                  class="opacity-75 ml-3"
+                  class="ml-3"
                 ></v-text-field>
               </v-col>
-              <div class="btn-pointer ml-4">
+              <div class="btn-pointer ml-4" @click="removeParcela(index)">
                 <img
                   style="width: 40px; height: 40px"
                   src="../../assets/menos.png"
@@ -70,17 +74,38 @@
           </v-card-text>
         </v-col>
       </v-card>
-    </v-col>
+    </v-container>
   </v-row>
 </template>
 
 <script>
 export default {
+  data() {
+    return {
+      numero: null,
+      dt_vencimento: null,
+      valor: null,
+      tx_multa: null,
+      tx_juros: null,
+      desconto_adimplencia: null,
+      observacao: null,
+    };
+  },
   props: {
     parcelas: {
-      type: Number,
+      type: Array,
       required: true,
+    },
+  },
+  methods: {
+    removeParcela(index) {
+      this.$emit("remove-parcela", index);
     },
   },
 };
 </script>
+<style scoped>
+.btn-pointer {
+  cursor: pointer;
+}
+</style>

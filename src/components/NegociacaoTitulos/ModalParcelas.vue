@@ -1,9 +1,8 @@
-
 <!-- ParcelaModal.vue -->
 <template>
   <v-dialog v-model="localShow" max-width="1200px" persistent>
-    <v-card title="Parcelas" >
-      <v-card-text  class="parcelas-content">
+    <v-card title="Parcelas">
+      <v-card-text class="parcelas-content">
         <v-row dense>
           <v-text-field
             label="Lote"
@@ -25,11 +24,13 @@
           ></v-text-field>
           <v-text-field
             label="Total Parcelas"
-            :model-value="parcelas"
+            :model-value="totalParcelas"
+            :rules="[maxParcelas]"
+            @input="checkParcelas"
             readonly
             class="opacity-75 ml-4"
           ></v-text-field>
-          <div class="btn-pointer ml-4">
+          <div class="btn-pointer ml-4" @click="addParcela" >
             <img
               style="width: 40px; height: 40px"
               src="../../assets/novo.png"
@@ -39,27 +40,34 @@
         </v-row>
       </v-card-text>
       <v-divider></v-divider>
-      <ParcelasGeradas :parcelas="parcelas" />
+      <ParcelasGeradas :parcelas="parcelasList" @remove-parcela="removeParcela"/>
       <v-divider></v-divider>
       <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn style="background-color: red; color: white"  @click="closeModal"> Voltar</v-btn>
-        <v-btn style="background-color: green; color: white" text @click="closeModal">Salvar</v-btn>
+        <v-btn style="background-color: red; color: white" @click="closeModal">
+          Voltar</v-btn
+        >
+        <v-btn
+          style="background-color: green; color: white"
+          text
+          @click="closeModal"
+          >Salvar</v-btn
+        >
       </v-card-actions>
     </v-card>
   </v-dialog>
 </template>
 
 <script>
-import ParcelasGeradas from './ParcelasGeradas.vue'
+import ParcelasGeradas from "./ParcelasGeradas.vue";
 export default {
-  components:{
-    ParcelasGeradas
+  components: {
+    ParcelasGeradas,
   },
   props: {
-    show:{
+    show: {
       Boolean,
-      required:true
+      required: true,
     },
     selectedItem: {
       type: String,
@@ -78,11 +86,17 @@ export default {
       required: false,
     },
   },
+  computed: {
+    totalParcelas() {
+      return this.parcelasList.length;
+    },
+  },
   data() {
     return {
-      documento:null,
-      dt_vencimento:null,
+      documento: null,
+      dt_vencimento: null,
       localShow: this.show,
+      parcelasList: [],
     };
   },
   watch: {
@@ -92,19 +106,42 @@ export default {
     localShow(val) {
       this.$emit("update:show", val);
     },
-
+    parcelas(val) {
+      this.parcelasList = Array(val);
+    },
   },
   methods: {
     closeModal() {
       this.localShow = false;
     },
-
+    addParcela() {
+      if (this.parcelasList.length<12) {
+        this.parcelasList.push({});
+      } else {
+        []
+      }
+    },
+    removeParcela(index) {
+      if (this.parcelasList.length > 1) {
+        this.parcelasList.splice(index, 1);
+      }
+    },
+    maxParcelas(value) {
+      if (value >= 12) {
+        return "O número máximo de parcelas é 12";
+      }
+      return true;
+    },
+    checkParcelas() {
+      if (this.parcelasList > 12) {
+        this.parcelasList = 12;
+      }
+    },
   },
 };
 </script>
 <style scoped>
-
 .btn-pointer {
-
   cursor: pointer;
-}</style>
+}
+</style>

@@ -409,10 +409,6 @@ export default {
   },
   computed: {
     displayedItems() {
-      console.log(
-        "QQQQQQQQQQQQQQQQQ=this.emptyInputs=QQQQQQQQQQQQQQQQ",
-        this.emptyInputs
-      );
 
       return [...this.emptyInputs, ...this.receita_filtrada];
     },

@@ -15,8 +15,6 @@ import AppBar from "@/layouts/default/AppBar.vue";
           label="Selecione um lote"
           item-title="nome"
           item-value="token"
-          @change="onLoteChange"
-          @update:search="onLoteChange"
         ></v-autocomplete>
       </v-col>
       <v-col class="btn-pointer" @click="gerarReceitas(selectedItem)">
@@ -28,7 +26,8 @@ import AppBar from "@/layouts/default/AppBar.vue";
       </v-col>
       <v-col class="ml-5">
         <v-text-field
-          v-model.number="valorTitulos"
+          type="number"
+          v-model="valorTitulos"
           label="Valor Títulos"
           readonly
           disabled
@@ -83,7 +82,7 @@ import AppBar from "@/layouts/default/AppBar.vue";
       <v-data-table
         class="mt-9"
         :headers="headers"
-        :items="filteredReceita"
+        :items="filteredLotes"
         v-model="selected"
         :rows-per-page-items="itemsPerPage"
         :footer-props="footerProps"
@@ -103,7 +102,6 @@ import AppBar from "@/layouts/default/AppBar.vue";
       :valor-negociado="valorNegociado"
       :parcelas="parcelas"
     />
-
   </v-container>
 </template>
 <script>
@@ -118,10 +116,10 @@ export default {
   },
   data() {
     return {
-      filteredReceita: [], // preocurar o correspondente e alterar
+      filteredLotes: [], // preocurar o correspondente e alterar
       showModal: false,
       selected: [],
-      receitas: [],
+      titulos_lote: [],
       selectedItem: null,
       selectedItemTitle: "",
       valorNegociado: null,
@@ -132,8 +130,13 @@ export default {
       itemsPerPage: [20],
       footerProps: [20],
       headers: [
-        { title: "Título", value: "titulo", search: "", width: "25%" },
-        { title: "Vencimento", value: "data", search: "", width: "25%" },
+        { title: "Título", value: "documento", search: "", width: "25%" },
+        {
+          title: "Vencimento",
+          value: "dt_vencimento",
+          search: "",
+          width: "25%",
+        },
         { title: "Valor", value: "valor", search: "", width: "25%" },
         {
           title: "Observação",
@@ -153,9 +156,7 @@ export default {
     returnToMainPage() {
       this.$router.push("/panel/index");
     },
-    onLoteChange() {
-      console.log("Selected Item Title:", this.selectedItem); // Exiba o título no console
-    },
+
     maxParcelas(value) {
       if (value >= 12) {
         return "O número máximo de parcelas é 12";
@@ -193,46 +194,41 @@ export default {
     },
     async gerarReceitas(selectedItem) {
       try {
+        const storedToken = JSON.parse(localStorage.getItem("predio"));
         const selectedToken = selectedItem;
         const data = {
           lote_token: selectedToken,
+          predio_token: storedToken.predio_token,
         };
         const response = await axios.post(
-          `${process.env.MANAGEMENT_API_URL}/loteReceita`,
+          `${process.env.MANAGEMENT_API_URL}/titulosLotes`,
           data
         );
-        const responseData = response.data[0].func_json_receitas_lote;
-        this.receitas = responseData;
-        this.filteredReceita = this.receitas;
+        const responseData = response.data[0].func_json_titulos_lote;
+        this.titulos_lote = responseData;
+        this.filteredLotes = this.titulos_lote;
+        console.log(this.titulos_lote);
       } catch (error) {
-        console.error("Erro ao carregar receitas:", error);
+        console.error("Erro ao carregar titulos_lote:", error);
       }
     },
     sumCheckedValues() {
-      const selectedItems = this.receitas.filter((item) =>
+      const selectedItems = this.titulos_lote.filter((item) =>
         this.selected.includes(item.id)
       );
-
       let sum = 0;
 
+      // Soma os valores dos itens selecionados
       selectedItems.forEach((item) => {
-        if (item.cobrar === "COBRAR") {
-          sum += parseFloat(item.valor);
-        } else if (item.cobrar === "DEVOLVER") {
-          const checkSum = sum - parseFloat(item.valor);
-          if (checkSum >= 0) {
-            sum = checkSum;
-          } else {
-            alert(
-              "Alerta: Valor inválido encontrado (o valor devolvido não pode ser superior ao cobtrado)."
-            );
-          }
-        }
+        sum += parseFloat(item.valor);
       });
-      this.valorTitulos = sum; // Atualiza o valor do campo lotes.valor
+
+      // Atualiza o valor total
+      this.valorTitulos = sum;
+      console.log(this.selected, selectedItems);
     },
     filterTable() {
-      this.filteredReceita = this.receitas.filter((item) => {
+      this.filteredLotes = this.titulos_lote.filter((item) => {
         return this.headers.every((header) => {
           if (header.search.trim() === "") return true;
           const value = String(item[header.value]).toLowerCase();
