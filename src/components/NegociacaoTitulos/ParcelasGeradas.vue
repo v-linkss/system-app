@@ -11,7 +11,7 @@
                 :label="'Número '"
                 class="ml-4"
               ></v-text-field>
-
+              {{ parcela }}
               <v-text-field
                 type="date"
                 v-model="dt_vencimento"
@@ -73,7 +73,9 @@
             </v-row>
           </v-card-text>
         </v-col>
+
       </v-card>
+
     </v-container>
   </v-row>
 </template>

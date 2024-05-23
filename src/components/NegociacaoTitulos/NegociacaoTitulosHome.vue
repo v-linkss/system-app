@@ -245,7 +245,7 @@ export default {
 
       this.parcelasDetalhadas = Array(this.parcelas)
         .fill()
-        .map((index) => {
+        .map((_,index) => {
           return {
             numero: index + 1,
             valor: index === 0 ? primeiraParcela : valorParcela,
