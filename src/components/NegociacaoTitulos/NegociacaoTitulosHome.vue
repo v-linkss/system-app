@@ -3,6 +3,7 @@ import AppBar from "@/layouts/default/AppBar.vue";
 </script>
 <template>
   <AppBar />
+
   <v-container>
     <h1 class="ml-15 mt-4 mb-10" style="color: #777777">
       Negocicação de Títulos
@@ -88,6 +89,7 @@ import AppBar from "@/layouts/default/AppBar.vue";
         :footer-props="footerProps"
         show-select
         density="default"
+        item-value="predio_titulo_id"
         item-selectable="selectable"
         @change="sumCheckedValues"
         fixed
@@ -220,8 +222,9 @@ export default {
     },
     sumCheckedValues() {
       const selectedItems = this.titulos_lote.filter((item) =>
-        this.selected.includes(item.id)
+        this.selected.includes(item.predio_titulo_id)
       );
+      console.log("@@@@@@@@@@@@@@@@@@@@@@@\n", selectedItems);
       let sum = 0;
 
       // Soma os valores dos itens selecionados

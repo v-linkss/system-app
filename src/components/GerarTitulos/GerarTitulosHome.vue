@@ -90,6 +90,7 @@ import AppBar from "@/layouts/default/AppBar.vue";
       :footer-props="footerProps"
       show-select
       density="default"
+      item-value="id"
       item-selectable="selectable"
       @change="sumCheckedValues"
       fixed
@@ -247,6 +248,8 @@ export default {
 
       // Itera sobre os itens marcados
       selectedItems.forEach((item) => {
+        console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@n", item);
+
         // Verifica se o item deve ser cobrado
         if (item.cobrar === "COBRAR") {
           // Adiciona o valor apenas se a condição for atendida
@@ -263,6 +266,13 @@ export default {
         }
       });
       this.lotes.valor = sum; // Atualiza o valor do campo lotes.valor
+    },
+    onInput() {
+      console.log(
+        "########################################\n",
+        JSON.stringify(this.selected, null, 2)
+      );
+      sumCheckedValues();
     },
     filterTable() {
       this.filteredReceita = this.receitas.filter((item) => {
