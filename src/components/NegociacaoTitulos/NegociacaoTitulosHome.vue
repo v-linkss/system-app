@@ -37,7 +37,7 @@ import AppBar from "@/layouts/default/AppBar.vue";
       <v-col>
         <v-text-field
           class="ml-6"
-          v-mask="'#####.##'"
+          v-mask="'######.##'"
           v-model.number="valorNegociado"
           label="Valor Negociado"
         ></v-text-field>
@@ -51,7 +51,7 @@ import AppBar from "@/layouts/default/AppBar.vue";
           @input="checkParcelas"
         ></v-text-field>
       </v-col>
-      <v-col class="btn-pointer" @click="showModal = true">
+      <v-col class="btn-pointer" @click="openModal">
         <img
           style="width: 40px; height: 40px"
           src="../../assets/novo.png"
@@ -97,10 +97,11 @@ import AppBar from "@/layouts/default/AppBar.vue";
     <v-btn class="mt-8" color="red" @click="returnToMainPage"> Voltar</v-btn>
     <ModalParcelas
       v-model:show="showModal"
-      :selected-item="selectedItem"
+      :selected-item="selectedItemTitle"
       :valor-titulo="valorTitulos"
       :valor-negociado="valorNegociado"
       :parcelas="parcelas"
+      :parcelas-detalhadas="parcelasDetalhadas"
     />
   </v-container>
 </template>
@@ -121,8 +122,9 @@ export default {
       selected: [],
       titulos_lote: [],
       selectedItem: null,
-      selectedItemTitle: "",
+      selectedItemTitle: null,
       valorNegociado: null,
+      parcelasDetalhadas: [],
       valorTitulos: null,
       parcelas: null,
       lotesCombo: [],
@@ -168,7 +170,10 @@ export default {
         this.parcelas = 12;
       }
     },
-
+    openModal() {
+      this.calcularParcelas();
+      this.showModal = true;
+    },
     async loadLotes() {
       const storedToken = JSON.parse(localStorage.getItem("predio"));
       const data = {
@@ -207,6 +212,7 @@ export default {
         const responseData = response.data[0].func_json_titulos_lote;
         this.titulos_lote = responseData;
         this.filteredLotes = this.titulos_lote;
+        this.selectedItemTitle = this.titulos_lote[0].lote;
         console.log(this.titulos_lote);
       } catch (error) {
         console.error("Erro ao carregar titulos_lote:", error);
@@ -226,6 +232,22 @@ export default {
       // Atualiza o valor total
       this.valorTitulos = sum;
       console.log(this.selected, selectedItems);
+    },
+    calcularParcelas() {
+      const valorParcela = (this.valorNegociado / this.parcelas).toFixed(2);
+      const primeiraParcela = (
+        this.valorNegociado -
+        valorParcela * (this.parcelas - 1)
+      ).toFixed(2);
+
+      this.parcelasDetalhadas = Array(this.parcelas)
+        .fill()
+        .map((index) => {
+          return {
+            numero: index + 1,
+            valor: index === 0 ? primeiraParcela : valorParcela,
+          };
+        });
     },
     filterTable() {
       this.filteredLotes = this.titulos_lote.filter((item) => {
@@ -252,18 +274,6 @@ export default {
 </script>
 
 <style scoped>
-.container {
-  margin-right: 10px;
-}
-.btn-pointer {
-  cursor: pointer;
-  max-width: 40px;
-}
-.btn {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
 .custom-td {
   display: flex;
   align-items: center;
@@ -273,14 +283,7 @@ export default {
 .btn-pointer {
   margin-left: 20px;
   cursor: pointer;
-}
-
-.red-icon {
-  color: red;
-}
-
-.gray-icon {
-  color: gray;
+  max-width: 40px;
 }
 
 .disabled {

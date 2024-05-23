@@ -10,6 +10,7 @@
             readonly
             class="opacity-75 ml-4"
           ></v-text-field>
+
           <v-text-field
             label="Valor Títulos"
             :model-value="valorTitulo"
@@ -69,15 +70,16 @@ export default {
       Boolean,
       required: true,
     },
+    parcelasDetalhadas: {
+      type: Array,
+      default: () => [],
+      required:true
+    },
     selectedItem: {
       type: String,
       required: false,
     },
     valorNegociado: {
-      type: Number,
-      required: false,
-    },
-    parcelas: {
       type: Number,
       required: false,
     },
@@ -96,7 +98,7 @@ export default {
       documento: null,
       dt_vencimento: null,
       localShow: this.show,
-      parcelasList: [],
+      parcelasList: JSON.parse(JSON.stringify(this.parcelasDetalhadas)),
     };
   },
   watch: {
@@ -106,19 +108,22 @@ export default {
     localShow(val) {
       this.$emit("update:show", val);
     },
-    parcelas(val) {
-      this.parcelasList = Array(val);
+    parcelasDetalhadas(val) {
+      this.parcelasList = JSON.parse(JSON.stringify(val));
     },
+
   },
   methods: {
     closeModal() {
       this.localShow = false;
     },
     addParcela() {
-      if (this.parcelasList.length<12) {
-        this.parcelasList.push({});
-      } else {
-        []
+      if (this.parcelasList.length < 12) {
+        const novaParcela = {
+          numero: this.parcelasList.length + 1,
+          valor: 0,
+        };
+        this.parcelasList.push(novaParcela);
       }
     },
     removeParcela(index) {
@@ -138,6 +143,7 @@ export default {
       }
     },
   },
+
 };
 </script>
 <style scoped>

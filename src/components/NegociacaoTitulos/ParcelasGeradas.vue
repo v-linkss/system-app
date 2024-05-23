@@ -7,7 +7,7 @@
           <v-card-text>
             <v-row dense>
               <v-text-field
-                :model-value="index + 1"
+                :model-value=" parcela.numero"
                 :label="'Número '"
                 class="ml-4"
               ></v-text-field>
@@ -21,7 +21,7 @@
               ></v-text-field>
 
               <v-text-field
-                v-model="valor"
+                v-model="parcela.valor"
                 type="number"
                 label="Valor "
                 class="ml-4"
@@ -95,6 +95,7 @@ export default {
     parcelas: {
       type: Array,
       required: true,
+
     },
   },
   methods: {
