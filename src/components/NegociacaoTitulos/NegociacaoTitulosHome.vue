@@ -101,8 +101,9 @@ import AppBar from "@/layouts/default/AppBar.vue";
       :selected-item="selectedItemTitle"
       :valor-titulo="valorTitulos"
       :valor-negociado="valorNegociado"
-      :parcelas="parcelas"
       :parcelas-detalhadas="parcelasDetalhadas"
+      :titulos="selectedTokens"
+      :taxas="taxas"
     />
   </v-container>
 </template>
@@ -121,6 +122,7 @@ export default {
       filteredLotes: [], // preocurar o correspondente e alterar
       showModal: false,
       selected: [],
+      taxas:[],
       titulos_lote: [],
       selectedItem: null,
       selectedItemTitle: null,
@@ -153,6 +155,12 @@ export default {
   computed: {
     valorTotal() {
       return this.valorTitulos || 0;
+    },
+    selectedTokens() {
+      return this.selected.map((id) => {
+        const item = this.titulos_lote.find((item) => item.predio_titulo_id === id);
+        return { token: item.token };
+      });
     },
   },
   methods: {
@@ -236,21 +244,34 @@ export default {
       this.valorTitulos = sum;
       console.log(this.selected, selectedItems);
     },
-    calcularParcelas() {
-      const valorParcela = (this.valorNegociado / this.parcelas).toFixed(2);
-      const primeiraParcela = (
-        this.valorNegociado -
-        valorParcela * (this.parcelas - 1)
-      ).toFixed(2);
+    async calcularParcelas() {
+      const storedToken = JSON.parse(localStorage.getItem("predio"));
+      try {
+        const response = await axios.get(
+          `${process.env.MANAGEMENT_API_URL}/getTaxasById/${storedToken.predio_id}`,
+        );
+        const responseData = response.data;
+        this.taxas = responseData
+        const valorParcela = (this.valorNegociado / this.parcelas).toFixed(2);
+        const primeiraParcela = (
+          this.valorNegociado -
+          valorParcela * (this.parcelas - 1)
+        ).toFixed(2);
 
-      this.parcelasDetalhadas = Array(this.parcelas)
-        .fill()
-        .map((_,index) => {
-          return {
-            numero: index + 1,
-            valor: index === 0 ? primeiraParcela : valorParcela,
-          };
-        });
+        this.parcelasDetalhadas = Array(this.parcelas)
+          .fill()
+          .map((_,index) => {
+            return {
+              documento: 'P-'+ (index+ 1),
+              valor: index === 0 ? Number(primeiraParcela): Number(valorParcela),
+              tx_multa:Number(responseData.tx_multa),
+              tx_juros:Number(responseData.tx_juros_mes),
+              desconto_adimplencia:Number(responseData.desconto_adimplencia)
+            };
+          });
+      } catch (error) {
+        console.error(error)
+      }
     },
     filterTable() {
       this.filteredLotes = this.titulos_lote.filter((item) => {

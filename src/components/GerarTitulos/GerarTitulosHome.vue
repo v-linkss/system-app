@@ -268,11 +268,8 @@ export default {
       this.lotes.valor = sum; // Atualiza o valor do campo lotes.valor
     },
     onInput() {
-      console.log(
-        "########################################\n",
-        JSON.stringify(this.selected, null, 2)
-      );
-      sumCheckedValues();
+
+      this.sumCheckedValues();
     },
     filterTable() {
       this.filteredReceita = this.receitas.filter((item) => {
