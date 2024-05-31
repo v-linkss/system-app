@@ -19,7 +19,12 @@ import AppBar from "@/layouts/default/AppBar.vue";
         <v-responsive width="100%"></v-responsive>
         <v-col>
           <v-sheet class="pa-2 ma-2">
-            Ambiente: {{ dados.predios_ambientes.descricao }}
+            Ambiente:
+            {{
+              dados.predios_ambientes && dados.predios_ambientes.descricao
+                ? dados.predios_ambientes.descricao
+                : "N/A"
+            }}
           </v-sheet>
         </v-col>
         <v-col>
