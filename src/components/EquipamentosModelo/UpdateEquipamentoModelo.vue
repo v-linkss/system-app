@@ -109,6 +109,7 @@ import axios from "axios";
 export default {
   data() {
     return {
+      userData: {},
       modelos: {
         descricao: undefined,
         codigo: undefined,
@@ -132,10 +133,15 @@ export default {
         token_predio: storedToken.predio_token,
       };
       try {
+        const headers = {
+          Authorization: `Bearer ${this.userData.token}`, // Add authorization header with Bearer token
+        };
         const response = await axios.post(
-          `${process.env.MANAGEMENT_API_URL}/listaTiposEquipamentos`,
-          data
+          `${process.env.AUTH_API_URL}/service/gerencia/listaTiposEquipamentos`,
+          data,
+          { headers }
         );
+
         const responseData = response.data[0].func_json_tiposequipamentos;
         this.tipos = responseData;
       } catch (error) {
@@ -144,9 +150,15 @@ export default {
     },
     async loadPredioModelosDetails() {
       try {
+        const headers = {
+          Authorization: `Bearer ${this.userData.token}`, // Add authorization header with Bearer token
+        };
+
         const response = await axios.get(
-          `${process.env.MANAGEMENT_API_URL}/getModeloEquipamentosById/${this.modelos.id}`
+          `${process.env.AUTH_API_URL}/service/gerencia/getModeloEquipamentosById/${this.modelos.id}`,
+          { headers }
         );
+
         // Preencha os campos com os detalhes carregados
         this.modelos.descricao = response.data.descricao;
         this.modelos.codigo = response.data.codigo;
@@ -176,9 +188,14 @@ export default {
       };
 
       try {
+        const headers = {
+          Authorization: `Bearer ${this.userData.token}`, // Add authorization header with Bearer token
+        };
+
         const response = await axios.put(
-          `${process.env.MANAGEMENT_API_URL}/updateModeloEquipamentos/${this.modelos.id}`,
-          data
+          `${process.env.AUTH_API_URL}/service/gerencia/updateModeloEquipamentos/${this.modelos.id}`,
+          data,
+          { headers }
         ); // Redirecione para a página principal ou faça qualquer outra ação desejada
 
         this.$router.push("/equipamentos-modelos/index");
@@ -198,6 +215,7 @@ export default {
     }
   },
   mounted() {
+    this.userData = JSON.parse(localStorage.getItem("user"));
     this.loadPredioModelosDetails();
     this.loadTipos();
   },

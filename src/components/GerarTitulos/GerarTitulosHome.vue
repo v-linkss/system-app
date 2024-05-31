@@ -106,6 +106,8 @@ export default {
   },
   data() {
     return {
+      userData: {},
+
       filteredReceita: [], // preocurar o correspondente e alterar
 
       selected: [],
@@ -152,14 +154,19 @@ export default {
   methods: {
     async gerarReceitas(selectedItem) {
       try {
+        const headers = {
+          Authorization: `Bearer ${this.userData.token}`, // Add authorization header with Bearer token
+        };
         const selectedToken = selectedItem;
         const data = {
           lote_token: selectedToken,
         };
         const response = await axios.post(
-          `${process.env.MANAGEMENT_API_URL}/loteReceita`,
-          data
+          `${process.env.AUTH_API_URL}/service/gerencia/loteReceita`,
+          data,
+          { headers }
         );
+
         const responseData = response.data[0].func_json_receitas_lote;
         this.receitas = responseData;
         this.filteredReceita = this.receitas;
@@ -171,6 +178,9 @@ export default {
 
     async gerarBoletos() {
       try {
+        const headers = {
+          Authorization: `Bearer ${this.userData.token}`, // Add authorization header with Bearer token
+        };
         const storedTokenPredio = JSON.parse(localStorage.getItem("predio"));
         const storedTokenUser = JSON.parse(localStorage.getItem("user"));
         const selectedToken = this.selectedItem;
@@ -189,19 +199,24 @@ export default {
         };
         console.log(data);
         const response = await axios.post(
-          `${process.env.MANAGEMENT_API_URL}/geraBoletos`,
-          data
+          `${process.env.AUTH_API_URL}/service/gerencia/geraBoletos`,
+          data,
+          { headers }
         );
         const responseData = response.data[0].func_gera_boleto_lote;
+        console.log("responseData\n", responseData);
         this.boleto = responseData;
         if (this.boleto[0].integra_banco === true) {
           const dataBoleto = {
             titulo_token: this.boleto[0].titulo_token,
           };
           const response = await axios.post(
-            `${process.env.MANAGEMENT_API_URL}/integraBanco`,
-            dataBoleto
+            `${process.env.AUTH_API_URL}/service/gerencia/integraBanco`,
+            dataBoleto,
+            { headers }
           );
+          console.log("################-integraBanco-################");
+
           const responseDataBoleto = response.data[0].func_integra_banco;
           window.open(responseDataBoleto[0].link_boleto, "_blank");
         } else {
@@ -218,10 +233,15 @@ export default {
         predio_token: storedToken.predio_token,
       };
       try {
+        const headers = {
+          Authorization: `Bearer ${this.userData.token}`, // Add authorization header with Bearer token
+        };
         const response = await axios.post(
-          `${process.env.MANAGEMENT_API_URL}/lotesPredios`,
-          data
+          `${process.env.AUTH_API_URL}/service/gerencia/lotesPredios`,
+          data,
+          { headers }
         );
+
         const responseData = response.data[0].func_json_lotes_predio;
         this.lotesCombo = responseData;
       } catch (error) {
@@ -285,6 +305,7 @@ export default {
     },
   },
   mounted() {
+    this.userData = JSON.parse(localStorage.getItem("user"));
     this.loadLotes();
   },
 };

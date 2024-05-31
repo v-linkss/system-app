@@ -257,7 +257,7 @@ export default {
     },
   },
   mounted() {
-    this.userData = JSON.parse(localStorage.getItem("user"));
+    console.log("###################TabLotes####################");
     const storedToken = JSON.parse(localStorage.getItem("predio"));
     const data = {
       predio_id: storedToken.predio_id,

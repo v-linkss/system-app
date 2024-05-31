@@ -174,9 +174,13 @@ export default {
         predio_token: storedToken.predio_token,
       };
       try {
+        const headers = {
+          Authorization: `Bearer ${this.userData.token}`, // Add authorization header with Bearer token
+        };
         const response = await axios.post(
-          `${process.env.MANAGEMENT_API_URL}/listaAmbientes`,
-          data
+          `${process.env.AUTH_API_URL}/service/gerencia/listaAmbientes`,
+          data,
+          { headers }
         );
         const responseData = response.data[0].func_json_ambientes;
         this.ambientes = responseData;
@@ -191,9 +195,13 @@ export default {
         token_predio: storedToken.predio_token,
       };
       try {
+        const headers = {
+          Authorization: `Bearer ${this.userData.token}`, // Add authorization header with Bearer token
+        };
         const response = await axios.post(
-          `${process.env.MANAGEMENT_API_URL}/listaModeloEquipamentos`,
-          data
+          `${process.env.AUTH_API_URL}/service/gerencia/listaModeloEquipamentos`,
+          data,
+          { headers }
         );
         const responseData = response.data[0].func_json_modelos_equipamentos;
         this.modelos = responseData;
@@ -207,9 +215,13 @@ export default {
         predio_token: storedToken.predio_token,
       };
       try {
+        const headers = {
+          Authorization: `Bearer ${this.userData.token}`, // Add authorization header with Bearer token
+        };
         const response = await axios.post(
-          `${process.env.MANAGEMENT_API_URL}/PrediosEquipamentosGestores`,
-          data
+          `${process.env.AUTH_API_URL}/service/gerencia/PrediosEquipamentosGestores`,
+          data,
+          { headers } // Pass headers object with authorization
         );
         const responseData = response.data[0].func_json_gestores;
         this.users = responseData;
@@ -243,8 +255,9 @@ export default {
 
       try {
         const response = await axios.put(
-          `${process.env.MANAGEMENT_API_URL}/PrediosEquipamentosAtualizar/${this.predios_equipamentos.id}`,
-          data
+          `${process.env.AUTH_API_URL}/service/gerencia/PrediosEquipamentosAtualizar/${this.predios_equipamentos.id}`,
+          data,
+          { headers } // Pass headers object with authorization
         );
 
         this.$router.push("/predios-equipamentos/index");
@@ -257,8 +270,12 @@ export default {
     },
     async loadPredioEquipamentosDetails() {
       try {
+        const headers = {
+          Authorization: `Bearer ${this.userData.token}`, // Add authorization header with Bearer token
+        };
         const response = await axios.get(
-          `${process.env.MANAGEMENT_API_URL}/getPrediosEquipamentos/${this.predios_equipamentos.id}`
+          `${process.env.AUTH_API_URL}/service/gerencia/getPrediosEquipamentos/${this.predios_equipamentos.id}`,
+          { headers } // Pass headers object with authorization
         );
         // Preencha os campos com os detalhes carregados
         this.predios_equipamentos.descricao = response.data.descricao;
@@ -290,6 +307,7 @@ export default {
     }
   },
   mounted() {
+    this.userData = JSON.parse(localStorage.getItem("user"));
     this.loadModelos();
     this.loadAmbientes();
     this.loadUsers();

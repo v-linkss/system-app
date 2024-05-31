@@ -6,42 +6,43 @@ import AppBar from "@/layouts/default/AppBar.vue";
     <font-awesome-icon :icon="['fas', 'spinner']" spin />
   </LoadingComponent>
   <div v-else>
-    <h1 class="ml-10 mt-5 " style="color: #777777">Liquidar Titulo</h1>
+    <h1 class="ml-10 mt-5" style="color: #777777">Liquidar Titulo</h1>
     <AppBar />
     <v-container class="data-container mt-7 mb-8">
-        <v-col>
-          <v-sheet class="pa-2 ma-2"> Lote: {{dados.pi_lotes.numero  }} - {{dados.pi_lotes.nome  }}</v-sheet>
-        </v-col>
-        <v-col>
-          <v-sheet class="pa-2 ma-2"> Título: {{ dados.documento }} </v-sheet>
-        </v-col>
+      <v-col>
+        <v-sheet class="pa-2 ma-2">
+          Lote: {{ dados.pi_lotes.numero }} - {{ dados.pi_lotes.nome }}</v-sheet
+        >
+      </v-col>
+      <v-col>
+        <v-sheet class="pa-2 ma-2"> Título: {{ dados.documento }} </v-sheet>
+      </v-col>
 
-        <v-responsive width="100%"></v-responsive>
+      <v-responsive width="100%"></v-responsive>
 
-        <v-col>
-          <v-sheet class="pa-2 ma-2">
-            Nosso Número: {{ dados.nosso_numero }}
-          </v-sheet>
-        </v-col>
+      <v-col>
+        <v-sheet class="pa-2 ma-2">
+          Nosso Número: {{ dados.nosso_numero }}
+        </v-sheet>
+      </v-col>
 
-        <v-col>
-          <v-sheet class="pa-2 ma-2"> Valor:R$ {{ dados.valor }} </v-sheet>
-        </v-col>
+      <v-col>
+        <v-sheet class="pa-2 ma-2"> Valor:R$ {{ dados.valor }} </v-sheet>
+      </v-col>
 
-        <v-col>
-          <v-sheet class="pa-2 ma-2"
-            >Vencimento: {{ dados.dt_vencimento }}</v-sheet
-          >
-        </v-col>
+      <v-col>
+        <v-sheet class="pa-2 ma-2"
+          >Vencimento: {{ dados.dt_vencimento }}</v-sheet
+        >
+      </v-col>
 
-        <v-responsive width="100%"></v-responsive>
+      <v-responsive width="100%"></v-responsive>
 
-        <v-col>
-          <v-sheet class="pa-2 ma-2">
-            Link do Boleto: {{ dados.link_boleto }}
-          </v-sheet>
-        </v-col>
-
+      <v-col>
+        <v-sheet class="pa-2 ma-2">
+          Link do Boleto: {{ dados.link_boleto }}
+        </v-sheet>
+      </v-col>
     </v-container>
     <v-row no-gutters class="justify-center align-center">
       <v-text-field
@@ -60,7 +61,14 @@ import AppBar from "@/layouts/default/AppBar.vue";
       ></v-checkbox>
     </v-row>
 
-    <v-btn class="me-4" style=" margin-left: 170px" color="red" @click="returnToMainPage"> Voltar </v-btn>
+    <v-btn
+      class="me-4"
+      style="margin-left: 170px"
+      color="red"
+      @click="returnToMainPage"
+    >
+      Voltar
+    </v-btn>
     <v-btn class="me-4" color="green" @click="updateLiquida"> Salvar </v-btn>
   </div>
 </template>
@@ -70,6 +78,7 @@ import axios from "axios";
 export default {
   data() {
     return {
+      userData: {},
       dados: {},
       data_pagamento: null,
       loading: true,
@@ -84,6 +93,9 @@ export default {
     },
     async updateLiquida() {
       try {
+        const headers = {
+          Authorization: `Bearer ${this.userData.token}`, // Add authorization header with Bearer token
+        };
         const storedTokenUser = JSON.parse(localStorage.getItem("user"));
         const data = {
           titulo_token: this.dados.token,
@@ -92,9 +104,11 @@ export default {
           user_token: storedTokenUser.token,
           acao: this.acao,
         };
+
         const response = await axios.post(
-          `${process.env.MANAGEMENT_API_URL}/gerarTitulos`,
-          data
+          `${process.env.AUTH_API_URL}/service/gerencia/gerarTitulos`,
+          data,
+          { headers }
         );
         const tokenTitulo = response.data[0].func_ger_titulos[0].titulo_token;
         if (this.imprimir === true) {
@@ -102,9 +116,13 @@ export default {
             const data = {
               titulo_token: tokenTitulo,
             };
+            // const headers = {
+            //   Authorization: `Bearer ${this.userData.token}`, // Add authorization header with Bearer token
+            // };
             const response = await axios.post(
-              `${process.env.MANAGEMENT_API_URL}/imprimirRecibo`,
-              data
+              `${process.env.AUTH_API_URL}/service/gerencia/imprimirRecibo`,
+              data,
+              { headers }
             );
             console.log(response);
 
@@ -135,9 +153,14 @@ export default {
           titulo_token: this.dados.token,
           data: this.data_pagamento,
         };
+        console.log("############\n", data);
+        const headers = {
+          Authorization: `Bearer ${this.userData.token}`, // Add authorization header with Bearer token
+        };
         const response = await axios.post(
-          `${process.env.MANAGEMENT_API_URL}/calcularAcrescimo`,
-          data
+          `${process.env.AUTH_API_URL}/service/gerencia/calcularAcrescimo`,
+          data,
+          { headers }
         );
         const acrescimo = response.data[0].func_calcula_acrescimo_titulo;
         this.valor = parseFloat(this.dados.valor) + parseFloat(acrescimo);
@@ -152,8 +175,12 @@ export default {
     },
     async loadLotes() {
       try {
+        const headers = {
+          Authorization: `Bearer ${this.userData.token}`, // Add authorization header with Bearer token
+        };
         const response = await axios.get(
-          `${process.env.MANAGEMENT_API_URL}/getPrediosTitulosById/${this.dados.documento}`
+          `${process.env.AUTH_API_URL}/service/gerencia/getPrediosTitulosById/${this.dados.documento}`,
+          { headers }
         );
         this.dados = response.data;
         console.log(this.dados);
@@ -173,6 +200,7 @@ export default {
     }
   },
   mounted() {
+    this.userData = JSON.parse(localStorage.getItem("user"));
     (async () => {
       await this.loadLotes();
     })();

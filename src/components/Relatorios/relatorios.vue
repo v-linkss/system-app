@@ -100,6 +100,7 @@ import AppBar from "@/layouts/default/AppBar.vue";
 <script>
 export default {
   data: () => ({
+    userData: {},
     relatoriosLocalStorage: [],
     selectedRelatorio: null,
     loading: true,
@@ -159,10 +160,13 @@ export default {
             userId: user.id,
             parametros: relatorio.parametros,
           };
-
+          const headers = {
+            Authorization: `Bearer ${this.userData.token}`, // Add authorization header with Bearer token
+          };
           const response = await axios.post(
-            `${process.env.MANAGEMENT_API_URL}/relatorios_query`,
-            data
+            `${process.env.AUTH_API_URL}/service/gerencia/relatorios_query`,
+            data,
+            { headers } // Pass headers object with authorization
           );
           this.comboSelecao = response.data;
         } else {
@@ -195,13 +199,20 @@ export default {
         relatorio.parametros_url[parametro.parametro] = parametro.valor;
       });
       console.log(relatorio.parametros_url);
+      const headers = {
+        Authorization: `Bearer ${this.userData.token}`, // Add authorization header with Bearer token
+      };
       const response = await axios.post(
-        `${process.env.MANAGEMENT_API_URL}/gerar_url`,
-        relatorio.parametros_url
+        `${process.env.AUTH_API_URL}/service/gerencia/gerar_url`,
+        relatorio.parametros_url,
+        { headers } // Pass headers object with authorization
       );
       this.relatorioLink = response.data;
       window.open(this.relatorioLink, "_blank");
     },
+  },
+  mounted() {
+    this.userData = JSON.parse(localStorage.getItem("user"));
   },
 };
 </script>

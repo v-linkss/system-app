@@ -212,6 +212,7 @@ export default {
   },
   data() {
     return {
+      userData: {},
       search: "",
       selected: [],
       selectedItem: null,
@@ -290,6 +291,9 @@ export default {
   methods: {
     async gerarTitulos(selectedItem) {
       try {
+        const headers = {
+          Authorization: `Bearer ${this.userData.token}`, // Add authorization header with Bearer token
+        };
         const storedToken = JSON.parse(localStorage.getItem("predio"));
         const selectedToken = selectedItem;
         const data = {
@@ -300,13 +304,17 @@ export default {
           dt_vencimento_inicio: this.titulos.dt_emissao_inicio,
           dt_vencimento_fim: this.titulos.dt_emissao_fim,
         };
+
+        console.log("@@@@@@@@@@@\n", JSON.stringify(data));
         const response = await axios.post(
-          `${process.env.MANAGEMENT_API_URL}/titulosLotes`,
-          data
+          `${process.env.AUTH_API_URL}/service/gerencia/titulosLotes`,
+          data,
+          { headers }
         );
         const responseData = response.data[0].func_json_titulos_lote;
         this.receitas = responseData;
         this.receita_filtrada = this.receitas;
+        console.log("WWWWWWWWWWWW\n",this.receita_filtrada )
       } catch (error) {
         console.error("Erro ao carregar receitas:", error);
       }
@@ -318,9 +326,13 @@ export default {
         predio_token: storedToken.predio_token,
       };
       try {
+        const headers = {
+          Authorization: `Bearer ${this.userData.token}`, // Add authorization header with Bearer token
+        };
         const response = await axios.post(
-          `${process.env.MANAGEMENT_API_URL}/lotesPredios`,
-          data
+          `${process.env.AUTH_API_URL}/service/gerencia/lotesPredios`,
+          data,
+          { headers }
         );
         const responseData = response.data[0].func_json_lotes_predio;
         this.lotesCombo = responseData;
@@ -330,6 +342,7 @@ export default {
     },
 
     async btnCancela(documento) {
+      console.log("#####################################");
       this.$router.push({
         name: "titulos-receber/cancela",
         query: {
@@ -349,16 +362,21 @@ export default {
 
     async btnRecibo(documento) {
       try {
+        const headers = {
+          Authorization: `Bearer ${this.userData.token}`, // Add authorization header with Bearer token
+        };
         const response = await axios.get(
-          `${process.env.MANAGEMENT_API_URL}/getPrediosTitulosById/${documento}`
+          `${process.env.AUTH_API_URL}/service/gerencia/getPrediosTitulosById/${documento}`,
+          { headers }
         );
         this.recibo = response.data;
         const data = {
           titulo_token: this.recibo.token,
         };
         const imprimirRecibo = await axios.post(
-          `${process.env.MANAGEMENT_API_URL}/imprimirRecibo`,
-          data
+          `${process.env.AUTH_API_URL}/service/gerencia/imprimirRecibo`,
+          data,
+          { headers }
         );
 
         const newTab = window.open();
@@ -405,12 +423,12 @@ export default {
     },
   },
   mounted() {
+    this.userData = JSON.parse(localStorage.getItem("user"));
     this.loadLotes();
   },
   computed: {
     displayedItems() {
       console.log(
-        "QQQQQQQQQQQQQQQQQ=this.emptyInputs=QQQQQQQQQQQQQQQQ",
         this.emptyInputs
       );
 

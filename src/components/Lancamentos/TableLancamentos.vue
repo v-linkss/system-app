@@ -223,15 +223,20 @@ export default {
     },
     async toggleExclusion(item) {
       try {
+        const headers = {
+          Authorization: `Bearer ${this.userData.token}`, // Add authorization header with Bearer token
+        };
+
         item.excluido = !item.excluido;
         const response = await axios.put(
-          `${process.env.MANAGEMENT_API_URL}/updateLancamentos/${item.id}`,
+          `${process.env.AUTH_API_URL}/service/gerencia/updateLancamentos/${item.id}`, // Modify URL
           {
             excluido: item.excluido,
-          }
+          },
+          { headers: headers } // Add headers
         );
 
-        return response
+        return response;
       } catch (error) {
         console.error("Erro ao atualizar exclusão:", error);
         item.excluido = !item.excluido;
@@ -245,16 +250,25 @@ export default {
     },
   },
   mounted() {
+    this.userData = JSON.parse(localStorage.getItem("user"));
+
+    const headers = {
+      Authorization: `Bearer ${this.userData.token}`, // Add authorization header with Bearer token
+    };
     const storedToken = JSON.parse(localStorage.getItem("predio"));
     const data = {
       predio_id: storedToken.predio_id,
     };
     axios
-      .post(`${process.env.MANAGEMENT_API_URL}/tabLancamentos`, data)
+      .post(
+        `${process.env.AUTH_API_URL}/service/gerencia/tabLancamentos`,
+        data,
+        { headers }
+      )
       .then((response) => {
         this.lancamentos = response.data.lancamentos;
         this.filteredLancamentos = this.lancamentos;
-        console.log(response.data)
+        console.log(response.data);
       })
       .catch((error) => {
         console.error("Erro na chamada de API:", error);

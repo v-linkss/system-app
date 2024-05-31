@@ -91,6 +91,7 @@ import axios from "axios";
 export default {
   data() {
     return {
+      userData: {},
       predios: {
         descricao: undefined,
         numero_ocupantes: undefined,
@@ -110,8 +111,12 @@ export default {
     },
     async loadTipos() {
       try {
+        const headers = {
+          Authorization: `Bearer ${this.userData.token}`, // Add authorization header with Bearer token
+        };
         const response = await axios.get(
-          `${process.env.MANAGEMENT_API_URL}/listaTiposAmbientes`
+          `${process.env.AUTH_API_URL}/service/gerencia/listaTiposAmbientes`,
+          { headers }
         );
         const responseData = response.data[0].func_json_tiposambientes;
         this.tipos = responseData;
@@ -125,9 +130,13 @@ export default {
         predio_token: storedToken.predio_token,
       };
       try {
+        const headers = {
+          Authorization: `Bearer ${this.userData.token}`, // Add authorization header with Bearer token
+        };
         const response = await axios.post(
-          `${process.env.MANAGEMENT_API_URL}/listaAreasAmbientes`,
-          data
+          `${process.env.AUTH_API_URL}/service/gerencia/listaAreasAmbientes`,
+          data,
+          { headers }
         );
         const responseData = response.data[0].func_json_areas;
         this.areas = responseData;
@@ -138,8 +147,12 @@ export default {
     },
     async loadPredioDetails() {
       try {
+        const headers = {
+          Authorization: `Bearer ${this.userData.token}`, // Add authorization header with Bearer token
+        };
         const response = await axios.get(
-          `${process.env.MANAGEMENT_API_URL}/PrediosAmbiente/${this.predios.id}`
+          `${process.env.AUTH_API_URL}/service/gerencia/PrediosAmbiente/${this.predios.id}`,
+          { headers }
         );
         // Preencha os campos com os detalhes carregados
         this.predios.descricao = response.data.descricao;
@@ -175,13 +188,17 @@ export default {
       };
 
       try {
+        const headers = {
+          Authorization: `Bearer ${this.userData.token}`, // Add authorization header with Bearer token
+        };
         console.log(
           "###################-this.predios.area-####################\n",
           this.predios.area
         );
         const response = await axios.put(
-          `${process.env.MANAGEMENT_API_URL}/PrediosAmbiente/${this.predios.id}`,
-          data
+          `${process.env.AUTH_API_URL}/service/gerencia/PrediosAmbiente/${this.predios.id}`,
+          data,
+          { headers }
         );
         this.$router.push("/predios-ambientes/index"); // Redirecione para a página principal ou faça qualquer outra ação desejada
 
@@ -203,6 +220,7 @@ export default {
     }
   },
   mounted() {
+    this.userData = JSON.parse(localStorage.getItem("user"));
     this.loadPredioDetails();
     this.loadTipos();
     this.loadAreas();

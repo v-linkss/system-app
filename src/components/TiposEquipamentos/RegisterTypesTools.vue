@@ -109,7 +109,8 @@ export default {
     async carregarSegmentos() {
       try {
         const response = await axios.get(
-          `${process.env.MANAGEMENT_API_URL}/listaSegmentos`
+          `${process.env.AUTH_API_URL}/service/gerencia/listaSegmentos`,
+          { headers } // Pass headers object with authorization
         );
         const responseData = response.data[0].func_json_segmentos;
         this.segmentos = responseData;
@@ -120,8 +121,12 @@ export default {
 
     async carregarSistemas() {
       try {
+        const headers = {
+          Authorization: `Bearer ${this.userData.token}`, // Add authorization header with Bearer token
+        };
         const response = await axios.get(
-          `${process.env.MANAGEMENT_API_URL}/listaSistemas`
+          `${process.env.AUTH_API_URL}/service/gerencia/listaSistemas`,
+          { headers } // Pass headers object with authorization
         );
         const responseData = response.data[0].func_json_sistemas;
         this.sistemas = responseData;
@@ -147,9 +152,13 @@ export default {
       };
 
       try {
+        const headers = {
+          Authorization: `Bearer ${this.userData.token}`, // Add authorization header with Bearer token
+        };
         const response = await axios.post(
-          `${process.env.MANAGEMENT_API_URL}/createEquipamentos`,
-          data
+          `${process.env.AUTH_API_URL}/service/gerencia/createEquipamentos`,
+          data,
+          { headers }
         );
         this.$router.push("/equipamentos-tipos/index");
 
@@ -162,6 +171,7 @@ export default {
     },
   },
   mounted() {
+    this.userData = JSON.parse(localStorage.getItem("user"));
     this.carregarSegmentos();
     this.carregarSistemas();
   },

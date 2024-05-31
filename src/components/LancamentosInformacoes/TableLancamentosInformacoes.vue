@@ -137,6 +137,7 @@ export default {
   },
   data() {
     return {
+      userData: {},
       filteredLancamentosInformacoes: [],
       loading: true,
       lancamentosInformacoes: [],
@@ -227,11 +228,13 @@ export default {
     async toggleExclusion(item) {
       try {
         item.excluido = !item.excluido;
+        const headers = {
+          Authorization: `Bearer ${this.userData.token}`, // Novo cabeçalho com token
+        };
         const response = await axios.put(
-          `${process.env.MANAGEMENT_API_URL}/updateLancamentos/${item.id}`,
-          {
-            excluido: item.excluido,
-          }
+          `${process.env.AUTH_API_URL}/service/gerencia/updateLancamentos/${item.id}`,
+          { excluido: item.excluido },
+          { headers }
         );
         console.log("Resposta da requisição:", response.data);
         console.log(item.excluido);
@@ -248,16 +251,23 @@ export default {
     },
   },
   mounted() {
+    this.userData = JSON.parse(localStorage.getItem("user"));
     const storedToken = JSON.parse(localStorage.getItem("predio"));
     const data = {
       predio_id: storedToken.predio_id,
     };
+    const headers = {
+      Authorization: `Bearer ${this.userData.token}`, // Novo cabeçalho com token
+    };
     axios
-      .post(`${process.env.MANAGEMENT_API_URL}/tabLancamentosInformacoes`, data)
+      .post(
+        `${process.env.AUTH_API_URL}/service/gerencia/tabLancamentosInformacoes`,
+        data,
+        { headers }
+      )
       .then((response) => {
         this.lancamentosInformacoes = response.data.lancamentos;
         this.filteredLancamentosInformacoes = this.lancamentosInformacoes;
-
       })
       .catch((error) => {
         console.error("Erro na chamada de API:", error);

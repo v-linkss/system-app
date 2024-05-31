@@ -108,6 +108,7 @@ import axios from "axios";
 export default {
   data() {
     return {
+      userData: {},
       modelos: {
         descricao: undefined,
         codigo: undefined,
@@ -126,14 +127,19 @@ export default {
       this.$router.push("/equipamentos-modelos/index");
     },
     async loadTipos() {
+      const headers = {
+        Authorization: `Bearer ${this.userData.token}`, // Add authorization header with Bearer token
+      };
       const storedToken = JSON.parse(localStorage.getItem("predio"));
       const data = {
         token_predio: storedToken.predio_token,
       };
+      console.log("WWWWWWWWWWWWWWWWWWWWW-TEST-WWWWWWWWWWWWWWWWWWW");
       try {
         const response = await axios.post(
-          `${process.env.MANAGEMENT_API_URL}/listaTiposEquipamentos`,
-          data
+          `${process.env.AUTH_API_URL}/service/gerencia/listaTiposEquipamentos`,
+          data,
+          { headers }
         );
         const responseData = response.data[0].func_json_tiposequipamentos;
         this.tipos = responseData;
@@ -161,9 +167,13 @@ export default {
       };
 
       try {
+        const headers = {
+          Authorization: `Bearer ${this.userData.token}`, // Add authorization header with Bearer token
+        };
         const response = await axios.post(
-          `${process.env.MANAGEMENT_API_URL}/createModeloEquipamentos`,
-          data
+          `${process.env.AUTH_API_URL}/service/gerencia/createModeloEquipamentos`,
+          data,
+          { headers }
         );
         // Redirecione para a página principal ou faça qualquer outra ação desejada
 
@@ -177,6 +187,7 @@ export default {
     },
   },
   mounted() {
+    this.userData = JSON.parse(localStorage.getItem("user"));
     this.loadTipos();
   },
 };

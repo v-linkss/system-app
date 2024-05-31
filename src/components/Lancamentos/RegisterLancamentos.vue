@@ -132,6 +132,7 @@ import axios from "axios";
 export default {
   data() {
     return {
+      userData: {},
       lancamentos: {
         descricao: undefined,
         conta_id: undefined,
@@ -162,10 +163,16 @@ export default {
         predio_token: storedToken.predio_token,
       };
       try {
+        const headers = {
+          Authorization: `Bearer ${this.userData.token}`, // Add authorization header with Bearer token
+        };
         const response = await axios.post(
-          `${process.env.MANAGEMENT_API_URL}/combolistEquipamentosLance`,
-          data
+          `${process.env.AUTH_API_URL}/service/gerencia/combolistEquipamentosLance`,
+          data,
+          { headers }
         );
+        // console.log("combolistEquipamentosLance"); Feito
+
         const responseData = response.data[0].func_json_equipamentos_combolist;
         this.equipamentos = responseData;
       } catch (error) {
@@ -178,10 +185,17 @@ export default {
         predio_id: storedId.predio_id,
       };
       try {
+        const headers = {
+          Authorization: `Bearer ${this.userData.token}`, // Add authorization header with Bearer token
+        };
+
         const response = await axios.post(
-          `${process.env.MANAGEMENT_API_URL}/combolistAmbientes`,
-          data
+          `${process.env.AUTH_API_URL}/service/gerencia/combolistAmbientes`,
+          data,
+          { headers }
         );
+        // console.log("combolistAmbientes"); FEITO
+
         const responseData = response.data.ambientes;
         this.ambientes = responseData;
       } catch (error) {
@@ -194,10 +208,18 @@ export default {
         predio_id: storedId.predio_id,
       };
       try {
+        const headers = {
+          Authorization: `Bearer ${this.userData.token}`, // Add authorization header with Bearer token
+        };
+
+
         const response = await axios.post(
-          `${process.env.MANAGEMENT_API_URL}/combolistContas`,
-          data
+          `${process.env.AUTH_API_URL}/service/gerencia/combolistContas`,
+          data,
+          { headers }
         );
+        // console.log("combolistContas");Feito
+
         const responseData = response.data.contas;
         this.contas = responseData;
       } catch (error) {
@@ -232,19 +254,26 @@ export default {
         recursos_proprios: recursos_proprios,
       };
       try {
+        const headers = {
+          Authorization: `Bearer ${this.userData.token}`, // Add authorization header with Bearer token
+        };
         const response = await axios.post(
-          `${process.env.MANAGEMENT_API_URL}/createLancamentos`,
-          data
+          `${process.env.AUTH_API_URL}/service/gerencia/createLancamentos`,
+          data,
+          { headers }
         );
+        console.log("createLancamentos");
         if (this.lancamentos.imprimir_boleto === true) {
           try {
             const data = {
               titulo_token: storedIdPredio.predio_token,
             };
             const imprimir = await axios.post(
-              `${process.env.MANAGEMENT_API_URL}/imprimirRecibo`,
-              data
+              `${process.env.AUTH_API_URL}/service/gerencia/imprimirRecibo`,
+              data,
+              { headers }
             );
+            console.log("imprimirRecibo");
 
             const newTab = window.open();
             this.$router.push("/pi-lancamentos/index");
@@ -263,6 +292,7 @@ export default {
     },
   },
   mounted() {
+    this.userData = JSON.parse(localStorage.getItem("user"));
     this.carregarContasCombolist();
     this.carregarEquipamentosCombolist();
     this.carregarAmbientesCombolist();

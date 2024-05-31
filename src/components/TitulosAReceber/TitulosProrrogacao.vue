@@ -10,7 +10,9 @@ import AppBar from "@/layouts/default/AppBar.vue";
     <h1 class="ml-10 mt-5" style="color: #777777">Prorrogar Titulo</h1>
     <v-container class="data-container mt-7 mb-8">
       <v-col>
-        <v-sheet class="pa-2 ma-2"> Lote: {{dados.pi_lotes.numero  }} - {{dados.pi_lotes.nome  }} </v-sheet>
+        <v-sheet class="pa-2 ma-2">
+          Lote: {{ dados.pi_lotes.numero }} - {{ dados.pi_lotes.nome }}
+        </v-sheet>
       </v-col>
       <v-col>
         <v-sheet class="pa-2 ma-2"> Título: {{ dados.documento }} </v-sheet>
@@ -67,6 +69,7 @@ import axios from "axios";
 export default {
   data() {
     return {
+      userData: {},
       dados: {},
       dt_vencimento: null,
       loading: true,
@@ -78,14 +81,18 @@ export default {
     },
     async updateProrrogacao() {
       try {
+        const headers = {
+          Authorization: `Bearer ${this.userData.token}`, // Add authorization header with Bearer token
+        };
         const storedIdUser = JSON.parse(localStorage.getItem("user"));
         const data = {
           dt_vencimento: this.dt_vencimento,
           user_alteracao: storedIdUser.id,
         };
         const response = await axios.put(
-          `${process.env.MANAGEMENT_API_URL}/updatePrediosTitulos/${this.dados.documento}`,
-          data
+          `${process.env.AUTH_API_URL}/service/gerencia/updatePrediosTitulos/${this.dados.documento}`,
+          data,
+          { headers }
         );
         console.log(response);
         this.$router.push("/gestao-perimetros/index");
@@ -96,8 +103,12 @@ export default {
     },
     async loadLotes() {
       try {
+        const headers = {
+          Authorization: `Bearer ${this.userData.token}`, // Add authorization header with Bearer token
+        };
         const response = await axios.get(
-          `${process.env.MANAGEMENT_API_URL}/getPrediosTitulosById/${this.dados.documento}`
+          `${process.env.AUTH_API_URL}/service/gerencia/getPrediosTitulosById/${this.dados.documento}`,
+          { headers }
         );
         this.dados = response.data;
       } catch (error) {
@@ -116,6 +127,9 @@ export default {
     }
   },
   mounted() {
+    console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
+    this.userData = JSON.parse(localStorage.getItem("user"));
+
     (async () => {
       await this.loadLotes();
     })();

@@ -8,11 +8,13 @@ import AppBar from "@/layouts/default/AppBar.vue";
   <div v-else>
     <AppBar />
     <v-container>
-
-      <h1 class="ml-1 mt-5 " style="color: #777777">Cancelar Titulo</h1>
+      <h1 class="ml-1 mt-5" style="color: #777777">Cancelar Titulo</h1>
       <v-container class="data-container mt-7 mb-8">
         <v-col>
-          <v-sheet class="pa-2 ma-2"> Lote: {{dados.pi_lotes.numero  }} - {{dados.pi_lotes.nome  }}</v-sheet>
+          <v-sheet class="pa-2 ma-2">
+            Lote: {{ dados.pi_lotes.numero }} -
+            {{ dados.pi_lotes.nome }}</v-sheet
+          >
         </v-col>
         <v-col>
           <v-sheet class="pa-2 ma-2"> Título: {{ dados.documento }} </v-sheet>
@@ -45,14 +47,7 @@ import AppBar from "@/layouts/default/AppBar.vue";
         </v-col>
       </v-container>
 
-      <v-btn
-        class="me-4"
-
-        color="red"
-        @click="returnToMainPage"
-      >
-        Voltar
-      </v-btn>
+      <v-btn class="me-4" color="red" @click="returnToMainPage"> Voltar </v-btn>
       <v-dialog v-model="dialog" max-width="400" persistent>
         <template v-slot:activator="{ props: activatorProps }">
           <v-btn class="me-4" v-bind="activatorProps" color="green">
@@ -82,6 +77,7 @@ import axios from "axios";
 export default {
   data() {
     return {
+      userData: {},
       dados: {},
       loading: true,
       dialog: false,
@@ -93,14 +89,18 @@ export default {
     },
     async updateProrrogacao() {
       try {
+        const headers = {
+          Authorization: `Bearer ${this.userData.token}`, // Add authorization header with Bearer token
+        };
         const storedIdUser = JSON.parse(localStorage.getItem("user"));
         const data = {
           dt_cancelamento: new Date().toISOString(),
           user_alteracao: storedIdUser.id,
         };
         const response = await axios.put(
-          `${process.env.MANAGEMENT_API_URL}/updatePrediosTitulos/${this.dados.documento}`,
-          data
+          `${process.env.AUTH_API_URL}/service/gerencia/updatePrediosTitulos/${this.dados.documento}`,
+          data,
+          { headers }
         );
         console.log(response);
         this.$router.push("/gestao-perimetros/index");
@@ -111,8 +111,12 @@ export default {
     },
     async loadLotes() {
       try {
+        const headers = {
+          Authorization: `Bearer ${this.userData.token}`, // Add authorization header with Bearer token
+        };
         const response = await axios.get(
-          `${process.env.MANAGEMENT_API_URL}/getPrediosTitulosById/${this.dados.documento}`
+          `${process.env.AUTH_API_URL}/service/gerencia/getPrediosTitulosById/${this.dados.documento}`,
+          { headers }
         );
         this.dados = response.data;
         console.log(this.dados);
@@ -132,6 +136,7 @@ export default {
     }
   },
   mounted() {
+    this.userData = JSON.parse(localStorage.getItem("user"));
     (async () => {
       await this.loadLotes();
     })();

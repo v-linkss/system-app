@@ -11,6 +11,7 @@ export default createStore({
     relatorio:null,
     equipamento:null
   },
+
   mutations: {
     setUser(state, user) {
       state.user = user;
@@ -54,10 +55,15 @@ export default createStore({
         predio_token:this.getters.prediosState.predio_token
       }
       try {
+        const userData = JSON.parse(localStorage.getItem("user"))
+        const headers = {
+          Authorization: `Bearer ${userData.token}`, // Add authorization header with Bearer token
+        };
         const response = await axios.post(
-          `${process.env.MANAGEMENT_API_URL}/listarMenu`,
-          data
+          `${process.env.AUTH_API_URL}/service/gerencia/listarMenu`,
+          data, {headers}
         );
+        
         const responseData = response.data;
         commit("setMenu", responseData[0].func_menu[0].menu);
       } catch (error) {
@@ -70,10 +76,15 @@ export default createStore({
        predio_token:storedToken.predio_token
       }
       try {
+        const userData = JSON.parse(localStorage.getItem("user"))
+        const headers = {
+          Authorization: `Bearer ${userData.token}`, // Add authorization header with Bearer token
+        };
         const response = await axios.post(
-          `${process.env.MANAGEMENT_API_URL}/listaEquipamentos`,
-          data
+          `${process.env.AUTH_API_URL}/service/gerencia/listaEquipamentos`,
+          data, {headers}
         );
+
         const responseData = response.data;
         commit("setEquipamento", responseData[0].func_json_equipamentos);
       } catch (error) {
@@ -88,10 +99,17 @@ export default createStore({
         predio_token:storedTokenPredio.predio_token
       }
       try {
+        const userData = JSON.parse(localStorage.getItem("user"))
+
+        const headers = {
+          Authorization: `Bearer ${userData.token}`, // Add authorization header with Bearer token
+        };
+
         const response = await axios.post(
-          `${process.env.MANAGEMENT_API_URL}/relatorios_combolist`,
-          data
+          `${process.env.AUTH_API_URL}/service/gerencia/relatorios_combolist`,
+          data, {headers}
         );
+
         const responseData = response.data;
         commit("setRelatorio", responseData[0].func_json_relatorios_v2);
       } catch (error) {

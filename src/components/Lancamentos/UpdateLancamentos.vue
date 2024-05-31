@@ -133,6 +133,7 @@ import axios from "axios";
 export default {
   data() {
     return {
+      userData: {},
       lancamentos: {
         descricao: undefined,
         conta_id: undefined,
@@ -163,9 +164,13 @@ export default {
         predio_token: storedToken.predio_token,
       };
       try {
+        const headers = {
+          Authorization: `Bearer ${this.userData.token}`, // Add authorization header with Bearer token
+        };
         const response = await axios.post(
-          `${process.env.MANAGEMENT_API_URL}/combolistEquipamentosLance`,
-          data
+          `${process.env.AUTH_API_URL}/service/gerencia/combolistEquipamentosLance`,
+          data,
+          { headers }
         );
         const responseData = response.data[0].func_json_equipamentos_combolist;
         this.equipamentos = responseData;
@@ -179,9 +184,13 @@ export default {
         predio_id: storedId.predio_id,
       };
       try {
+        const headers = {
+          Authorization: `Bearer ${this.userData.token}`, // Add authorization header with Bearer token
+        };
         const response = await axios.post(
-          `${process.env.MANAGEMENT_API_URL}/combolistAmbientes`,
-          data
+          `${process.env.AUTH_API_URL}service/gerencia/combolistAmbientes`,
+          data,
+          { headers }
         );
         const responseData = response.data.ambientes;
         this.ambientes = responseData;
@@ -195,9 +204,13 @@ export default {
         predio_id: storedId.predio_id,
       };
       try {
+        const headers = {
+          Authorization: `Bearer ${this.userData.token}`, // Add authorization header with Bearer token
+        };
         const response = await axios.post(
-          `${process.env.MANAGEMENT_API_URL}/combolistContas`,
-          data
+          `${process.env.AUTH_API_URL}/service/gerencia/combolistContas`,
+          data,
+          { headers }
         );
         const responseData = response.data.contas;
         this.contas = responseData;
@@ -207,8 +220,12 @@ export default {
     },
     async loadLancamentosDetails() {
       try {
+        const headers = {
+          Authorization: `Bearer ${this.userData.token}`, // Add authorization header with Bearer token
+        };
         const response = await axios.get(
-          `${process.env.MANAGEMENT_API_URL}/getLancamentosById/${this.lancamentos.id}`
+          `${process.env.AUTH_API_URL}/service/gerencia/getLancamentosById/${this.lancamentos.id}`,
+          { headers }
         );
         // Preencha os campos com os detalhes carregados
         this.lancamentos.descricao = response.data.lancamentos.descricao;
@@ -264,9 +281,13 @@ export default {
       };
 
       try {
+        const headers = {
+          Authorization: `Bearer ${this.userData.token}`, // Add authorization header with Bearer token
+        };
         const response = await axios.put(
-          `${process.env.MANAGEMENT_API_URL}/updateLancamentos/${this.lancamentos.id}`,
-          data
+          `${process.env.AUTH_API_URL}/service/gerencia/updateLancamentos/${this.lancamentos.id}`,
+          data,
+          { headers }
         ); // Redirecione para a página principal ou faça qualquer outra ação desejada
 
         this.$router.push("/pi-lancamentos/index");
@@ -286,6 +307,7 @@ export default {
     }
   },
   mounted() {
+    this.userData = JSON.parse(localStorage.getItem("user"));
     this.loadLancamentosDetails();
     this.carregarContasCombolist();
     this.carregarEquipamentosCombolist();

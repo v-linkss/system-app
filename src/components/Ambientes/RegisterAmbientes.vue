@@ -90,6 +90,7 @@ import axios from "axios";
 export default {
   data() {
     return {
+      userData: {},
       predios: {
         descricao: undefined,
         numero_ocupantes: undefined,
@@ -108,26 +109,46 @@ export default {
       this.$router.push("/predios-ambientes/index");
     },
     async loadTipos() {
+      const headers = {
+        Authorization: `Bearer ${this.userData.token}`, // Add authorization header with Bearer token
+      };
       try {
+        // Retrieve the token from localStorage
+
+        console.log("###################\n", this.userData.token);
+
         const response = await axios.get(
-          `${process.env.MANAGEMENT_API_URL}/listaTiposAmbientes`
+          `${process.env.AUTH_API_URL}/service/gerencia/listaTiposAmbientes`,
+          { headers } // Pass headers object with authorization
         );
+
         const responseData = response.data[0].func_json_tiposambientes;
         this.tipos = responseData;
       } catch (error) {
         console.error("Erro ao carregar tipos:", error);
       }
     },
+
+
     async loadAreas() {
+      console.log("loadAreas##################\n", this.userData.token);
+
+      const headers = {
+        Authorization: `Bearer ${this.userData.token}`, // Add authorization header with Bearer token
+      };
+
       const storedToken = JSON.parse(localStorage.getItem("predio"));
       const data = {
         predio_token: storedToken.predio_token,
       };
+
       try {
         const response = await axios.post(
-          `${process.env.MANAGEMENT_API_URL}/listaAreasAmbientes`,
-          data
+          `${process.env.AUTH_API_URL}/service/gerencia/listaAreasAmbientes`,
+          data,
+          { headers }
         );
+        console.log("##################\n", response);
         const responseData = response.data[0].func_json_areas;
         this.areas = responseData;
         console.log(this.areas);
@@ -159,7 +180,7 @@ export default {
 
       try {
         const response = await axios.post(
-          `${process.env.MANAGEMENT_API_URL}/PrediosAmbienteCadastro`,
+          `${process.env.AUTH_API_URL}/PrediosAmbienteCadastro`,
           data
         );
         this.$router.push("/predios-ambientes/index"); // Redirecione para a página principal ou faça qualquer outra ação desejada
@@ -173,6 +194,8 @@ export default {
     },
   },
   mounted() {
+    this.userData = JSON.parse(localStorage.getItem("user"));
+
     this.loadAreas();
     this.loadTipos();
   },

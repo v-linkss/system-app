@@ -78,6 +78,7 @@ import axios from "axios";
 export default {
   data() {
     return {
+      userData: {},
       lancamentosInformacoes: {
         conta_id: undefined,
         quantidade: undefined,
@@ -99,9 +100,13 @@ export default {
         predio_id: storedId.predio_id,
       };
       try {
+        const headers = {
+          Authorization: `Bearer ${this.userData.token}`, // Add authorization header with Bearer token
+        };
         const response = await axios.post(
-          `${process.env.MANAGEMENT_API_URL}/combolistContasInformacoes`,
-          data
+          `${process.env.AUTH_API_URL}/service/gerencia/combolistContasInformacoes`,
+          data,
+          { headers }
         );
         const responseData = response.data.contas;
         this.contas = responseData;
@@ -111,8 +116,12 @@ export default {
     },
     async loadLancamentosInformacoesDetails() {
       try {
+        const headers = {
+          Authorization: `Bearer ${this.userData.token}`, // Add authorization header with Bearer token
+        };
         const response = await axios.get(
-          `${process.env.MANAGEMENT_API_URL}/getLancamentosInformacoesById/${this.lancamentosInformacoes.id}`
+          `${process.env.AUTH_API_URL}/service/gerencia/getLancamentosInformacoesById/${this.lancamentosInformacoes.id}`,
+          { headers }
         );
         // Preencha os campos com os detalhes carregados
         this.lancamentosInformacoes.valor = response.data.lancamentos.valor;
@@ -144,9 +153,13 @@ export default {
         user_alteracao: storedIdUser.id,
       };
       try {
+        const headers = {
+          Authorization: `Bearer ${this.userData.token}`, // Add authorization header with Bearer token
+        };
         const response = await axios.put(
-          `${process.env.MANAGEMENT_API_URL}/updateLancamentos/${this.lancamentosInformacoes.id}`,
-          data
+          `${process.env.AUTH_API_URL}/service/gerencia/updateLancamentos/${this.lancamentosInformacoes.id}`,
+          data,
+          { headers }
         );
         this.$router.push("/pi-informacoes/index");
         console.log(response);
@@ -166,6 +179,7 @@ export default {
     }
   },
   mounted() {
+    this.userData = JSON.parse(localStorage.getItem("user"));
     this.loadLancamentosInformacoesDetails();
     this.carregarContasCombolist();
   },

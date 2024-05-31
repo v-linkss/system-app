@@ -67,6 +67,7 @@ import axios from "axios";
 export default {
   data() {
     return {
+      userData: {},
       dados: {},
       loading: true,
     };
@@ -77,10 +78,15 @@ export default {
     },
     async loadLancamentos() {
       try {
+        const headers = {
+          Authorization: `Bearer ${this.userData.token}`, // Add authorization header with Bearer token
+        };
         const response = await axios.get(
-          `${process.env.MANAGEMENT_API_URL}/getLancamentosById/${this.dados.id}`
+          `${process.env.AUTH_API_URL}/service/gerencia/getLancamentosById/${this.dados.id}`,
+          { headers }
         );
         this.dados = response.data.lancamentos;
+        console.log("@@@@@@@@@@@@@@@@@@@@@@@@@\n", response);
       } catch (error) {
         console.error("Erro na chamada de API:", error);
       } finally {
@@ -97,6 +103,7 @@ export default {
     }
   },
   mounted() {
+    // this.userData = JSON.parse(localStorage.getItem("user"));
     (async () => {
       await this.loadLancamentos();
     })();

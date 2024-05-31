@@ -50,6 +50,7 @@ import axios from "axios";
 export default {
   data() {
     return {
+      userData: {},
       dados: {},
       loading: true,
     };
@@ -60,8 +61,12 @@ export default {
     },
     async loadPredios() {
       try {
+        const headers = {
+          Authorization: `Bearer ${this.userData.token}`, // Add authorization header with Bearer token
+        };
         const response = await axios.get(
-          `${process.env.MANAGEMENT_API_URL}/getModeloEquipamentosById/${this.dados.id}`
+          `${process.env.AUTH_API_URL}/service/gerencia/getModeloEquipamentosById/${this.dados.id}`,
+          { headers }
         );
         this.dados = response.data;
         console.log(this.dados);
@@ -81,6 +86,7 @@ export default {
     }
   },
   mounted() {
+    this.userData = JSON.parse(localStorage.getItem("user"));
     (async () => {
       await this.loadPredios();
     })();

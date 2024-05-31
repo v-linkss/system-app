@@ -19,7 +19,12 @@
 
         <v-col>
           <v-sheet class="pa-2 ma-2">
-            Tipo: {{ dados.tabelas_valores.descricao }}
+            Tipo:
+            {{
+              dados.tabelas_valores && dados.tabelas_valores.descricao
+                ? dados.tabelas_valores.descricao
+                : "N/A"
+            }}
           </v-sheet>
         </v-col>
 
@@ -60,6 +65,8 @@ import axios from "axios";
 export default {
   data() {
     return {
+      userData: {},
+
       dados: {},
       loading: true,
     };
@@ -69,9 +76,13 @@ export default {
       this.$router.push("/predios-ambientes/index");
     },
     async loadPredios() {
+      const headers = {
+        Authorization: `Bearer ${this.userData.token}`, // Add authorization header with Bearer token
+      };
       try {
         const response = await axios.get(
-          `${process.env.MANAGEMENT_API_URL}/PrediosAmbiente/${this.dados.id}`
+          `${process.env.AUTH_API_URL}/service/gerencia/PrediosAmbiente/${this.dados.id}`,
+          { headers }
         );
         this.dados = response.data;
       } catch (error) {
@@ -93,6 +104,7 @@ export default {
     }
   },
   mounted() {
+    this.userData = JSON.parse(localStorage.getItem("user"));
     (async () => {
       await this.loadPredios();
     })();

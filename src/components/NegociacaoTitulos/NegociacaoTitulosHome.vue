@@ -3,8 +3,10 @@ import AppBar from "@/layouts/default/AppBar.vue";
 </script>
 <template>
   <AppBar />
-  <v-container >
-    <h1 class="ml-15 mt-4 mb-10" style="color: #777777">Negocicação de Títulos</h1>
+  <v-container>
+    <h1 class="ml-15 mt-4 mb-10" style="color: #777777">
+      Negocicação de Títulos
+    </h1>
     <v-row class="mt-6" no-gutters>
       <v-col class="ml-13">
         <v-autocomplete
@@ -51,7 +53,11 @@ import AppBar from "@/layouts/default/AppBar.vue";
         ></v-text-field>
       </v-col>
       <v-col class="btn-pointer" @click="showModal = true">
-        <img style="width: 40px; height: 40px" src="../../assets/novo.png" alt="novo" />
+        <img
+          style="width: 40px; height: 40px"
+          src="../../assets/novo.png"
+          alt="novo"
+        />
       </v-col>
     </v-row>
     <v-row class="ml-10 mr-10">
@@ -103,11 +109,12 @@ export default {
   },
   data() {
     return {
+      userData: {},
       filteredReceita: [], // preocurar o correspondente e alterar
       showModal: false,
       selected: [],
       selectedItem: null,
-      parcelas:null,
+      parcelas: null,
       lotesChecked: [],
       lotes: {
         data_vencimento: null,
@@ -143,7 +150,7 @@ export default {
   methods: {
     maxParcelas(value) {
       if (value === 12) {
-        return 'O número máximo de parcelas é 12';
+        return "O número máximo de parcelas é 12";
       }
       return true;
     },
@@ -160,9 +167,13 @@ export default {
         const data = {
           lote_token: selectedToken,
         };
+        const headers = {
+          Authorization: `Bearer ${this.userData.token}`, // Add authorization header with Bearer token
+        };
         const response = await axios.post(
-          `${process.env.MANAGEMENT_API_URL}/loteReceita`,
-          data
+          `${process.env.AUTH_API_URL}/service/gerencia/loteReceita`,
+          data,
+          { headers } // Pass headers object with authorization
         );
         const responseData = response.data[0].func_json_receitas_lote;
         this.receitas = responseData;
@@ -192,9 +203,13 @@ export default {
           receitas: receitasSelecionadas,
         };
         console.log(data);
+        const headers = {
+          Authorization: `Bearer ${this.userData.token}`, // Add authorization header with Bearer token
+        };
         const response = await axios.post(
-          `${process.env.MANAGEMENT_API_URL}/geraBoletos`,
-          data
+          `${process.env.AUTH_API_URL}/service/gerencia/geraBoletos`,
+          data,
+          { headers } // Pass headers object with authorization
         );
         const responseData = response.data[0].func_gera_boleto_lote;
         this.boleto = responseData;
@@ -202,9 +217,13 @@ export default {
           const dataBoleto = {
             titulo_token: this.boleto[0].titulo_token,
           };
+          const headers = {
+            Authorization: `Bearer ${this.userData.token}`, // Add authorization header with Bearer token
+          };
           const response = await axios.post(
-            `${process.env.MANAGEMENT_API_URL}/integraBanco`,
-            dataBoleto
+            `${process.env.AUTH_API_URL}/service/gerencia/integraBanco`,
+            dataBoleto,
+            { headers } // Pass headers object with authorization
           );
           const responseDataBoleto = response.data[0].func_integra_banco;
           window.open(responseDataBoleto[0].link_boleto, "_blank");
@@ -222,9 +241,13 @@ export default {
         predio_token: storedToken.predio_token,
       };
       try {
+        const headers = {
+          Authorization: `Bearer ${this.userData.token}`, // Add authorization header with Bearer token
+        };
         const response = await axios.post(
-          `${process.env.MANAGEMENT_API_URL}/lotesPredios`,
-          data
+          `${process.env.AUTH_API_URL}/service/gerencia/lotesPredios`,
+          data,
+          { headers } // Pass headers object with authorization
         );
         const responseData = response.data[0].func_json_lotes_predio;
         this.lotesCombo = responseData;
@@ -287,6 +310,7 @@ export default {
     },
   },
   mounted() {
+    this.userData = JSON.parse(localStorage.getItem("user"));
     this.loadLotes();
   },
 };

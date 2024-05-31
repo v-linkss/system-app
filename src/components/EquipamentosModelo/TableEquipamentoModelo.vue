@@ -129,6 +129,7 @@ export default {
   },
   data() {
     return {
+      userData: {},
       filteredPrediosEquipamentos: [],
       equipamentos_modelos: [],
       loading: true,
@@ -201,11 +202,15 @@ export default {
     async toggleExclusion(item) {
       try {
         item.excluido = !item.excluido;
+        const headers = {
+          Authorization: `Bearer ${this.userData.token}`, // Add authorization header with Bearer token
+        };
         await axios.put(
-          ` ${process.env.MANAGEMENT_API_URL}/deleteModeloEquipamentos/${item.id}`,
+          ` ${process.env.AUTH_API_URL}/service/gerencia/deleteModeloEquipamentos/${item.id}`,
           {
             excluido: item.excluido,
-          }
+          },
+          { headers }
         );
         console.log(item.excluido);
       } catch (error) {
@@ -243,12 +248,20 @@ export default {
     },
   },
   mounted() {
+    this.userData = JSON.parse(localStorage.getItem("user"));
     const storedToken = JSON.parse(localStorage.getItem("predio"));
     const data = {
       token_predio: storedToken.predio_token,
     };
+    const headers = {
+      Authorization: `Bearer ${this.userData.token}`, // Add authorization header with Bearer token
+    };
     axios
-      .post(`${process.env.MANAGEMENT_API_URL}/listaModeloEquipamentos`, data)
+      .post(
+        `${process.env.AUTH_API_URL}/service/gerencia/listaModeloEquipamentos`,
+        data,
+        { headers }
+      )
       .then((response) => {
         this.equipamentos_modelos =
           response.data[0].func_json_modelos_equipamentos;

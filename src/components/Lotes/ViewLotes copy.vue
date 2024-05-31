@@ -1,7 +1,6 @@
 <script setup>
 import AppBar from "@/layouts/default/AppBar.vue";
 </script>
-
 <template>
   <LoadingComponent v-if="loading">
     <font-awesome-icon :icon="['fas', 'spinner']" spin />
@@ -18,21 +17,41 @@ import AppBar from "@/layouts/default/AppBar.vue";
         </v-col>
 
         <v-responsive width="100%"></v-responsive>
-
         <v-col>
           <v-sheet class="pa-2 ma-2">
-            Conta:
-            {{ dados.pi_contas?.descricao || "Descrição não disponível" }}
+            Cobrar: {{ dados.cobrar ? "Cobrar" : "Devolver" }}
           </v-sheet>
+        </v-col>
+        <v-col>
+          <v-sheet class="pa-2 ma-2">
+            Observação: {{ dados.observacao }}
+          </v-sheet>
+        </v-col>
+
+        <v-responsive width="100%"></v-responsive>
+
+        <v-col>
+          <v-sheet class="pa-2 ma-2"> Conta: {{ dados.conta_id }} </v-sheet>
+        </v-col>
+
+        <v-col>
+          <v-sheet class="pa-2 ma-2"> Lote: {{ dados.lote_id }} </v-sheet>
         </v-col>
 
         <v-col>
           <v-sheet class="pa-2 ma-2">
-            Quantidade: {{ dados.quantidade }}
+            Equipamento: {{ dados.predio_equipamento_id }}
           </v-sheet>
         </v-col>
       </v-row>
     </v-container>
+    <!-- <v-row>
+      <v-col class="text-center">
+        <v-btn class="arrow" color="red" @click="returnToMainPage">
+          Voltar
+        </v-btn>
+      </v-col>
+    </v-row> -->
     <center>
       <v-btn class="mt-8" color="red" @click="returnToMainPage"> Voltar</v-btn>
     </center>
@@ -45,29 +64,24 @@ export default {
   data() {
     return {
       userData: {},
-      dados: {
-        pi_contas: {}, // Ensure pi_contas is always an object
-      },
+      dados: {},
       loading: true,
     };
   },
   methods: {
     returnToMainPage() {
-      this.$router.push("/pi-informacoes/index");
+      this.$router.push("/pi-lotes-receitas/index/");
     },
-    async loadLancamentos() {
+    async loadLotes() {
       try {
         const headers = {
           Authorization: `Bearer ${this.userData.token}`, // Add authorization header with Bearer token
         };
         const response = await axios.get(
-          `${process.env.AUTH_API_URL}/service/gerencia/getLancamentosById/${this.dados.id}`,
-          { headers }
+          `${process.env.AUTH_API_URL}/service/gerencia/ReceitaLotes/${this.dados.id}`,
+          headers
         );
-        this.dados = response.data.lancamentos || {};
-        if (!this.dados.pi_contas) {
-          this.dados.pi_contas = {}; // Ensure pi_contas is always defined
-        }
+        this.dados = response.data;
       } catch (error) {
         console.error("Erro na chamada de API:", error);
       } finally {
@@ -78,21 +92,20 @@ export default {
   created() {
     if (this.$route.query.id) {
       this.dados.id = this.$route.query.id;
-      this.loadLancamentos();
+      this.loadLotes();
     } else {
       console.log("Erro em carregar dados");
     }
   },
   mounted() {
+    console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
     this.userData = JSON.parse(localStorage.getItem("user"));
-
     (async () => {
-      await this.loadLancamentos();
+      await this.loadLotes();
     })();
   },
 };
 </script>
-
 <style scoped>
 .data-container {
   border: 1px solid black;
@@ -101,6 +114,7 @@ export default {
 }
 .arrow {
   cursor: pointer;
-  margin-bottom: 20px;
+  margin-top: 2%;
+  margin-right: 90%;
 }
 </style>

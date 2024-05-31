@@ -20,7 +20,12 @@ import AppBar from "@/layouts/default/AppBar.vue";
 
       <v-col>
         <v-sheet class="pa-2 ma-2">
-          Segmento: {{ dados.tabelas_valores.descricao }}
+          Segmento:
+          {{
+            dados.tabelas_valores && dados.tabelas_valores.descricao
+              ? dados.tabelas_valores.descricao
+              : "N/A"
+          }}
         </v-sheet>
       </v-col>
 
@@ -60,6 +65,7 @@ import axios from "axios";
 export default {
   data() {
     return {
+      userData: {},
       dados: {},
       loading: true,
     };
@@ -70,8 +76,12 @@ export default {
     },
     async loadPredios() {
       try {
+        const headers = {
+          Authorization: `Bearer ${this.userData.token}`, // Add authorization header with Bearer token
+        };
         const response = await axios.get(
-          `${process.env.MANAGEMENT_API_URL}/getEquipamentosById/${this.dados.id}`
+          `${process.env.AUTH_API_URL}/service/gerencia/getEquipamentosById/${this.dados.id}`,
+          { headers }
         );
         this.dados = response.data;
         console.log("##########################\n", this.dados);
@@ -91,6 +101,7 @@ export default {
     }
   },
   mounted() {
+    this.userData = JSON.parse(localStorage.getItem("user"));
     (async () => {
       await this.loadPredios();
     })();

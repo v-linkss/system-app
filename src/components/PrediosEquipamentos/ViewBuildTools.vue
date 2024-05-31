@@ -43,13 +43,23 @@ import AppBar from "@/layouts/default/AppBar.vue";
 
         <v-col>
           <v-sheet class="pa-2 ma-2">
-            Modelo: {{ dados.equipamentos_modelo.codigo }}
+            Modelo:
+            {{
+              dados.equipamentos_modelo && dados.equipamentos_modelo.codigo
+                ? dados.equipamentos_modelo.codigo
+                : "N/A"
+            }}
           </v-sheet>
         </v-col>
 
         <v-col>
           <v-sheet class="pa-2 ma-2">
-            Ambiente: {{ dados.predios_ambientes.descricao }}
+            Ambiente:
+            {{
+              dados.predios_ambientes && dados.predios_ambientes.descricao
+                ? dados.predios_ambientes.descricao
+                : "N/A"
+            }}
           </v-sheet>
         </v-col>
 
@@ -84,6 +94,7 @@ import axios from "axios";
 export default {
   data() {
     return {
+      userData: {},
       dados: {},
       loading: true,
     };
@@ -94,8 +105,12 @@ export default {
     },
     async loadPrediosEquipamentos() {
       try {
+        const headers = {
+          Authorization: `Bearer ${this.userData.token}`, // Add authorization header with Bearer token
+        };
         const response = await axios.get(
-          `${process.env.MANAGEMENT_API_URL}/PrediosEquipamentos/${this.dados.id}`
+          `${process.env.AUTH_API_URL}/service/gerencia/PrediosEquipamentos/${this.dados.id}`,
+          { headers } // Pass headers object with authorization
         );
         this.dados = response.data;
         console.log(this.dados);
@@ -115,6 +130,7 @@ export default {
     }
   },
   mounted() {
+    this.userData = JSON.parse(localStorage.getItem("user"));
     (async () => {
       await this.loadPrediosEquipamentos();
     })();

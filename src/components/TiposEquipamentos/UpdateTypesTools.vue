@@ -88,12 +88,13 @@ import axios from "axios";
 export default {
   data() {
     return {
+      userData: {},
       prediosTipos: {
         descricao: undefined,
         sistema_id: undefined,
         tabvalores_segmento_id: undefined,
         icone_ok: undefined,
-        icone_problema: undefined
+        icone_problema: undefined,
       },
       showError: false,
       segmentos: [],
@@ -107,8 +108,12 @@ export default {
     },
     async carregarSegmentos() {
       try {
+        const headers = {
+          Authorization: `Bearer ${this.userData.token}`, // Add authorization header with Bearer token
+        };
         const response = await axios.get(
-          `${process.env.MANAGEMENT_API_URL}/listaSegmentos`
+          `${process.env.AUTH_API_URL}/service/gerencia/listaSegmentos`,
+          { headers } // Pass headers object with authorization
         );
         const responseData = response.data[0].func_json_segmentos;
         this.segmentos = responseData;
@@ -119,8 +124,12 @@ export default {
 
     async carregarSistemas() {
       try {
+        const headers = {
+          Authorization: `Bearer ${this.userData.token}`, // Add authorization header with Bearer token
+        };
         const response = await axios.get(
-          `${process.env.MANAGEMENT_API_URL}/listaSistemas`
+          `${process.env.AUTH_API_URL}/service/gerencia/listaSistemas`,
+          { headers }
         );
         const responseData = response.data[0].func_json_sistemas;
         this.sistemas = responseData;
@@ -130,11 +139,11 @@ export default {
     },
     async update() {
       if (this.prediosTipos.sistema_id === undefined) {
-    this.prediosTipos.sistema_id = null;
-    }
-    if (this.prediosTipos.tabvalores_segmento_id === undefined) {
-      this.prediosTipos.tabvalores_segmento_id = null;
-    }
+        this.prediosTipos.sistema_id = null;
+      }
+      if (this.prediosTipos.tabvalores_segmento_id === undefined) {
+        this.prediosTipos.tabvalores_segmento_id = null;
+      }
       const storedIdUser = JSON.parse(localStorage.getItem("user"));
       const data = {
         descricao: this.prediosTipos.descricao,
@@ -146,9 +155,13 @@ export default {
       };
 
       try {
+        const headers = {
+          Authorization: `Bearer ${this.userData.token}`, // Add authorization header with Bearer token
+        };
         const response = await axios.put(
-          `${process.env.MANAGEMENT_API_URL}/updateEquipamentos/${this.prediosTipos.id}`,
-          data
+          `${process.env.AUTH_API_URL}/service/gerencia/updateEquipamentos/${this.prediosTipos.id}`,
+          data,
+          { headers } // Pass headers object with authorization
         );
 
         this.$router.push("/equipamentos-tipos/index");
@@ -162,8 +175,12 @@ export default {
     },
     async loadTiposEquipamentos() {
       try {
+        const headers = {
+          Authorization: `Bearer ${this.userData.token}`, // Add authorization header with Bearer token
+        };
         const response = await axios.get(
-          `${process.env.MANAGEMENT_API_URL}/getEquipamentosById/${this.prediosTipos.id}`
+          `${process.env.AUTH_API_URL}/service/gerencia/getEquipamentosById/${this.prediosTipos.id}`,
+          { headers }
         );
         // Preencha os campos com os detalhes carregados
         console.log(response.data);
@@ -189,6 +206,7 @@ export default {
     }
   },
   mounted() {
+    this.userData = JSON.parse(localStorage.getItem("user"));
     this.loadTiposEquipamentos();
     this.carregarSegmentos();
     this.carregarSistemas();

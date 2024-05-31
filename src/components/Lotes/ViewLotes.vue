@@ -73,8 +73,23 @@ export default {
     },
     async loadLotes() {
       try {
+        // Obtenha o token do usuário do localStorage
+        const userData = JSON.parse(localStorage.getItem("user"));
+        const token = userData ? userData.token : null;
+
+        // Verifique se o token está disponível
+        if (!token) {
+          throw new Error("Token de autenticação não encontrado");
+        }
+
+        // Configure os cabeçalhos com o token de autenticação
+        const headers = {
+          Authorization: `Bearer ${token}`,
+        };
+
         const response = await axios.get(
-          `${process.env.MANAGEMENT_API_URL}/ReceitaLotes/${this.dados.id}`
+          `${process.env.AUTH_API_URL}/service/gerencia/ReceitaLotes/${this.dados.id}`,
+          { headers: headers }
         );
         this.dados = response.data;
       } catch (error) {
@@ -99,6 +114,7 @@ export default {
   },
 };
 </script>
+
 <style scoped>
 .data-container {
   border: 1px solid black;

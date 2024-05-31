@@ -123,6 +123,7 @@ export default {
   },
   data() {
     return {
+      userData: {},
       filteredPrediosAmbientes: [],
       loading: true,
       predios_ambientes: [],
@@ -207,14 +208,19 @@ export default {
         },
       });
     },
+
     async toggleExclusion(item) {
+      const headers = {
+        Authorization: `Bearer ${this.userData.token}`, // Add authorization header with Bearer token
+      };
       try {
         item.excluido = !item.excluido;
         await axios.put(
-          `${process.env.MANAGEMENT_API_URL}/deleteAmbientes/${item.id}`,
+          `${process.env.AUTH_API_URL}/service/gerencia/deleteAmbientes/${item.id}`,
           {
             excluido: item.excluido,
-          }
+          },
+          { headers }
         );
         console.log(item.excluido);
       } catch (error) {
@@ -230,12 +236,20 @@ export default {
     },
   },
   mounted() {
+    this.userData = JSON.parse(localStorage.getItem("user"));
+    const headers = {
+      Authorization: `Bearer ${this.userData.token}`, // Add authorization header with Bearer token
+    };
     const storedToken = JSON.parse(localStorage.getItem("predio"));
     const data = {
       predio_token: storedToken.predio_token,
     };
     axios
-      .post(`${process.env.MANAGEMENT_API_URL}/listaAmbientes`, data)
+      .post(
+        `${process.env.AUTH_API_URL}/service/gerencia/listaAmbientes`,
+        data,
+        { headers }
+      )
       .then((response) => {
         this.predios_ambientes = response.data[0].func_json_ambientes;
         this.filteredPrediosAmbientes = this.predios_ambientes;

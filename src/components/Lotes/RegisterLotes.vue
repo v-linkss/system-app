@@ -113,6 +113,7 @@ import axios from "axios";
 export default {
   data() {
     return {
+      userData: {},
       pi_lotes_receitas: {
         data: undefined,
         lote_id: undefined,
@@ -143,9 +144,13 @@ export default {
         predio_token: storedToken.predio_token,
       };
       try {
+        const headers = {
+          Authorization: `Bearer ${this.userData.token}`, // Add authorization header with Bearer token
+        };
         const response = await axios.post(
-          `${process.env.MANAGEMENT_API_URL}/loteEquipamentos`,
-          data
+          `${process.env.AUTH_API_URL}/service/gerencia/loteEquipamentos`,
+          data,
+          { headers }
         );
         const responseData = response.data[0].func_json_equipamentos_combolist;
         this.equipamentos = responseData;
@@ -159,9 +164,13 @@ export default {
         predio_token: storedToken.predio_token,
       };
       try {
+        const headers = {
+          Authorization: `Bearer ${this.userData.token}`, // Add authorization header with Bearer token
+        };
         const response = await axios.post(
-          `${process.env.MANAGEMENT_API_URL}/contasPredios`,
-          data
+          `${process.env.AUTH_API_URL}/service/gerencia/contasPredios`,
+          data,
+          { headers }
         );
         const responseData = response.data[0].func_json_contas_predio;
         this.contas = responseData;
@@ -176,9 +185,13 @@ export default {
         predio_token: storedToken.predio_token,
       };
       try {
+        const headers = {
+          Authorization: `Bearer ${this.userData.token}`, // Add authorization header with Bearer token
+        };
         const response = await axios.post(
-          `${process.env.MANAGEMENT_API_URL}/lotesPredios`,
-          data
+          `${process.env.AUTH_API_URL}/service/gerencia/lotesPredios`,
+          data,
+          { headers }
         );
         const responseData = response.data[0].func_json_lotes_predio;
         this.lotes = responseData;
@@ -215,9 +228,13 @@ export default {
       };
 
       try {
+        const headers = {
+          Authorization: `Bearer ${this.userData.token}`, // Add authorization header with Bearer token
+        };
         const response = await axios.post(
-          `${process.env.MANAGEMENT_API_URL}/createReceitaLotes`,
-          data
+          `${process.env.AUTH_API_URL}/service/gerencia/createReceitaLotes`,
+          data,
+          { headers }
         );
         this.$router.push("/pi-lotes-receitas/index/");
         return response;
@@ -243,6 +260,7 @@ export default {
     },
   },
   mounted() {
+    this.userData = JSON.parse(localStorage.getItem("user"));
     this.loadContas();
     this.loadEquipamentos();
     this.loadLotes();
