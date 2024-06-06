@@ -103,12 +103,14 @@ export default {
       this.$emit("remove-parcela", index);
     },
     updateParcela(index, field, event) {
-      const value = event.target.value;
-      let formattedValue = parseFloat(value.replace(',', '.')).toFixed(2);
-      if (isNaN(formattedValue)) {
-        formattedValue = '0.00';
+      let value = event.target.value;
+      if (field !== 'dt_vencimento') {
+        value = parseFloat(value.replace(',', '.')).toFixed(2);
+        if (isNaN(value)) {
+          value = '0.00';
+        }
       }
-      this.$emit("update-parcela", { index, field, value: formattedValue });
+      this.$emit("update-parcela", { index, field, value });
     },
   },
   watch: {

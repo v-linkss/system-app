@@ -10,7 +10,6 @@
             readonly
             class="opacity-75 ml-4"
           ></v-text-field>
-
           <v-text-field
             label="Valor Títulos"
             :model-value="valorTitulo"
@@ -83,6 +82,34 @@
                 >
               </v-card-actions>
             </v-card>
+            <v-card v-if="showBoleto">
+              <v-card-text>
+                {{ `Deseja visualizar os boletos?` }}
+              </v-card-text>
+
+              <v-card-actions>
+                <v-spacer></v-spacer>
+
+                <v-btn
+                  style="
+                    background-color: red;
+                    color: white;
+                    width: 80px;
+                    height: 40px;
+                  "
+                  @click="isActive.value = false"
+                  >Não</v-btn
+                >
+                <v-btn
+                  class="me-4"
+                  style="background-color: green; width: 80px; height: 40px"
+                  color="white"
+                  @click="confirmBoletoView"
+                >
+                  Sim
+                </v-btn>
+              </v-card-actions>
+            </v-card>
           </template>
         </v-dialog>
       </v-card-actions>
@@ -93,7 +120,20 @@
 <script>
 import ParcelasGeradas from "./ParcelasGeradas.vue";
 import axios from "axios";
+
 export default {
+  data() {
+    return {
+      documento: null,
+      dt_vencimento: null,
+      localShow: this.show,
+      parcelasList: JSON.parse(JSON.stringify(this.parcelasDetalhadas)),
+      taxasList: JSON.parse(JSON.stringify(this.taxas)),
+      showError: false,
+      showBoleto: false,
+      boletos: [],
+    };
+  },
   components: {
     ParcelasGeradas,
   },
@@ -134,18 +174,11 @@ export default {
       return this.parcelasList.length;
     },
     valorTotalParcelas() {
-      return this.parcelasList.reduce((total, parcela) => total + parcela.valor, 0);
+      return this.parcelasList.reduce(
+        (total, parcela) => total + parcela.valor,
+        0
+      );
     },
-  },
-  data() {
-    return {
-      documento: null,
-      dt_vencimento: null,
-      localShow: this.show,
-      parcelasList: JSON.parse(JSON.stringify(this.parcelasDetalhadas)),
-      taxasList: JSON.parse(JSON.stringify(this.taxas)),
-      showError: false,
-    };
   },
   watch: {
     show(val) {
@@ -187,7 +220,6 @@ export default {
           desconto_adimplencia: this.taxasList.desconto_adimplencia,
         };
         this.parcelasList.push(novaParcela);
-
       }
     },
     removeParcela(index) {
@@ -206,6 +238,14 @@ export default {
         this.parcelasList = 12;
       }
     },
+    async confirmBoletoView() {
+      window.open(
+        `/boletos-negociacao?data=${encodeURIComponent(
+          JSON.stringify(this.boletos)
+        )}`,
+        "_blank"
+      );
+    },
     async submit() {
       const storedIdPredio = JSON.parse(localStorage.getItem("predio"));
       const storedIdUser = JSON.parse(localStorage.getItem("user"));
@@ -219,7 +259,6 @@ export default {
         ],
         parcelas: this.parcelasList,
       };
-      console.log(data);
       if (this.valorTotalParcelas !== this.valorNegociado) {
         this.showError = true;
       } else {
@@ -229,7 +268,13 @@ export default {
             [data]
           );
           const responseData = response.data[0].func_negociacao_titulos;
-          console.log(responseData)
+          if (storedIdPredio.conta_bancaria_id) {
+            this.showBoleto = true;
+            this.boletos = responseData;
+            console.log(responseData);
+          } else {
+            this.localShow = false;
+          }
           return responseData;
         } catch (error) {
           console.error("Erro na criação do registro:", error);

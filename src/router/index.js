@@ -246,6 +246,12 @@ const routes = [
         component: () =>
           import("@/views/NegociacaoTitulos/NegociacaoTitulos.vue"),
       },
+      {
+        path: "/boletos-negociacao",
+        name: "/boletos-negociacao",
+        component: () =>
+          import("@/views/NegociacaoTitulos/BoletosNegociacao.vue"),
+      },
     ],
   },
 ];
