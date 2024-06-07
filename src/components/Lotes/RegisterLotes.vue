@@ -244,18 +244,10 @@ export default {
         this.showError = true;
       }
     },
-    async handleReset() {
-      this.pi_lotes_receitas.cobrar = null;
-      this.pi_lotes_receitas.conta_id = null;
-      this.pi_lotes_receitas.predio_equipamento_id = null;
-      this.pi_lotes_receitas.data = null;
-      this.pi_lotes_receitas.valor = null;
-      this.pi_lotes_receitas.observacao = null;
-      this.pi_lotes_receitas.lote_id = null;
-    },
+
     async checkUndefinedValues() {
-      if (pi_lotes_receitas.predio_equipamento_id === undefined) {
-        pi_lotes_receitas.predio_equipamento_id = null;
+      if (this.pi_lotes_receitas.predio_equipamento_id === undefined) {
+        this.pi_lotes_receitas.predio_equipamento_id = null;
       }
     },
   },

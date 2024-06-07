@@ -26,8 +26,8 @@ import AppBar from "@/layouts/default/AppBar.vue";
       </v-col>
       <v-col class="ml-5">
         <v-text-field
-          v-model="lotes.valor"
           type="number"
+          v-model="valorTitulos"
           label="Valor Títulos"
           readonly
           disabled
@@ -37,22 +37,21 @@ import AppBar from "@/layouts/default/AppBar.vue";
       <v-col>
         <v-text-field
           class="ml-6"
-          v-model="lotes.data_vencimento"
-          type="number"
+          v-mask="'######.##'"
+          v-model.number="valorNegociado"
           label="Valor Negociado"
         ></v-text-field>
       </v-col>
 
       <v-col class="ml-5">
         <v-text-field
-          v-model="parcelas"
-          type="number"
+          v-model.number="parcelas"
           label="Parcelas"
           :rules="[maxParcelas]"
           @input="checkParcelas"
         ></v-text-field>
       </v-col>
-      <v-col class="btn-pointer" @click="showModal = true">
+      <v-col class="btn-pointer" @click="openModal">
         <img
           style="width: 40px; height: 40px"
           src="../../assets/novo.png"
@@ -83,8 +82,9 @@ import AppBar from "@/layouts/default/AppBar.vue";
       <v-data-table
         class="mt-9"
         :headers="headers"
-        :items="filteredReceita"
+        :items="filteredLotes"
         v-model="selected"
+        item-value="predio_titulo_id"
         :rows-per-page-items="itemsPerPage"
         :footer-props="footerProps"
         show-select
@@ -95,13 +95,23 @@ import AppBar from "@/layouts/default/AppBar.vue";
       >
       </v-data-table>
     </div>
-    <ModalParcelas v-model:show="showModal" />
+    <v-btn class="mt-8" color="red" @click="returnToMainPage"> Voltar</v-btn>
+    <ModalParcelas
+      v-model:show="showModal"
+      :selected-item="selectedItemTitle"
+      :valor-titulo="valorTitulos"
+      :valor-negociado="valorNegociado"
+      :parcelas-detalhadas="parcelasDetalhadas"
+      :titulos="selectedTokens"
+      :taxas="taxas"
+    />
   </v-container>
 </template>
 <script>
 import { VDataTable } from "vuetify/lib/components/index.mjs";
 import axios from "axios";
 import ModalParcelas from "./ModalParcelas.vue";
+
 export default {
   components: {
     ModalParcelas,
@@ -110,28 +120,29 @@ export default {
   data() {
     return {
       userData: {},
-      filteredReceita: [], // preocurar o correspondente e alterar
+      filteredLotes: [], // preocurar o correspondente e alterar
       showModal: false,
       selected: [],
+      taxas: [],
+      titulos_lote: [],
       selectedItem: null,
+      selectedItemTitle: null,
+      valorNegociado: null,
+      parcelasDetalhadas: [],
+      valorTitulos: null,
       parcelas: null,
-      lotesChecked: [],
-      lotes: {
-        data_vencimento: null,
-        valor: null,
-        observacao: null,
-      },
-
-      receitas: [],
       lotesCombo: [],
-      boleto: [],
-      testVal: [],
       searchQuery: "",
       itemsPerPage: [20],
       footerProps: [20],
       headers: [
-        { title: "Título", value: "titulo", search: "", width: "25%" },
-        { title: "Vencimento", value: "data", search: "", width: "25%" },
+        { title: "Título", value: "documento", search: "", width: "25%" },
+        {
+          title: "Vencimento",
+          value: "dt_vencimento",
+          search: "",
+          width: "25%",
+        },
         { title: "Valor", value: "valor", search: "", width: "25%" },
         {
           title: "Observação",
@@ -144,12 +155,24 @@ export default {
   },
   computed: {
     valorTotal() {
-      return this.lotes.valor || 0;
+      return this.valorTitulos || 0;
+    },
+    selectedTokens() {
+      return this.selected.map((id) => {
+        const item = this.titulos_lote.find(
+          (item) => item.predio_titulo_id === id
+        );
+        return { token: item.token };
+      });
     },
   },
   methods: {
+    returnToMainPage() {
+      this.$router.push("/panel/index");
+    },
+
     maxParcelas(value) {
-      if (value === 12) {
+      if (value >= 12) {
         return "O número máximo de parcelas é 12";
       }
       return true;
@@ -157,84 +180,12 @@ export default {
     checkParcelas() {
       if (this.parcelas > 12) {
         this.parcelas = 12;
-      } else if (this.parcelas < 1) {
-        this.parcelas = 1;
       }
     },
-    async gerarReceitas(selectedItem) {
-      try {
-        const selectedToken = selectedItem;
-        const data = {
-          lote_token: selectedToken,
-        };
-        const headers = {
-          Authorization: `Bearer ${this.userData.token}`, // Add authorization header with Bearer token
-        };
-        const response = await axios.post(
-          `${process.env.AUTH_API_URL}/service/gerencia/loteReceita`,
-          data,
-          { headers } // Pass headers object with authorization
-        );
-        const responseData = response.data[0].func_json_receitas_lote;
-        this.receitas = responseData;
-        this.filteredReceita = this.receitas;
-        console.log(this.receitas);
-      } catch (error) {
-        console.error("Erro ao carregar receitas:", error);
-      }
+    openModal() {
+      this.calcularParcelas();
+      this.showModal = true;
     },
-
-    async gerarBoletos() {
-      try {
-        const storedTokenPredio = JSON.parse(localStorage.getItem("predio"));
-        const storedTokenUser = JSON.parse(localStorage.getItem("user"));
-        const selectedToken = this.selectedItem;
-        const receitasSelecionadas = this.selected.map((itemId) => {
-          const receita = this.receitas.find((item) => item.id === itemId);
-          return { receita_token: receita.token };
-        });
-        const data = {
-          observacao: this.lotes.observacao,
-          valor: this.lotes.valor,
-          data_vencimento: this.lotes.data_vencimento,
-          lote_token: selectedToken,
-          predio_token: storedTokenPredio.predio_token,
-          user_token: storedTokenUser.token,
-          receitas: receitasSelecionadas,
-        };
-        console.log(data);
-        const headers = {
-          Authorization: `Bearer ${this.userData.token}`, // Add authorization header with Bearer token
-        };
-        const response = await axios.post(
-          `${process.env.AUTH_API_URL}/service/gerencia/geraBoletos`,
-          data,
-          { headers } // Pass headers object with authorization
-        );
-        const responseData = response.data[0].func_gera_boleto_lote;
-        this.boleto = responseData;
-        if (this.boleto[0].integra_banco === true) {
-          const dataBoleto = {
-            titulo_token: this.boleto[0].titulo_token,
-          };
-          const headers = {
-            Authorization: `Bearer ${this.userData.token}`, // Add authorization header with Bearer token
-          };
-          const response = await axios.post(
-            `${process.env.AUTH_API_URL}/service/gerencia/integraBanco`,
-            dataBoleto,
-            { headers } // Pass headers object with authorization
-          );
-          const responseDataBoleto = response.data[0].func_integra_banco;
-          window.open(responseDataBoleto[0].link_boleto, "_blank");
-        } else {
-          [];
-        }
-      } catch (error) {
-        console.error("Erro ao carregar receitas:", error);
-      }
-    },
-
     async loadLotes() {
       const storedToken = JSON.parse(localStorage.getItem("predio"));
       const data = {
@@ -247,10 +198,11 @@ export default {
         const response = await axios.post(
           `${process.env.AUTH_API_URL}/service/gerencia/lotesPredios`,
           data,
-          { headers } // Pass headers object with authorization
+          { headers }
         );
         const responseData = response.data[0].func_json_lotes_predio;
         this.lotesCombo = responseData;
+        console.log("############lotesCombo##########\n", this.lotesCombo);
       } catch (error) {
         console.error("Erro ao carregar áreas:", error);
       }
@@ -262,37 +214,85 @@ export default {
       const searchQuery = localStorage.getItem("searchQuery");
       console.log("saveSearchQuery:", searchQuery); // Imprime no console
     },
+    async gerarReceitas(selectedItem) {
+      try {
+        console.log("eeeeeeeeeeeeeeeeeeeeeeeeeh");
+        const headers = {
+          Authorization: `Bearer ${this.userData.token}`, // Add authorization header with Bearer token
+        };
+        const storedToken = JSON.parse(localStorage.getItem("predio"));
+        const selectedToken = selectedItem;
+        const data = {
+          lote_token: selectedToken,
+          predio_token: storedToken.predio_token,
+        };
+        const response = await axios.post(
+          `${process.env.AUTH_API_URL}/service/gerencia/titulosLotes`,
+          data,
+          { headers }
+        );
+        const responseData = response.data[0].func_json_titulos_lote;
+        this.titulos_lote = responseData;
+        this.filteredLotes = this.titulos_lote;
+        this.selectedItemTitle = this.titulos_lote[0].lote;
 
+        console.log("############titulos_lote##########\n", this.titulos_lote);
+      } catch (error) {
+        console.error("Erro ao carregar titulos_lote:", error);
+      }
+    },
     sumCheckedValues() {
-      // Filtra os itens marcados
-      const selectedItems = this.receitas.filter((item) =>
-        this.selected.includes(item.id)
+      const selectedItems = this.titulos_lote.filter((item) =>
+        this.selected.includes(item.predio_titulo_id)
       );
 
-      // Inicializa a soma
       let sum = 0;
 
-      // Itera sobre os itens marcados
+      // Soma os valores dos itens selecionados
       selectedItems.forEach((item) => {
-        // Verifica se o item deve ser cobrado
-        if (item.cobrar === "COBRAR") {
-          // Adiciona o valor apenas se a condição for atendida
-          sum += parseFloat(item.valor);
-        } else if (item.cobrar === "DEVOLVER") {
-          const checkSum = sum - parseFloat(item.valor);
-          if (checkSum >= 0) {
-            sum = checkSum;
-          } else {
-            alert(
-              "Alerta: Valor inválido encontrado (o valor devolvido não pode ser superior ao cobtrado)."
-            );
-          }
-        }
+        sum += parseFloat(item.valor);
       });
-      this.lotes.valor = sum; // Atualiza o valor do campo lotes.valor
+
+      // Atualiza o valor total
+      this.valorTitulos = sum;
+      console.log(this.selected, selectedItems);
+    },
+    async calcularParcelas() {
+      const storedToken = JSON.parse(localStorage.getItem("predio"));
+      try {
+        const headers = {
+          Authorization: `Bearer ${this.userData.token}`, // Add authorization header with Bearer token
+        };
+        const response = await axios.get(
+          `${process.env.AUTH_API_URL}/service/gerencia/getTaxasById/${storedToken.predio_id}`,
+          { headers }
+        );
+        const responseData = response.data;
+        this.taxas = responseData;
+        const valorParcela = (this.valorNegociado / this.parcelas).toFixed(2);
+        const primeiraParcela = (
+          this.valorNegociado -
+          valorParcela * (this.parcelas - 1)
+        ).toFixed(2);
+
+        this.parcelasDetalhadas = Array(this.parcelas)
+          .fill()
+          .map((_, index) => {
+            return {
+              documento: "P-" + (index + 1),
+              valor:
+                index === 0 ? Number(primeiraParcela) : Number(valorParcela),
+              tx_multa: Number(responseData.tx_multa),
+              tx_juros: Number(responseData.tx_juros_mes),
+              desconto_adimplencia: Number(responseData.desconto_adimplencia),
+            };
+          });
+      } catch (error) {
+        console.error(error);
+      }
     },
     filterTable() {
-      this.filteredReceita = this.receitas.filter((item) => {
+      this.filteredLotes = this.titulos_lote.filter((item) => {
         return this.headers.every((header) => {
           if (header.search.trim() === "") return true;
           const value = String(item[header.value]).toLowerCase();
@@ -310,25 +310,13 @@ export default {
     },
   },
   mounted() {
-    this.userData = JSON.parse(localStorage.getItem("user"));
     this.loadLotes();
+    this.userData = JSON.parse(localStorage.getItem("user"));
   },
 };
 </script>
 
 <style scoped>
-.container {
-  margin-right: 10px;
-}
-.btn-pointer {
-  cursor: pointer;
-  max-width: 40px;
-}
-.btn {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
 .custom-td {
   display: flex;
   align-items: center;
@@ -338,14 +326,7 @@ export default {
 .btn-pointer {
   margin-left: 20px;
   cursor: pointer;
-}
-
-.red-icon {
-  color: red;
-}
-
-.gray-icon {
-  color: gray;
+  max-width: 40px;
 }
 
 .disabled {

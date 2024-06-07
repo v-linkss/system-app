@@ -4,7 +4,7 @@
  * Automatically included in `./src/main.js`
  */
 
-// Plugins
+// PluginstransformItems
 import vuetify from './vuetify'
 import router from '../router'
 

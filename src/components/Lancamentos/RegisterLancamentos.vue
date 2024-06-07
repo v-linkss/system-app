@@ -16,7 +16,7 @@
 
     <v-text-field
       class="ml-5 mr-5"
-      v-mask="'#####'"
+      v-mask="'#####.##'"
       v-model.number="lancamentos.valor"
       :error-messages="vida_util.errorMessage.value"
       label="Valor"

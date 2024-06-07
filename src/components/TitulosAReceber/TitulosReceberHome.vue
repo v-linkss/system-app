@@ -314,7 +314,7 @@ export default {
         const responseData = response.data[0].func_json_titulos_lote;
         this.receitas = responseData;
         this.receita_filtrada = this.receitas;
-        console.log("WWWWWWWWWWWW\n",this.receita_filtrada )
+        console.log("WWWWWWWWWWWW\n", this.receita_filtrada);
       } catch (error) {
         console.error("Erro ao carregar receitas:", error);
       }
@@ -428,10 +428,6 @@ export default {
   },
   computed: {
     displayedItems() {
-      console.log(
-        this.emptyInputs
-      );
-
       return [...this.emptyInputs, ...this.receita_filtrada];
     },
   },

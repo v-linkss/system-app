@@ -129,7 +129,7 @@
   </v-app-bar>
 </template>
 
-<script>
+<script >
 export default {
   data: () => ({
     darkTheme: false,
@@ -162,10 +162,7 @@ export default {
         this.$router.go(0);
       }
     },
-    toggleTheme() {
-      this.$vuetify.theme.dark = !this.darkTheme; // Alternar entre temas claro e escuro
-      this.darkTheme = !this.darkTheme; // Alternar o estado do tema
-    },
+
     itemClick(title) {
       if (title === "Sair") {
         localStorage.clear();
@@ -212,15 +209,28 @@ export default {
 };
 </script>
 
-<script setup>
-import { ref } from "vue";
+<script setup >
+import { ref, onMounted } from "vue";
 import { useTheme } from "vuetify";
 
 const theme = useTheme();
 const darkMode = ref(false);
 
+// Função para salvar o tema no localStorage
+const saveThemeToLocalStorage = (isDark) => {
+  localStorage.setItem("darkMode", isDark ? "dark" : "light");
+};
+
+// Recuperar o tema do localStorage quando a aplicação for montada
+onMounted(() => {
+  const savedTheme = localStorage.getItem("darkMode");
+  darkMode.value = savedTheme === "dark";
+  theme.global.name.value = darkMode.value ? "dark" : "light";
+});
+
 const toggleTheme = () => {
   theme.global.name.value = darkMode.value ? "dark" : "light";
+  saveThemeToLocalStorage(darkMode.value);
 };
 </script>
 

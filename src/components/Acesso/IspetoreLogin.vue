@@ -45,7 +45,7 @@
           </v-btn>
         </template>
 
-        <v-card v-if="showPasswordError" text="Senha inválida2.">
+        <v-card v-if="showPasswordError" text="Senha inválida.">
           <template v-slot:actions>
             <v-spacer></v-spacer>
 
@@ -59,7 +59,7 @@
         </v-card>
         <v-card
           v-if="showEmailError"
-          text="Esse email não está cadastrado no Durabil."
+          text="Esse email não está cadastrado."
         >
           <template v-slot:actions>
             <v-spacer></v-spacer>
@@ -162,10 +162,10 @@ export default {
           console.log(errorData);
           if (
             errorData.status_mensagem ===
-            "Esse email não está cadastrado no Durabil."
+            "Esse email não está cadastrado."
           ) {
             this.showEmailError = true;
-          } else if (errorData.status_mensagem === "Senha inválida2.") {
+          } else if (errorData.status_mensagem === "Senha inválida.") {
             this.showPasswordError = true;
           } else if (errorData.error === "Erro ao autenticar usuário") {
             this.showError = true;
