@@ -1,6 +1,6 @@
 import App from './App.vue'
 // Plugins
-import { registerPlugins } from '@/plugins'
+import { registerPlugins } from './plugins'
 import store from './stores/store'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { library } from '@fortawesome/fontawesome-svg-core';
