@@ -253,6 +253,7 @@ export default {
       .then((response) => {
         this.predios_ambientes = response.data[0].func_json_ambientes;
         this.filteredPrediosAmbientes = this.predios_ambientes;
+        console.log(this.filteredPrediosAmbientes)
       })
       .catch((error) => {
         console.error("Erro na chamada de API:", error);

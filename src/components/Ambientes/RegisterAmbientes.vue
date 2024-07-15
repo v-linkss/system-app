@@ -115,7 +115,6 @@ export default {
       try {
         // Retrieve the token from localStorage
 
-        console.log("###################\n", this.userData.token);
 
         const response = await axios.get(
           `${process.env.AUTH_API_URL}/service/gerencia/listaTiposAmbientes`,
@@ -131,7 +130,6 @@ export default {
 
 
     async loadAreas() {
-      console.log("loadAreas##################\n", this.userData.token);
 
       const headers = {
         Authorization: `Bearer ${this.userData.token}`, // Add authorization header with Bearer token
@@ -148,23 +146,24 @@ export default {
           data,
           { headers }
         );
-        console.log("##################\n", response);
+
         const responseData = response.data[0].func_json_areas;
         this.areas = responseData;
-        console.log(this.areas);
+
       } catch (error) {
         console.error("Erro ao carregar áreas:", error);
       }
     },
     async submit() {
+      const headers = {
+          Authorization: `Bearer ${this.userData.token}`, // Add authorization header with Bearer token
+        };
       if (this.predios.predio_area_id === undefined) {
         this.predios.predio_area_id = null;
-        console.log(this.predios.predio_area_id);
       }
 
       if (this.predios.numero_ocupantes === undefined) {
         this.predios.numero_ocupantes = null;
-        console.log(this.predios.numero_ocupantes);
       }
       const storedIdPredio = JSON.parse(localStorage.getItem("predio"));
       const storedIdUser = JSON.parse(localStorage.getItem("user"));
@@ -180,8 +179,8 @@ export default {
 
       try {
         const response = await axios.post(
-          `${process.env.AUTH_API_URL}/PrediosAmbienteCadastro`,
-          data
+          `${process.env.AUTH_API_URL}/service/gerencia/PrediosAmbienteCadastro`,
+          data, { headers }
         );
         this.$router.push("/predios-ambientes/index"); // Redirecione para a página principal ou faça qualquer outra ação desejada
 
@@ -195,7 +194,6 @@ export default {
   },
   mounted() {
     this.userData = JSON.parse(localStorage.getItem("user"));
-
     this.loadAreas();
     this.loadTipos();
   },

@@ -140,7 +140,7 @@ export default {
         );
         const responseData = response.data[0].func_json_areas;
         this.areas = responseData;
-        console.log(this.areas);
+
       } catch (error) {
         console.error("Erro ao carregar áreas:", error);
       }
@@ -161,23 +161,20 @@ export default {
         this.predios.tabvalores_tipo_ambiente_id =
           response.data.tabvalores_tipo_ambiente_id;
         this.predios.predio_area_id = response.data.predio_area_id;
+
       } catch (error) {
         console.error("Erro ao carregar detalhes do prédio:", error);
       }
     },
     async update() {
-      // if (this.predios.area === undefined) {
-      //   this.predios.area = null;
-      //   console.log(this.predios.area);
-      // }
 
       if (this.predios.numero_ocupantes === undefined) {
         this.predios.numero_ocupantes = null;
-        console.log(this.predios.numero_ocupantes);
+
       }
       if (this.predios.predio_area_id === undefined) {
         this.predios.predio_area_id = null;
-        console.log(this.predios.predio_area_id);
+
       }
       const data = {
         descricao: this.predios.descricao,
@@ -191,18 +188,13 @@ export default {
         const headers = {
           Authorization: `Bearer ${this.userData.token}`, // Add authorization header with Bearer token
         };
-        console.log(
-          "###################-this.predios.area-####################\n",
-          this.predios.area
-        );
+
         const response = await axios.put(
           `${process.env.AUTH_API_URL}/service/gerencia/PrediosAmbiente/${this.predios.id}`,
           data,
           { headers }
         );
         this.$router.push("/predios-ambientes/index"); // Redirecione para a página principal ou faça qualquer outra ação desejada
-
-        this.$router.push("/predios-ambientes/index");
         return response;
       } catch (error) {
         console.error("Erro na criação do registro:", error);
@@ -216,7 +208,7 @@ export default {
     if (this.$route.query.id) {
       this.predios.id = this.$route.query.id;
     } else {
-      console.log("Erro em carregar dados");
+      console.error("Erro em carregar dados");
     }
   },
   mounted() {
